@@ -7,6 +7,13 @@
     <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, galleria, street art">
     <meta name="author" content="ViAmo Art">
     <title>ViAmo - Galleria d'Arte</title>
+    <!-- Includi EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("z2kCGkszIchfP51G_"); // Public Key di EmailJS
+        })();
+    </script>
     <style>
         body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
         header { background-color: #2c3e50; color: white; padding: 15px; text-align: center; }
@@ -15,23 +22,23 @@
         nav a { color: white; margin: 0 20px; text-decoration: none; font-size: 1.1em; }
         nav a:hover { text-decoration: underline; }
         section { padding: 25px; margin: 20px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        .gallery { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 20px; 
-            max-height: 600px; 
-            overflow-y: auto; 
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
         }
         .artwork { border: 1px solid #ddd; padding: 15px; text-align: center; background: #fff; }
         .artwork img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
-        .artwork a { 
-            display: inline-block; 
-            margin-top: 10px; 
-            padding: 8px 16px; 
-            background-color: #2c3e50; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 5px; 
+        .artwork a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
         }
         .artwork a:hover { background-color: #34495e; }
         form { display: flex; flex-direction: column; max-width: 450px; margin: 0 auto; }
@@ -41,6 +48,7 @@
         #admin { display: none; }
         #login-form, #admin-panel { max-width: 400px; margin: 0 auto; }
         .error { color: red; display: none; text-align: center; margin: 10px 0; }
+        .success { color: green; display: none; text-align: center; margin: 10px 0; }
         @media (max-width: 300px) {
             .gallery { grid-template-columns: 1fr; }
             .artwork img { height: 150px; }
@@ -89,6 +97,13 @@
                 <p>Prezzo: €600</p>
                 <a href="artwork.html?id=3" aria-label="Visualizza dettagli di Abbraccio della Natura">Visualizza Dettagli</a>
             </div>
+            <div class="artwork">
+                <img src="Opere/Marilyn1.jpg" alt="Marilyn" loading="lazy">
+                <h3>Marilyn</h3>
+                <p>Dimensioni: 50x70 cm</p>
+                <p>Prezzo: €700</p>
+                <a href="artwork.html?id=4" aria-label="Visualizza dettagli di Marilyn">Visualizza Dettagli</a>
+            </div>
         </div>
     </section>
 
@@ -104,6 +119,8 @@
             <input type="email" name="user_email" placeholder="La tua email" required aria-label="La tua email">
             <textarea name="message" placeholder="Il tuo messaggio" rows="5" required aria-label="Il tuo messaggio"></textarea>
             <button type="submit" aria-label="Invia il messaggio">Invia</button>
+            <p class="success" id="form-success" style="display: none;">Messaggio inviato con successo!</p>
+            <p class="error" id="form-error" style="display: none;">Errore durante l'invio. Riprova.</p>
         </form>
         <p>Invia un'email a: <a id="contact-email" href="mailto:viamoarte@gmail.com">viamoarte@gmail.com</a></p>
     </section>
@@ -169,7 +186,8 @@
         let artworks = JSON.parse(localStorage.getItem('artworks')) || [
             { id: 1, title: 'Tramonti d\'Estate', desc: 'Olio su tela, 2023', dimensions: '50x70 cm', price: 500, image: 'Opere/tramonti-destate.jpg' },
             { id: 2, title: 'Riflessi Lunari', desc: 'Acrilico, 2022', dimensions: '60x80 cm', price: 450, image: 'Opere/riflessi-lunari.jpg' },
-            { id: 3, title: 'Abbraccio della Natura', desc: 'Tecnica mista, 2024', dimensions: '70x100 cm', price: 600, image: 'Opere/abbraccio-natura.jpg' }
+            { id: 3, title: 'Abbraccio della Natura', desc: 'Tecnica mista, 2024', dimensions: '70x100 cm', price: 600, image: 'Opere/abbraccio-natura.jpg' },
+            { id: 4, title: 'Marilyn', desc: 'Acrilico, 2025', dimensions: '50x70 cm', price: 700, image: 'Opere/Marilyn1.jpg' }
         ];
         let homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
         let aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
@@ -349,16 +367,25 @@
             // Non resettare il form
         });
 
-        // Gestione Form Contatti
-        document.getElementById('contact-form').addEventListener('submit', e => {
+        // Gestione Form Contatti con EmailJS
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const form = e.target;
-            const successMessage = document.createElement('p');
-            successMessage.textContent = 'Messaggio inviato con successo!';
-            successMessage.style.color = 'green';
-            form.appendChild(successMessage);
-            setTimeout(() => successMessage.remove(), 3000);
-            form.reset();
+            const successMessage = document.getElementById('form-success');
+            const errorMessage = document.getElementById('form-error');
+
+            // Invia email tramite EmailJS
+            emailjs.sendForm('service_slktprw', 'template_hms1a09', this)
+                .then(function() {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    setTimeout(() => successMessage.style.display = 'none', 3000);
+                    document.getElementById('contact-form').reset();
+                }, function(error) {
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    console.error('Errore invio email:', error);
+                    setTimeout(() => errorMessage.style.display = 'none', 3000);
+                });
         });
 
         // Inizializza galleria
