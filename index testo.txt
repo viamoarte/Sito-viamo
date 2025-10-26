@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scopri le opere uniche di ViAmo, artista di street art e pop culture.">
+    <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, galleria, street art">
+    <meta name="author" content="ViAmo Art">
+    <title>ViAmo - Galleria d'Arte</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
+        header { background-color: #2c3e50; color: white; padding: 15px; text-align: center; }
+        #banner { width: 100%; max-height: 350px; object-fit: cover; }
+        nav { background-color: #34495e; padding: 10px; text-align: center; }
+        nav a { color: white; margin: 0 20px; text-decoration: none; font-size: 1.1em; }
+        nav a:hover { text-decoration: underline; }
+        section { padding: 25px; margin: 20px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+        .gallery { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            max-height: 600px; 
+            overflow-y: auto; 
+        }
+        .artwork { border: 1px solid #ddd; padding: 15px; text-align: center; background: #fff; }
+        .artwork img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
+        .artwork a { 
+            display: inline-block; 
+            margin-top: 10px; 
+            padding: 8px 16px; 
+            background-color: #2c3e50; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+        }
+        .artwork a:hover { background-color: #34495e; }
+        form { display: flex; flex-direction: column; max-width: 450px; margin: 0 auto; }
+        input, textarea { margin: 10px 0; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        button { padding: 12px; background-color: #2c3e50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        button:hover { background-color: #34495e; }
+        #admin { display: none; }
+        #login-form, #admin-panel { max-width: 400px; margin: 0 auto; }
+        .error { color: red; display: none; text-align: center; margin: 10px 0; }
+        @media (max-width: 300px) {
+            .gallery { grid-template-columns: 1fr; }
+            .artwork img { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
+        <h1>ViAmo - Vincenza Amodio</h1>
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#gallery">Galleria</a>
+        <a href="#about">Chi Sono</a>
+        <a href="#contact">Contatti</a>
+        <a href="#" onclick="toggleAdmin()" aria-label="Accedi all'area riservata">Area Riservata</a>
+    </nav>
+
+    <section id="home">
+        <h2>Benvenuti</h2>
+        <p id="home-text">ViAmo, alias Vincenza Amodio, è un'artista che trasforma emozioni in opere d'arte unendo street art e cultura pop.</p>
+    </section>
+
+    <section id="gallery">
+        <h2>Galleria Opere</h2>
+        <div class="gallery" id="gallery-container">
+            <div class="artwork">
+                <img src="Opere/tramonti-destate.jpg" alt="Tramonti d'Estate" loading="lazy">
+                <h3>Tramonti d'Estate</h3>
+                <p>Dimensioni: 50x70 cm</p>
+                <p>Prezzo: €500</p>
+                <a href="artwork.html?id=1" aria-label="Visualizza dettagli di Tramonti d'Estate">Visualizza Dettagli</a>
+            </div>
+            <div class="artwork">
+                <img src="Opere/riflessi-lunari.jpg" alt="Riflessi Lunari" loading="lazy">
+                <h3>Riflessi Lunari</h3>
+                <p>Dimensioni: 60x80 cm</p>
+                <p>Prezzo: €450</p>
+                <a href="artwork.html?id=2" aria-label="Visualizza dettagli di Riflessi Lunari">Visualizza Dettagli</a>
+            </div>
+            <div class="artwork">
+                <img src="Opere/abbraccio-natura.jpg" alt="Abbraccio della Natura" loading="lazy">
+                <h3>Abbraccio della Natura</h3>
+                <p>Dimensioni: 70x100 cm</p>
+                <p>Prezzo: €600</p>
+                <a href="artwork.html?id=3" aria-label="Visualizza dettagli di Abbraccio della Natura">Visualizza Dettagli</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2>Chi è ViAmo</h2>
+        <p id="about-text">Vincenza Amodio, nota come ViAmo, è un'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.</p>
+    </section>
+
+    <section id="contact">
+        <h2>Contattami</h2>
+        <form id="contact-form">
+            <input type="text" name="user_name" placeholder="Il tuo nome" required aria-label="Il tuo nome">
+            <input type="email" name="user_email" placeholder="La tua email" required aria-label="La tua email">
+            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required aria-label="Il tuo messaggio"></textarea>
+            <button type="submit" aria-label="Invia il messaggio">Invia</button>
+        </form>
+        <p>Invia un'email a: <a id="contact-email" href="mailto:viamoarte@gmail.com">viamoarte@gmail.com</a></p>
+    </section>
+
+    <section id="admin">
+        <h2>Area Amministratore</h2>
+        <p class="error" id="admin-error">Errore: problema nell'apertura dell'area. Controlla la console.</p>
+        <div id="login-section">
+            <form id="login-form">
+                <input type="password" id="admin-password" placeholder="Password Admin" required aria-label="Password amministratore">
+                <p class="error" id="login-error">Password errata. Riprova.</p>
+                <button type="submit" aria-label="Accedi all'area amministratore">Accedi</button>
+            </form>
+        </div>
+        <div id="admin-panel" style="display:none;">
+            <button onclick="logout()" aria-label="Esci dall'area amministratore">Esci</button>
+            <h3>Modifica Banner</h3>
+            <form id="banner-form">
+                <input type="url" id="new-banner" placeholder="URL Nuova Immagine Banner" value="Opere/banner.jpg" aria-label="URL immagine banner">
+                <button type="submit" aria-label="Aggiorna immagine banner">Aggiorna Banner</button>
+            </form>
+            <h3>Modifica Testo Home</h3>
+            <form id="home-form">
+                <textarea id="new-home-text" rows="3" aria-label="Testo sezione home">ViAmo, alias Vincenza Amodio, è un'artista che trasforma emozioni in opere d'arte unendo street art e cultura pop.</textarea>
+                <button type="submit" aria-label="Aggiorna testo home">Aggiorna Home</button>
+            </form>
+            <h3>Modifica Descrizione Artista</h3>
+            <form id="about-form">
+                <textarea id="new-about-text" rows="3" aria-label="Descrizione artista">Vincenza Amodio, nota come ViAmo, è un'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.</textarea>
+                <button type="submit" aria-label="Aggiorna descrizione artista">Aggiorna Descrizione</button>
+            </form>
+            <h3>Modifica Galleria</h3>
+            <form id="gallery-form">
+                <input type="text" id="gallery-title" placeholder="Titolo Opera" required aria-label="Titolo opera">
+                <input type="text" id="gallery-desc" placeholder="Descrizione Opera" required aria-label="Descrizione opera">
+                <input type="text" id="gallery-dimensions" placeholder="Dimensioni (es. 50x70 cm)" required aria-label="Dimensioni opera">
+                <input type="number" id="gallery-price" placeholder="Prezzo (€)" required min="1" aria-label="Prezzo opera">
+                <input type="url" id="gallery-image" placeholder="URL Immagine (es. Opere/immagine.jpg)" required aria-label="URL immagine opera">
+                <button type="submit" aria-label="Aggiungi opera alla galleria">Aggiungi Opera</button>
+            </form>
+            <h3>Modifica Email Contatti</h3>
+            <form id="email-form">
+                <input type="email" id="new-email" placeholder="Nuova Email" value="viamoarte@gmail.com" required aria-label="Nuova email di contatto">
+                <button type="submit" aria-label="Aggiorna email di contatto">Aggiorna Email</button>
+            </form>
+            <h3>Modifica Testo Footer</h3>
+            <form id="footer-form">
+                <textarea id="new-footer-text" rows="2" aria-label="Testo footer">&copy; 2025 ViAmo Art. Tutti i diritti riservati.</textarea>
+                <button type="submit" aria-label="Aggiorna testo footer">Aggiorna Footer</button>
+            </form>
+        </div>
+    </section>
+
+    <footer id="footer-text">
+        &copy; 2025 ViAmo Art. Tutti i diritti riservati.
+    </footer>
+
+    <script>
+        // ATTENZIONE: La password è hardcoded per semplicità. In produzione, utilizzare un backend per gestire l'autenticazione in modo sicuro.
+        const adminPassword = '#Venus2025';
+
+        // Dati salvati in localStorage
+        let artworks = JSON.parse(localStorage.getItem('artworks')) || [
+            { id: 1, title: 'Tramonti d\'Estate', desc: 'Olio su tela, 2023', dimensions: '50x70 cm', price: 500, image: 'Opere/tramonti-destate.jpg' },
+            { id: 2, title: 'Riflessi Lunari', desc: 'Acrilico, 2022', dimensions: '60x80 cm', price: 450, image: 'Opere/riflessi-lunari.jpg' },
+            { id: 3, title: 'Abbraccio della Natura', desc: 'Tecnica mista, 2024', dimensions: '70x100 cm', price: 600, image: 'Opere/abbraccio-natura.jpg' }
+        ];
+        let homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
+        let aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
+        let footerText = localStorage.getItem('footerText') || '&copy; 2025 ViAmo Art. Tutti i diritti riservati.';
+        let contactEmail = localStorage.getItem('contactEmail') || 'viamoarte@gmail.com';
+        let bannerUrl = localStorage.getItem('bannerUrl') || 'Opere/banner.jpg';
+
+        let loggedIn = false;
+
+        // Inizializza testi
+        document.getElementById('home-text').textContent = homeText;
+        document.getElementById('about-text').textContent = aboutText;
+        document.getElementById('footer-text').innerHTML = footerText;
+        document.getElementById('contact-email').href = 'mailto:' + contactEmail;
+        document.getElementById('contact-email').textContent = contactEmail;
+        document.getElementById('banner').src = bannerUrl;
+
+        // Renderizza la galleria
+        function renderGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = artworks.map(art => `
+                <div class="artwork">
+                    <img src="${art.image}" alt="${art.title}" loading="lazy">
+                    <h3>${art.title}</h3>
+                    <p>Dimensioni: ${art.dimensions}</p>
+                    <p>Prezzo: €${art.price}</p>
+                    <a href="artwork.html?id=${art.id}" aria-label="Visualizza dettagli di ${art.title}">Visualizza Dettagli</a>
+                    ${loggedIn ? `<button onclick="editArtwork(${art.id})" aria-label="Modifica opera ${art.title}">Modifica</button> <button onclick="deleteArtwork(${art.id})" aria-label="Elimina opera ${art.title}">Elimina</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Toggle area riservata
+        function toggleAdmin() {
+            const adminSection = document.getElementById('admin');
+            const errorMessage = document.getElementById('admin-error');
+            try {
+                adminSection.style.display = adminSection.style.display === 'none' ? 'block' : 'none';
+                errorMessage.style.display = 'none';
+            } catch (e) {
+                errorMessage.style.display = 'block';
+                console.error('Errore toggleAdmin:', e);
+            }
+        }
+
+        // Logout
+        function logout() {
+            loggedIn = false;
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-password').value = '';
+            renderGallery();
+        }
+
+        // Modifica Opera
+        function editArtwork(id) {
+            if (!loggedIn) {
+                alert('Accesso non autorizzato. Effettua il login come amministratore.');
+                return;
+            }
+            const artwork = artworks.find(art => art.id === id);
+            if (artwork) {
+                document.getElementById('gallery-title').value = artwork.title;
+                document.getElementById('gallery-desc').value = artwork.desc;
+                document.getElementById('gallery-dimensions').value = artwork.dimensions;
+                document.getElementById('gallery-price').value = artwork.price;
+                document.getElementById('gallery-image').value = artwork.image;
+                deleteArtwork(id);
+            }
+        }
+
+        // Elimina Opera
+        function deleteArtwork(id) {
+            if (!loggedIn) {
+                alert('Accesso non autorizzato. Effettua il login come amministratore.');
+                return;
+            }
+            artworks = artworks.filter(art => art.id !== id);
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            renderGallery();
+        }
+
+        // Login
+        document.getElementById('login-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const inputPassword = document.getElementById('admin-password').value;
+            const errorMessage = document.getElementById('login-error');
+            if (inputPassword === adminPassword) {
+                loggedIn = true;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                errorMessage.style.display = 'none';
+                renderGallery();
+                // Pre-riempi i campi
+                document.getElementById('new-home-text').value = homeText;
+                document.getElementById('new-about-text').value = aboutText;
+                document.getElementById('new-footer-text').value = footerText;
+                document.getElementById('new-email').value = contactEmail;
+                document.getElementById('new-banner').value = bannerUrl;
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Modifica Banner
+        document.getElementById('banner-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const newBannerUrl = document.getElementById('new-banner').value;
+            document.getElementById('banner').src = newBannerUrl;
+            localStorage.setItem('bannerUrl', newBannerUrl);
+            // Non resettare il form
+        });
+
+        // Modifica Testo Home
+        document.getElementById('home-form').addEventListener('submit', e => {
+            e.preventDefault();
+            homeText = document.getElementById('new-home-text').value;
+            localStorage.setItem('homeText', homeText);
+            document.getElementById('home-text').textContent = homeText;
+            // Non resettare il form
+        });
+
+        // Modifica Descrizione Artista
+        document.getElementById('about-form').addEventListener('submit', e => {
+            e.preventDefault();
+            aboutText = document.getElementById('new-about-text').value;
+            localStorage.setItem('aboutText', aboutText);
+            document.getElementById('about-text').textContent = aboutText;
+            // Non resettare il form
+        });
+
+        // Modifica Galleria
+        document.getElementById('gallery-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const title = document.getElementById('gallery-title').value;
+            const desc = document.getElementById('gallery-desc').value;
+            const dimensions = document.getElementById('gallery-dimensions').value;
+            const price = parseInt(document.getElementById('gallery-price').value);
+            const image = document.getElementById('gallery-image').value;
+
+            // Validazione
+            if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !image.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                alert('Per favore, inserisci dati validi: titolo, descrizione, dimensioni, prezzo positivo e un URL immagine valido (es. Opere/immagine.jpg).');
+                return;
+            }
+
+            const newArt = {
+                id: Date.now(),
+                title,
+                desc,
+                dimensions,
+                price,
+                image
+            };
+            artworks.push(newArt);
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            renderGallery();
+            e.target.reset();
+        });
+
+        // Modifica Email Contatti
+        document.getElementById('email-form').addEventListener('submit', e => {
+            e.preventDefault();
+            contactEmail = document.getElementById('new-email').value;
+            localStorage.setItem('contactEmail', contactEmail);
+            document.getElementById('contact-email').href = 'mailto:' + contactEmail;
+            document.getElementById('contact-email').textContent = contactEmail;
+            // Non resettare il form
+        });
+
+        // Modifica Testo Footer
+        document.getElementById('footer-form').addEventListener('submit', e => {
+            e.preventDefault();
+            footerText = document.getElementById('new-footer-text').value;
+            localStorage.setItem('footerText', footerText);
+            document.getElementById('footer-text').innerHTML = footerText;
+            // Non resettare il form
+        });
+
+        // Gestione Form Contatti
+        document.getElementById('contact-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const form = e.target;
+            const successMessage = document.createElement('p');
+            successMessage.textContent = 'Messaggio inviato con successo!';
+            successMessage.style.color = 'green';
+            form.appendChild(successMessage);
+            setTimeout(() => successMessage.remove(), 3000);
+            form.reset();
+        });
+
+        // Inizializza galleria
+        renderGallery();
+    </script>
+</body>
+</html>
