@@ -1,380 +1,468 @@
-     <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Scopri le opere uniche di ViAmo, artista di street art e pop culture.">
-    <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, galleria, street art">
-    <meta name="author" content="ViAmo Art">
-    <title>ViAmo - Galleria d'Arte</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Scopri le opere uniche di ViAmo, artista di street art e pop culture.">
+  <meta name="author" content="ViAmo Art">
+  <title>ViAmo - Galleria d'Arte</title>
 
-    <!-- EmailJS SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function(){
-            emailjs.init("z2kCGkszIchfP51G_"); // PUBLIC KEY
-        })();
-    </script>
+  <!-- Open Graph / Twitter (SEO/social) -->
+  <meta property="og:title" content="ViAmo - Galleria d'Arte">
+  <meta property="og:description" content="Scopri le opere di ViAmo, tra street art e pop culture.">
+  <meta property="og:image" content="Opere/banner.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="it_IT">
+  <meta name="twitter:card" content="summary_large_image">
 
-    <style>
-        body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
-        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;position:relative;}
-        #banner{width:100%;max-height:350px;object-fit:cover;display:block;}
-        nav{background:#34495e;padding:10px;text-align:center;}
-        nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
-        nav a:hover{text-decoration:underline;}
-        section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
-        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-height:70vh;overflow-y:auto;padding:10px;}
-        .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
-        .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
-        .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
-        .artwork a:hover,.artwork button:hover{background:#34495e;}
-        form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
-        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
-        input[type=file]{margin:10px 0;padding:8px;}
-        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
-        button:hover{background:#34495e;}
-        #admin{display:none;}
-        .error{color:red;display:none;text-align:center;margin:10px 0;}
-        .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
-        .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
-        .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
-        .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
-        .password-change{background:#f9f9f9;padding:15px;border-radius:8px;margin-top:20px;}
-        .admin-section{margin-bottom:30px;}
-        .admin-section h3{margin-top:0;}
-        @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
-    </style>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+
+  <style>
+    :root{--bg:#f0f0f0;--ink:#2c3e50;--ink2:#34495e;--ok:#155724;--okbg:#d4edda;--err:#721c24;--errbg:#f8d7da;}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;margin:0;padding:0;background:var(--bg);}
+    header{background:var(--ink);color:#fff;padding:15px;text-align:center;position:relative;}
+    #banner{width:100%;max-height:350px;object-fit:cover;display:block;}
+    nav{background:var(--ink2);padding:10px;text-align:center;}
+    nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
+    nav a:hover{text-decoration:underline;cursor:pointer}
+    section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-height:70vh;overflow-y:auto;padding:10px;}
+    .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
+    .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
+    .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:var(--ink);color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
+    .artwork a:hover,.artwork button:hover{background:var(--ink2);}
+    form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
+    label{font-weight:bold;margin-top:6px}
+    input,textarea{margin:8px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
+    input[type=file]{margin:10px 0;padding:8px;}
+    button{background:var(--ink);color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
+    button:hover{background:var(--ink2);}
+    #admin{display:none;}
+    .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;display:none}
+    .feedback.success{background:var(--okbg);color:var(--ok);border:1px solid #c3e6cb;}
+    .feedback.error{background:var(--errbg);color:var(--err);border:1px solid #f5c6cb;}
+    .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
+    .password-change{background:#f9f9f9;padding:15px;border-radius:8px;margin-top:20px;}
+    .admin-section{margin-bottom:30px;}
+    .admin-section h3{margin-top:0;}
+    @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
+    /* Accessibilità */
+    :focus-visible{outline:3px solid #80b3ff;outline-offset:2px;border-radius:6px}
+  </style>
 </head>
 <body>
-    <header>
-        <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
-        <h1>ViAmo - Vincenza Amodio</h1>
-    </header>
+  <header>
+    <!-- Banner senza lazy + dimensioni per migliorare LCP/CLS -->
+    <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" width="1600" height="350">
+    <h1>ViAmo - Vincenza Amodio</h1>
+  </header>
 
-    <nav aria-label="Navigazione principale">
-        <a href="#home">Home</a>
-        <a href="#gallery">Galleria</a>
-        <a href="#about">Chi Sono</a>
-        <a href="#contact">Contatti</a>
-        <a href="#" onclick="toggleAdmin()">Area Riservata</a>
-    </nav>
+  <nav aria-label="Navigazione principale">
+    <a href="#home">Home</a>
+    <a href="#gallery">Galleria</a>
+    <a href="#about">Chi Sono</a>
+    <a href="#contact">Contatti</a>
+    <a href="#" onclick="toggleAdmin()">Area Riservata</a>
+  </nav>
 
-    <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
-    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
-    <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
+  <section id="home">
+    <h2>Home</h2>
+    <p id="home-text">Caricamento...</p>
+    <div id="home-feedback" class="feedback" aria-live="polite"></div>
+  </section>
 
-    <!-- FORM CONTATTAMI -->
-    <section id="contact">
-        <h2>Contattami</h2>
-        <form id="contact-form">
-            <input type="text" id="user_name" placeholder="Il tuo nome" required>
-            <input type="email" id="user_email" placeholder="La tua email" required>
-            <textarea id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
-            <button type="submit">Invia Messaggio</button>
-            <div id="form-feedback"></div>
+  <section id="gallery">
+    <h2>Galleria Opere</h2>
+    <div class="gallery" id="gallery-container"></div>
+    <div id="gallery-feedback" class="feedback" aria-live="polite"></div>
+  </section>
+
+  <section id="about">
+    <h2>Chi è ViAmo</h2>
+    <p id="about-text">Caricamento...</p>
+    <div id="about-feedback" class="feedback" aria-live="polite"></div>
+  </section>
+
+  <!-- FORM CONTATTAMI -->
+  <section id="contact">
+    <h2>Contattami</h2>
+    <form id="contact-form" aria-describedby="form-feedback" novalidate>
+      <label for="user_name">Nome</label>
+      <input type="text" id="user_name" placeholder="Il tuo nome" required autocomplete="name">
+
+      <label for="user_email">Email</label>
+      <input type="email" id="user_email" placeholder="La tua email" required inputmode="email" autocomplete="email">
+
+      <label for="message">Messaggio</label>
+      <textarea id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+
+      <!-- Honeypot anti-spam -->
+      <input type="text" id="website" name="website" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;">
+
+      <button type="submit" id="contact-submit">Invia Messaggio</button>
+      <div id="form-feedback" class="feedback" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <!-- AREA ADMIN -->
+  <section id="admin" aria-label="Area amministratore">
+    <h2>Area Amministratore</h2>
+    <div class="error" id="admin-error" style="display:none">Errore: controlla la console.</div>
+
+    <div id="login-section">
+      <form id="login-form">
+        <label for="admin-password">Password Admin</label>
+        <input type="password" id="admin-password" placeholder="Password Admin" required>
+        <div class="feedback error" id="login-error" aria-live="polite">Password errata.</div>
+        <button type="submit">Accedi</button>
+      </form>
+    </div>
+
+    <div id="admin-panel" style="display:none;">
+      <button onclick="logout()">Esci</button>
+
+      <!-- BANNER -->
+      <div class="admin-section">
+        <h3>Modifica Banner</h3>
+        <form id="banner-form">
+          <input type="file" id="banner-file" accept="image/*">
+          <img id="banner-preview" class="preview-img" alt="Anteprima">
+          <button type="submit">Aggiorna</button>
+          <div id="banner-feedback" class="feedback" aria-live="polite"></div>
         </form>
-    </section>
+      </div>
 
-    <!-- AREA ADMIN -->
-    <section id="admin">
-        <h2>Area Amministratore</h2>
-        <div class="error" id="admin-error">Errore: controlla la console.</div>
+      <!-- TESTI -->
+      <div class="admin-section">
+        <h3>Testo Home</h3>
+        <form id="home-form">
+          <textarea id="new-home-text" rows="4" required></textarea>
+          <button type="submit">Aggiorna</button>
+        </form>
+      </div>
+      <div class="admin-section">
+        <h3>Testo Chi è ViAmo</h3>
+        <form id="about-form">
+          <textarea id="new-about-text" rows="4" required></textarea>
+          <button type="submit">Aggiorna</button>
+        </form>
+      </div>
 
-        <div id="login-section">
-            <form id="login-form">
-                <input type="password" id="admin-password" placeholder="Password Admin" required>
-                <div class="error" id="login-error">Password errata.</div>
-                <button type="submit">Accedi</button>
-            </form>
+      <!-- OPERE -->
+      <div class="admin-section">
+        <h3>Aggiungi/Modifica Opera</h3>
+        <form id="gallery-form">
+          <input type="text" id="gallery-title" placeholder="Titolo" required>
+          <input type="text" id="gallery-desc" placeholder="Descrizione" required>
+          <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
+          <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
+          <input type="file" id="gallery-image-file" accept="image/*" required>
+          <img id="preview-main" class="preview-img" alt="Anteprima">
+          <input type="file" id="gallery-rendering-file" accept="image/*">
+          <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
+          <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
+          <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
+          <div id="gallery-feedback-admin" class="feedback" aria-live="polite"></div>
+        </form>
+      </div>
+
+      <!-- PASSWORD -->
+      <div class="password-change">
+        <h3>Cambia Password Admin</h3>
+        <form id="password-form">
+          <input type="password" id="old-password" placeholder="Password attuale" required>
+          <input type="password" id="new-password" placeholder="Nuova password" required minlength="6">
+          <input type="password" id="confirm-password" placeholder="Conferma" required>
+          <button type="submit">Cambia</button>
+          <div id="password-feedback" class="feedback" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer-text">© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
+
+  <script>
+    // Inizializzazione EmailJS dopo il caricamento della SDK
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.emailjs && emailjs.init) {
+        emailjs.init("z2kCGkszIchfP51G_"); // PUBLIC KEY
+      } else {
+        console.warn('EmailJS SDK non caricata');
+      }
+    });
+
+    // CONFIG EMAILJS – ID CORRETTI
+    const EMAILJS_SERVICE_ID = 'service_rdfzdc8';
+    const EMAILJS_TEMPLATE_ID = 'template_b4cgblx';
+
+    // DATI
+    let artworks = [], homeText = '', aboutText = '', bannerData = '';
+    let adminPasswordHash = '';
+    let loggedIn = false, editingId = null;
+
+    function loadData() {
+      artworks = JSON.parse(localStorage.getItem('artworks')) || [];
+      homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
+      aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
+      bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
+      adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('#Venus2025');
+      if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
+    }
+    loadData();
+
+    document.getElementById('home-text').textContent = homeText;
+    document.getElementById('about-text').textContent = aboutText;
+    document.getElementById('banner').src = bannerData;
+
+    // Helper feedback sicuro
+    function showFeedback(id, msg, ok = true) {
+      const el = document.getElementById(id);
+      if (!el) { console.warn('Feedback target not found:', id, '-', msg); return; }
+      el.textContent = msg;
+      el.className = 'feedback ' + (ok ? 'success' : 'error');
+      el.style.display = 'block';
+      setTimeout(() => { if (el) el.style.display = 'none'; }, 4000);
+    }
+
+    // Render galleria
+    function renderGallery() {
+      const c = document.getElementById('gallery-container');
+      c.innerHTML = artworks.map(a => `
+        <div class="artwork">
+          <img src="${a.image}" alt="${a.title}">
+          <h3>${a.title}</h3>
+          <p>Dimensioni: ${a.dimensions}</p>
+          <p>Prezzo: €${Number(a.price).toLocaleString('it-IT')}</p>
+          <a href="artwork.html?id=${a.id}">Dettagli</a>
+          ${loggedIn ? `<button onclick="startEdit(${a.id})">Modifica</button>
+                        <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
         </div>
+      `).join('');
+    }
 
-        <div id="admin-panel" style="display:none;">
-            <button onclick="logout()">Esci</button>
+    function toggleAdmin() {
+      const a = document.getElementById('admin');
+      a.style.display = a.style.display === 'block' ? 'none' : 'block';
+    }
+    function logout() {
+      loggedIn = false; editingId = null;
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('admin-panel').style.display = 'none';
+      renderGallery();
+    }
 
-            <!-- BANNER -->
-            <div class="admin-section">
-                <h3>Modifica Banner</h3>
-                <form id="banner-form">
-                    <input type="file" id="banner-file" accept="image/*">
-                    <img id="banner-preview" class="preview-img" alt="Anteprima">
-                    <button type="submit">Aggiorna</button>
-                    <div id="banner-feedback"></div>
-                </form>
-            </div>
+    // Preview immagini
+    function previewFile(inputId, previewId) {
+      const file = document.getElementById(inputId).files[0];
+      const preview = document.getElementById(previewId);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(file);
+      } else preview.style.display = 'none';
+    }
 
-            <!-- TESTI -->
-            <div class="admin-section">
-                <h3>Testo Home</h3>
-                <form id="home-form">
-                    <textarea id="new-home-text" rows="4" required></textarea>
-                    <button type="submit">Aggiorna</button>
-                </form>
-            </div>
-            <div class="admin-section">
-                <h3>Testo Chi è ViAmo</h3>
-                <form id="about-form">
-                    <textarea id="new-about-text" rows="4" required></textarea>
-                    <button type="submit">Aggiorna</button>
-                </form>
-            </div>
-
-            <!-- OPERE -->
-            <div class="admin-section">
-                <h3>Aggiungi/Modifica Opera</h3>
-                <form id="gallery-form">
-                    <input type="text" id="gallery-title" placeholder="Titolo" required>
-                    <input type="text" id="gallery-desc" placeholder="Descrizione" required>
-                    <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
-                    <input type="file" id="gallery-image-file" accept="image/*" required>
-                    <img id="preview-main" class="preview-img" alt="Anteprima">
-                    <input type="file" id="gallery-rendering-file" accept="image/*">
-                    <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
-                    <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
-                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
-                    <div id="gallery-feedback"></div>
-                </form>
-            </div>
-
-            <!-- PASSWORD -->
-            <div class="password-change">
-                <h3>Cambia Password Admin</h3>
-                <form id="password-form">
-                    <input type="password" id="old-password" placeholder="Password attuale" required>
-                    <input type="password" id="new-password" placeholder="Nuova password" required minlength="6">
-                    <input type="password" id="confirm-password" placeholder="Conferma" required>
-                    <button type="submit">Cambia</button>
-                    <div id="password-feedback"></div>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <footer id="footer-text">© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
-
-    <script>
-        // CONFIG EMAILJS – ID CORRETTI
-        const EMAILJS_SERVICE_ID = 'service_rdfzdc8';
-        const EMAILJS_TEMPLATE_ID = 'template_b4cgblx';
-
-        // DATI
-        let artworks = [], homeText = '', aboutText = '', bannerData = '';
-        let adminPasswordHash = '';
-        let loggedIn = false, editingId = null;
-
-        function loadData() {
-            artworks = JSON.parse(localStorage.getItem('artworks')) || [];
-            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
-            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
-            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
-            adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('#Venus2025');
-            if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
-        }
-        loadData();
-
-        document.getElementById('home-text').textContent = homeText;
-        document.getElementById('about-text').textContent = aboutText;
+    // BANNER
+    document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview'));
+    document.getElementById('banner-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!loggedIn) return;
+      const file = document.getElementById('banner-file').files[0];
+      if (!file) return showFeedback('banner-feedback', 'Seleziona un file!', false);
+      const reader = new FileReader();
+      reader.onload = ev => {
+        bannerData = ev.target.result;
         document.getElementById('banner').src = bannerData;
+        localStorage.setItem('bannerData', bannerData);
+        showFeedback('banner-feedback', 'Banner aggiornato!');
+      };
+      reader.readAsDataURL(file);
+    });
 
-        function showFeedback(id, msg, ok = true) {
-            const el = document.getElementById(id);
-            el.textContent = msg;
-            el.className = 'feedback ' + (ok ? 'success' : 'error');
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
-        }
+    // TESTI
+    ['home', 'about'].forEach(s => {
+      document.getElementById(s + '-form').addEventListener('submit', e => {
+        e.preventDefault();
+        if (!loggedIn) return;
+        const text = document.getElementById('new-' + s + '-text').value.trim();
+        if (!text) return;
+        if (s === 'home') homeText = text;
+        if (s === 'about') aboutText = text;
+        localStorage.setItem(s + 'Text', text);
+        document.getElementById(s + '-text').textContent = text;
+        showFeedback(s + '-feedback', 'Aggiornato!');
+      });
+    });
 
-        function renderGallery() {
-            const c = document.getElementById('gallery-container');
-            c.innerHTML = artworks.map(a => `
-                <div class="artwork">
-                    <img src="${a.image}" alt="${a.title}" loading="lazy">
-                    <h3>${a.title}</h3>
-                    <p>Dimensioni: ${a.dimensions}</p>
-                    <p>Prezzo: €${a.price}</p>
-                    <a href="artwork.html?id=${a.id}">Dettagli</a>
-                    ${loggedIn ? `<button onclick="startEdit(${a.id})">Modifica</button>
-                                 <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
-                </div>
-            `).join('');
-        }
+    // GALLERIA
+    document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
+    document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
 
-        function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
-        function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
+    function startEdit(id) {
+      if (!loggedIn) return;
+      const art = artworks.find(x => x.id === id);
+      if (!art) return;
+      editingId = id;
+      document.getElementById('gallery-title').value = art.title;
+      document.getElementById('gallery-desc').value = art.desc;
+      document.getElementById('gallery-dimensions').value = art.dimensions;
+      document.getElementById('gallery-price').value = art.price;
+      document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
+      if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
+      document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+      document.getElementById('cancel-edit').style.display = 'inline-block';
+    }
 
-        // ANTEPRIMA
-        function previewFile(inputId, previewId) {
-            const file = document.getElementById(inputId).files[0];
-            const preview = document.getElementById(previewId);
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
-                reader.readAsDataURL(file);
-            } else preview.style.display = 'none';
-        }
+    function cancelEdit() {
+      editingId = null;
+      document.getElementById('gallery-form').reset();
+      document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+      document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
+      document.getElementById('cancel-edit').style.display = 'none';
+    }
 
-        // BANNER
-        document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview'));
-        document.getElementById('banner-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const file = document.getElementById('banner-file').files[0];
-            if (!file) return showFeedback('banner-feedback', 'Seleziona un file!', false);
-            const reader = new FileReader();
-            reader.onload = ev => {
-                bannerData = ev.target.result;
-                document.getElementById('banner').src = bannerData;
-                localStorage.setItem('bannerData', bannerData);
-                showFeedback('banner-feedback', 'Banner aggiornato!');
-            };
-            reader.readAsDataURL(file);
-        });
+    function deleteArtwork(id) {
+      if (!loggedIn) return;
+      if (!confirm('Eliminare?')) return;
+      artworks = artworks.filter(x => x.id !== id);
+      localStorage.setItem('artworks', JSON.stringify(artworks));
+      renderGallery();
+      showFeedback('gallery-feedback', 'Eliminata!');
+    }
 
-        // TESTI
-        ['home', 'about'].forEach(s => {
-            document.getElementById(s + '-form').addEventListener('submit', e => {
-                e.preventDefault();
-                const text = document.getElementById('new-' + s + '-text').value.trim();
-                if (!text) return;
-                if (s === 'home') homeText = text;
-                if (s === 'about') aboutText = text;
-                localStorage.setItem(s + 'Text', text);
-                document.getElementById(s + '-text').textContent = text;
-                showFeedback(s + '-feedback', 'Aggiornato!');
-            });
-        });
+    document.getElementById('gallery-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!loggedIn) return;
 
-        // GALLERIA
-        document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
-        document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
+      const title = document.getElementById('gallery-title').value.trim();
+      const desc = document.getElementById('gallery-desc').value.trim();
+      const dimensions = document.getElementById('gallery-dimensions').value.trim();
+      const price = parseInt(document.getElementById('gallery-price').value, 10);
+      const imageFile = document.getElementById('gallery-image-file').files[0];
+      const renderingFile = document.getElementById('gallery-rendering-file').files[0];
 
-        function startEdit(id) {
-            const art = artworks.find(x => x.id === id);
-            if (!art) return;
-            editingId = id;
-            document.getElementById('gallery-title').value = art.title;
-            document.getElementById('gallery-desc').value = art.desc;
-            document.getElementById('gallery-dimensions').value = art.dimensions;
-            document.getElementById('gallery-price').value = art.price;
-            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
-            if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
-            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
-            document.getElementById('cancel-edit').style.display = 'inline-block';
-        }
+      if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || (!editingId && !imageFile)) {
+        showFeedback('gallery-feedback', 'Compila i campi obbligatori!', false);
+        return;
+      }
 
-        function cancelEdit() {
-            editingId = null;
-            document.getElementById('gallery-form').reset();
-            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
-            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
-            document.getElementById('cancel-edit').style.display = 'none';
-        }
+      // Se stai modificando e non carichi una nuova immagine, riusa la precedente
+      if (!imageFile && editingId) {
+        const current = artworks.find(x => x.id === editingId);
+        saveArtwork({ title, desc, dimensions, price, image: current.image, rendering: current.rendering });
+        return;
+      }
 
-        function deleteArtwork(id) {
-            if (!confirm('Eliminare?')) return;
-            artworks = artworks.filter(x => x.id !== id);
-            localStorage.setItem('artworks', JSON.stringify(artworks));
-            renderGallery();
-            showFeedback('gallery-feedback', 'Eliminata!');
-        }
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const image = ev.target.result;
+        if (renderingFile) {
+          const reader2 = new FileReader();
+          reader2.onload = ev2 => saveArtwork({ title, desc, dimensions, price, image, rendering: ev2.target.result });
+          reader2.readAsDataURL(renderingFile);
+        } else saveArtwork({ title, desc, dimensions, price, image });
+      };
+      reader.readAsDataURL(imageFile);
+    });
 
-        document.getElementById('gallery-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const title = document.getElementById('gallery-title').value.trim();
-            const desc = document.getElementById('gallery-desc').value.trim();
-            const dimensions = document.getElementById('gallery-dimensions').value.trim();
-            const price = parseInt(document.getElementById('gallery-price').value);
-            const imageFile = document.getElementById('gallery-image-file').files[0];
-            const renderingFile = document.getElementById('gallery-rendering-file').files[0];
+    function saveArtwork(data) {
+      if (!loggedIn) return;
+      const wasEditing = Boolean(editingId);
+      if (wasEditing) {
+        const i = artworks.findIndex(x => x.id === editingId);
+        artworks[i] = { id: editingId, ...data };
+        cancelEdit();
+      } else {
+        artworks.push({ id: Date.now(), ...data });
+      }
+      localStorage.setItem('artworks', JSON.stringify(artworks));
+      renderGallery();
+      showFeedback('gallery-feedback', wasEditing ? 'Modificata!' : 'Aggiunta!');
+    }
 
-            if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !imageFile) {
-                showFeedback('gallery-feedback', 'Compila i campi obbligatori!', false);
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const image = ev.target.result;
-                if (renderingFile) {
-                    const reader2 = new FileReader();
-                    reader2.onload = ev2 => saveArtwork({ title, desc, dimensions, price, image, rendering: ev2.target.result });
-                    reader2.readAsDataURL(renderingFile);
-                } else saveArtwork({ title, desc, dimensions, price, image });
-            };
-            reader.readAsDataURL(imageFile);
-        });
-
-        function saveArtwork(data) {
-            if (editingId) {
-                const i = artworks.findIndex(x => x.id === editingId);
-                artworks[i] = { id: editingId, ...data };
-                cancelEdit();
-            } else {
-                artworks.push({ id: Date.now(), ...data });
-            }
-            localStorage.setItem('artworks', JSON.stringify(artworks));
-            renderGallery();
-            showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta!');
-        }
-
-        // LOGIN
-        document.getElementById('login-form').addEventListener('submit', e => {
-            e.preventDefault();
-            if (btoa(document.getElementById('admin-password').value) === adminPasswordHash) {
-                loggedIn = true;
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('login-error').style.display = 'none';
-                document.getElementById('new-home-text').value = homeText;
-                document.getElementById('new-about-text').value = aboutText;
-                renderGallery();
-            } else document.getElementById('login-error').style.display = 'block';
-        });
-
-        // CAMBIO PASSWORD
-        document.getElementById('password-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const old = document.getElementById('old-password').value;
-            const newP = document.getElementById('new-password').value;
-            const conf = document.getElementById('confirm-password').value;
-            if (btoa(old) !== adminPasswordHash) return showFeedback('password-feedback', 'Password attuale errata!', false);
-            if (newP !== conf) return showFeedback('password-feedback', 'Le password non coincidono!', false);
-            if (newP.length < 6) return showFeedback('password-feedback', 'Minimo 6 caratteri!', false);
-            adminPasswordHash = btoa(newP);
-            localStorage.setItem('adminPasswordHash', adminPasswordHash);
-            showFeedback('password-feedback', 'Password aggiornata!');
-            e.target.reset();
-        });
-
-        // FORM CONTATTAMI – CON ID CORRETTI
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Invio in corso...';
-
-            const templateParams = {
-                user_name: document.getElementById('user_name').value,
-                user_email: document.getElementById('user_email').value,
-                message: document.getElementById('message').value
-            };
-
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
-                .then(() => {
-                    showFeedback('form-feedback', 'Messaggio inviato con successo!');
-                    this.reset();
-                })
-                .catch((error) => {
-                    console.error('EmailJS Error:', error);
-                    showFeedback('form-feedback', 'Errore: ' + (error.text || 'Controlla console'), false);
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Invia Messaggio';
-                });
-        });
-
+    // LOGIN
+    document.getElementById('login-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (btoa(document.getElementById('admin-password').value) === adminPasswordHash) {
+        loggedIn = true;
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('login-error').style.display = 'none';
+        document.getElementById('new-home-text').value = homeText;
+        document.getElementById('new-about-text').value = aboutText;
         renderGallery();
-    </script>
+      } else {
+        const err = document.getElementById('login-error');
+        err.style.display = 'block';
+        err.className = 'feedback error';
+      }
+    });
+
+    // CAMBIO PASSWORD
+    document.getElementById('password-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!loggedIn) return;
+      const old = document.getElementById('old-password').value;
+      const newP = document.getElementById('new-password').value;
+      const conf = document.getElementById('confirm-password').value;
+      if (btoa(old) !== adminPasswordHash) return showFeedback('password-feedback', 'Password attuale errata!', false);
+      if (newP !== conf) return showFeedback('password-feedback', 'Le password non coincidono!', false);
+      if (newP.length < 6) return showFeedback('password-feedback', 'Minimo 6 caratteri!', false);
+      adminPasswordHash = btoa(newP);
+      localStorage.setItem('adminPasswordHash', adminPasswordHash);
+      showFeedback('password-feedback', 'Password aggiornata!');
+      e.target.reset();
+    });
+
+    // ===== MODULO CONTATTAMI (funzionante con EmailJS) =====
+    document.getElementById('contact-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('contact-submit');
+      const feedbackId = 'form-feedback';
+
+      // Honeypot: se compilato, fingi successo e basta
+      if (document.getElementById('website').value) {
+        showFeedback(feedbackId, 'Messaggio inviato. Grazie!', true);
+        this.reset();
+        return;
+      }
+
+      // Validazioni base
+      const name = document.getElementById('user_name').value.trim();
+      const email = document.getElementById('user_email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      if (!name || !emailOk || !message) {
+        showFeedback(feedbackId, 'Controlla i campi: nome, email valida e messaggio sono obbligatori.', false);
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Invio in corso...';
+
+      const templateParams = { user_name: name, user_email: email, message };
+
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+        showFeedback(feedbackId, 'Messaggio inviato con successo! Ti risponderò presto.');
+        this.reset();
+      } catch (error) {
+        console.error('EmailJS Error:', error);
+        const reason = error && (error.text || error.message) ? ' (' + (error.text || error.message) + ')' : '';
+        showFeedback(feedbackId, 'Si è verificato un errore durante l’invio' + reason, false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Invia Messaggio';
+      }
+    });
+
+    // Avvio
+    renderGallery();
+  </script>
 </body>
 </html>
