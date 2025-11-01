@@ -61,7 +61,7 @@
         <p id="artwork-dimensions"></p>
         <p id="artwork-price"></p>
 
-        <button id="rendering-btn" style="display:none;">Visualizza con Rendering</button>
+        <button id="rendering-btn" style="display:none;">Visualizza in un ambiente</button>
 
         <p class="error" id="error-message" style="display:none;">Opera non trovata.</p>
 
@@ -157,8 +157,8 @@
             .then(() => {
                 // 2. INVIA AUTOREPLY
                 return emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
-                    to_email: data.user_email,
-                    user_name: data.user_name
+                    to_email: user_email,
+                    user_name: user_name
                 });
             })
             .then(() => {
