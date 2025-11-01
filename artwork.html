@@ -32,7 +32,7 @@
         button:hover{background:#34495e;}
         .back-link{display:inline-block;margin:20px;color:#2c3e50;text-decoration:none;font-size:1.1em;}
         .back-link:hover{text-decoration:underline;}
-        .feedback{padding:10px;margin:10px auto;max-width:450px;border-radius:5px;text-align:center;}
+        .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
         .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
         #rendering-btn{margin:15px auto;display:block;padding:10px 20px;background:#1a5276;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1em;}
@@ -61,17 +61,18 @@
         <p id="artwork-dimensions"></p>
         <p id="artwork-price"></p>
 
-        <button id="rendering-btn" style="display:none;">Visualizza in un ambiente</button>
+        <button id="rendering-btn" style="display:none;">Visualizza con Rendering</button>
 
         <p class="error" id="error-message" style="display:none;">Opera non trovata.</p>
 
+        <!-- FORM IDENTICO A INDEX -->
         <h3>Chiedi Informazioni per Questa Opera</h3>
-        <form id="inquiry-form">
-            <input type="text" name="user_name" id="inquiry-name" placeholder="Il tuo nome" required>
-            <input type="email" name="user_email" id="inquiry-email" placeholder="La tua email" required>
-            <textarea name="message" id="inquiry-message" rows="5" required></textarea>
-            <button type="submit">Invia Richiesta</button>
-            <div id="inquiry-feedback"></div>
+        <form id="contact-form">
+            <input type="text" name="user_name" id="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" id="user_email" placeholder="La tua email" required>
+            <textarea name="message" id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+            <button type="submit">Invia Messaggio</button>
+            <div id="form-feedback"></div>
         </form>
 
         <a href="index.html#gallery" class="back-link">Torna alla Galleria</a>
@@ -79,7 +80,7 @@
 
     <!-- LIGHTBOX -->
     <div class="lightbox" id="lightbox">
-        <span class="close-lightbox" onclick="closeLightbox()">×</span>
+        <span class="close-lightbox" onclick="closeLightbox()">X</span>
         <img id="lightbox-img" src="" alt="Rendering ad alta risoluzione">
     </div>
 
@@ -107,7 +108,7 @@
             $('error-message').style.display = 'none';
 
             // Precompila messaggio
-            $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
+            $('message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
 
             // Rendering
             if (artwork.rendering) {
@@ -124,7 +125,7 @@
 
         // FEEDBACK
         function showFeedback(msg, ok = true) {
-            const el = $('inquiry-feedback');
+            const el = $('form-feedback');
             el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
             setTimeout(() => el.innerHTML = '', 4000);
         }
@@ -136,18 +137,15 @@
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-        // FORM RICHIESTA
-        $('inquiry-form').addEventListener('submit', function(e) {
+        // FORM CONTATTAMI – IDENTICO A INDEX
+        $('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
             btn.disabled = true;
-            btn.textContent = 'Invio...';
+            btn.textContent = 'Invio in corso...';
 
-            const data = {
-                user_name: $('inquiry-name').value,
-                user_email: $('inquiry-email').value,
-                message: $('inquiry-message').value
-            };
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
 
             // 1. INVIA A TE
             emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
@@ -164,17 +162,17 @@
                 });
             })
             .then(() => {
-                showFeedback('Richiesta inviata! Riceverai una risposta.');
+                showFeedback('Messaggio inviato! Riceverai una risposta.');
                 this.reset();
-                if (artwork) $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
+                if (artwork) $('message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
             })
             .catch((error) => {
-                console.error('Errore:', error);
+                console.error('EmailJS Error:', error);
                 showFeedback('Errore: ' + (error.text || 'Controlla console'), false);
             })
             .finally(() => {
                 btn.disabled = false;
-                btn.textContent = 'Invia Richiesta';
+                btn.textContent = 'Invia Messaggio';
             });
         });
     </script>
