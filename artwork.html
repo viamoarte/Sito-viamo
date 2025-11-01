@@ -3,226 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dettagli opera di ViAmo con rendering ad alta risoluzione">
-    <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, rendering, street art">
-    <meta name="author" content="ViAmo Art">
     <title>ViAmo - Dettagli Opera</title>
-
-    <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
-
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
         header{background:#2c3e50;color:#fff;padding:15px;text-align:center;}
         nav{background:#34495e;padding:10px;text-align:center;}
         nav a{color:#fff;margin:0 20px;text-decoration:none;font-size:1.1em;}
         nav a:hover{text-decoration:underline;}
-        .artwork-details{margin:20px;padding:20px;background:#fff;border-radius:10px;
-                         box-shadow:0 0 15px rgba(0,0,0,.1);text-align:center;}
-        .artwork-details img{max-width:100%;max-height:500px;object-fit:contain;
-                             border-radius:5px;margin:15px 0;}
+        .artwork-details{margin:20px;padding:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);text-align:center;}
+        .artwork-details img{max-width:100%;max-height:500px;object-fit:contain;border-radius:5px;}
         .artwork-details p#artwork-desc{text-align:justify;margin:15px 0;}
         .error{color:#c00;margin:20px;font-weight:bold;}
         form{display:flex;flex-direction:column;max-width:450px;margin:20px auto;}
-        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;
-                       border-radius:5px;font-size:1em;}
-        button{padding:12px;background:#2c3e50;color:#fff;border:none;
-               border-radius:5px;cursor:pointer;font-size:1em;}
+        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
+        button{padding:12px;background:#2c3e50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1em;}
         button:hover{background:#34495e;}
-        .back-link{display:inline-block;margin:20px;color:#2c3e50;
-                   text-decoration:none;font-size:1.1em;}
+        .back-link{display:inline-block;margin:20px;color:#2c3e50;text-decoration:none;font-size:1.1em;}
         .back-link:hover{text-decoration:underline;}
-        .feedback{padding:10px;margin:10px auto;max-width:450px;
-                  border-radius:5px;text-align:center;}
+        .feedback{padding:10px;margin:10px auto;max-width:450px;border-radius:5px;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
         .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
-
-        /* Pulsante Rendering */
-        #rendering-btn{
-            margin:20px auto;
-            display:block;
-            padding:12px 24px;
-            background:#1a5276;
-            color:#fff;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-            font-size:1.1em;
-            font-weight:bold;
-            box-shadow:0 2px 5px rgba(0,0,0,.2);
-        }
-        #rendering-btn:hover{background:#21618c;transform:translateY(-1px);}
-
-        /* Lightbox */
-        .lightbox{
-            display:none;
-            position:fixed;
-            top:0;left:0;
-            width:100%;height:100%;
-            background:rgba(0,0,0,.95);
-            justify-content:center;
-            align-items:center;
-            z-index:1000;
-            padding:20px;
-            box-sizing:border-box;
-        }
-        .lightbox img{
-            max-width:95%;
-            max-height:95%;
-            object-fit:contain;
-            border:3px solid #fff;
-            border-radius:8px;
-            box-shadow:0 0 30px rgba(0,0,0,.8);
-        }
-        .close-lightbox{
-            position:absolute;
-            top:20px;right:30px;
-            color:#fff;
-            font-size:50px;
-            font-weight:bold;
-            cursor:pointer;
-            text-shadow:0 0 10px #000;
-            transition:.3s;
-        }
-        .close-lightbox:hover{transform:scale(1.2);}
+        #rendering-btn{margin:15px auto;display:block;padding:10px 20px;background:#1a5276;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1em;}
+        #rendering-btn:hover{background:#21618c;}
+        .lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);justify-content:center;align-items:center;z-index:1000;}
+        .lightbox img{max-width:95%;max-height:95%;object-fit:contain;}
+        .close-lightbox{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;cursor:pointer;}
     </style>
 </head>
 <body>
-    <header>
-        <h1>ViAmo – Dettagli Opera</h1>
-    </header>
-
-    <nav aria-label="Navigazione principale">
+    <header><h1>ViAmo – Dettagli Opera</h1></header>
+    <nav>
         <a href="index.html">Home</a>
         <a href="index.html#gallery">Galleria</a>
         <a href="index.html#about">Chi Sono</a>
         <a href="index.html#contact">Contatti</a>
     </nav>
-
     <section class="artwork-details">
         <h2 id="artwork-title">Caricamento…</h2>
         <img id="artwork-image" alt="" loading="lazy">
         <p id="artwork-desc"></p>
         <p id="artwork-dimensions"></p>
         <p id="artwork-price"></p>
-
-        <!-- Pulsante Rendering -->
-        <button id="rendering-btn" style="display:none;">Visualizza in un ambiente</button>
-
+        <button id="rendering-btn" style="display:none;">Visualizza con Rendering</button>
         <p class="error" id="error-message" style="display:none;">Opera non trovata.</p>
-
         <h3>Chiedi Informazioni</h3>
         <form id="inquiry-form">
-            <input type="text" name="user_name" placeholder="Il tuo nome" required aria-label="Nome">
-            <input type="email" name="user_email" placeholder="La tua email" required aria-label="Email">
-            <textarea name="message" id="inquiry-message" rows="5" required aria-label="Messaggio"></textarea>
-            <button type="submit">Invia Richiesta</button>
+            <input type="text" name="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" placeholder="La tua email" required>
+            <textarea name="message" id="inquiry-message" rows="5" required></textarea>
+            <button type="submit">Invia</button>
             <div id="inquiry-feedback"></div>
         </form>
-
         <a href="index.html#gallery" class="back-link">Torna alla Galleria</a>
     </section>
-
-    <!-- LIGHTBOX PER RENDERING -->
     <div class="lightbox" id="lightbox">
-        <span class="close-lightbox" onclick="closeLightbox()">×</span>
-        <img id="lightbox-img" src="" alt="Rendering ad alta risoluzione">
+        <span class="close-lightbox" onclick="closeLightbox()">X</span>
+        <img id="lightbox-img" src="" alt="Rendering">
     </div>
-
     <script>
-        const EMAILJS_SERVICE = 'service_slktprw';
-        const EMAILJS_TEMPLATE = 'template_hms1a09';
-
-        // Carica opere
+        const EMAILJS_SERVICE_ID = 'service_slktprw';
+        const EMAILJS_TEMPLATE_ID = 'template_hms1a09';
         const artworks = JSON.parse(localStorage.getItem('artworks')) || [];
-        const urlParams = new URLSearchParams(location.search);
-        const id = parseInt(urlParams.get('id'));
+        const id = parseInt(new URLSearchParams(location.search).get('id'));
         const artwork = artworks.find(a => a.id === id);
-
         const $ = id => document.getElementById(id);
 
         if (artwork) {
-            // Dettagli opera
             $('artwork-title').textContent = artwork.title;
-            const mainImg = $('artwork-image');
-            mainImg.src = artwork.image;
-            mainImg.alt = `Opera "${artwork.title}" di ViAmo`;
+            $('artwork-image').src = artwork.image;
+            $('artwork-image').alt = `Opera "${artwork.title}"`;
             $('artwork-desc').textContent = artwork.desc;
             $('artwork-dimensions').textContent = `Dimensioni: ${artwork.dimensions}`;
             $('artwork-price').textContent = `Prezzo: €${artwork.price}`;
             $('error-message').style.display = 'none';
-
-            // Precompila messaggio
-            $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
-
-            // Rendering
+            $('inquiry-message').value = `Richiesta per "${artwork.title}"`;
             if (artwork.rendering) {
-                const btn = $('rendering-btn');
-                btn.style.display = 'block';
-                btn.onclick = () => openLightbox(artwork.rendering);
+                $('rendering-btn').style.display = 'block';
+                $('rendering-btn').onclick = () => { $('lightbox-img').src = artwork.rendering; $('lightbox').style.display = 'flex'; };
             }
         } else {
             $('artwork-title').textContent = 'Opera non trovata';
             $('error-message').style.display = 'block';
         }
 
-        // Feedback
         function showFeedback(msg, ok = true) {
             const el = $('inquiry-feedback');
             el.textContent = msg;
             el.className = 'feedback ' + (ok ? 'success' : 'error');
             el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3000);
+            setTimeout(() => el.style.display = 'none', 4000);
         }
 
-        // Lightbox
-        function openLightbox(src) {
-            $('lightbox-img').src = src;
-            $('lightbox').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+        function closeLightbox() { $('lightbox').style.display = 'none'; $('lightbox-img').src = ''; }
 
-        function closeLightbox() {
-            $('lightbox').style.display = 'none';
-            $('lightbox-img').src = '';
-            document.body.style.overflow = '';
-        }
-
-        // Chiudi con ESC
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closeLightbox();
-        });
-
-        // Click fuori immagine chiude
-        $('lightbox').addEventListener('click', e => {
-            if (e.target === $('lightbox')) closeLightbox();
-        });
-
-        // Form contatto
         $('inquiry-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Invio...';
-
-            emailjs.sendForm(EMAILJS_SERVICE, EMAILJS_TEMPLATE, this)
-                .then(() => {
-                    showFeedback('Richiesta inviata con successo!');
-                    this.reset();
-                    if (artwork) {
-                        $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
-                    }
-                })
-                .catch(err => {
-                    console.error('EmailJS:', err);
-                    showFeedback('Errore invio. Riprova.', false);
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Invia Richiesta';
-                });
+            btn.disabled = true; btn.textContent = 'Invio...';
+            emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
+                .then(() => { showFeedback('Inviato!'); this.reset(); if (artwork) $('inquiry-message').value = `Richiesta per "${artwork.title}"`; })
+                .catch(() => showFeedback('Errore.', false))
+                .finally(() => { btn.disabled = false; btn.textContent = 'Invia'; });
         });
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
     </script>
 </body>
 </html>
