@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -155,8 +155,8 @@
 
     <script>
         // CONFIG EMAILJS – ID CORRETTI
-        const EMAILJS_SERVICE_ID = 'service_slktprw';
-        const EMAILJS_TEMPLATE_ID = 'template_3xn7eco';
+        const EMAILJS_SERVICE_ID = 'service_rdfzdc8';
+        const EMAILJS_TEMPLATE_ID = 'template_b4cgblx';
 
         // DATI
         let artworks = [], homeText = '', aboutText = '', bannerData = '';
@@ -165,8 +165,8 @@
 
         function loadData() {
             artworks = JSON.parse(localStorage.getItem('artworks')) || [];
-            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio...';
-            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo...';
+            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
+            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
             bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
             adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('#Venus2025');
             if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
