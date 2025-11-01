@@ -353,27 +353,37 @@
             e.target.reset();
         });
 
-        // FORM CONTATTAMI – FUNZIONANTE
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Invio in corso...';
+        // FORM CONTATTAMI – VERSIONE CORRETTA CON emailjs.send()
+document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-            emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
-                .then(() => {
-                    showFeedback('form-feedback', 'Messaggio inviato con successo!');
-                    this.reset();
-                })
-                .catch((error) => {
-                    console.error('EmailJS Error:', error);
-                    showFeedback('form-feedback', 'Errore: messaggio non inviato. Riprova.', false);
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Invia Messaggio';
-                });
+    const btn = this.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = 'Invio in corso...';
+
+    const templateParams = {
+        user_name: document.getElementById('user_name').value,
+        user_email: document.getElementById('user_email').value,
+        message: document.getElementById('message').value
+    };
+
+    console.log('Invio dati:', templateParams); // DEBUG
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then((response) => {
+            console.log('SUCCESS!', response.status, response.text);
+            showFeedback('form-feedback', 'Messaggio inviato con successo!');
+            this.reset();
+        })
+        .catch((error) => {
+            console.error('FAILED...', error);
+            showFeedback('form-feedback', 'Errore: ' + (error.text || 'Controlla console'), false);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.textContent = 'Invia Messaggio';
         });
+});
 
         renderGallery();
     </script>
