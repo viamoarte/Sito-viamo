@@ -9,61 +9,37 @@
     <title>ViAmo - Galleria d'Arte</title>
 
     <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function(){
-            emailjs.init("z2kCGkszIchfP51G_"); // Public Key
-        })();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
 
     <style>
-        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
-        header { background-color: #2c3e50; color: white; padding: 15px; text-align: center; }
-        #banner { width: 100%; max-height: 350px; object-fit: cover; }
-        nav { background-color: #34495e; padding: 10px; text-align: center; }
-        nav a { color: white; margin: 0 15px; text-decoration: none; font-size: 1.1em; }
-        nav a:hover { text-decoration: underline; }
-        section { padding: 25px; margin: 20px; background: white; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-height: 70vh;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .artwork { border: 1px solid #ddd; padding: 15px; text-align: center; background: #fff; border-radius: 8px; }
-        .artwork img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; }
-        .artwork a, .artwork button {
-            display: inline-block;
-            margin: 8px 4px 0;
-            padding: 8px 14px;
-            background-color: #2c3e50;
-            color: white;
-            text-decoration: none;
-            border: none;
-            border-radius: 5px;
-            font-size: 0.9em;
-            cursor: pointer;
-        }
-        .artwork a:hover, .artwork button:hover { background-color: #34495e; }
-        form { display: flex; flex-direction: column; max-width: 450px; margin: 0 auto; }
-        input, textarea, button {
-            margin: 10px 0; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em;
-        }
-        button { background-color: #2c3e50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #34495e; }
-        #admin { display: none; }
-        #login-form, #admin-panel { max-width: 400px; margin: 20px auto; }
-        .error { color: red; display: none; text-align: center; margin: 10px 0; }
-        .success { color: green; display: none; text-align: center; margin: 10px 0; }
-        .feedback { padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; }
-        .feedback.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .feedback.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        @media (max-width: 600px) {
-            nav a { display: block; margin: 10px 0; }
-            .gallery { grid-template-columns: 1fr; }
-        }
+        body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
+        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;position:relative;}
+        #banner{width:100%;max-height:350px;object-fit:cover;display:block;}
+        nav{background:#34495e;padding:10px;text-align:center;}
+        nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
+        nav a:hover{text-decoration:underline;}
+        section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
+        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-height:70vh;overflow-y:auto;padding:10px;}
+        .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
+        .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
+        .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
+        .artwork a:hover,.artwork button:hover{background:#34495e;}
+        form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
+        input[type=text],input[type=email],input[type=number],textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
+        input[type=file]{margin:10px 0;padding:8px;}
+        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
+        button:hover{background:#34495e;}
+        #admin{display:none;}
+        .error{color:red;display:none;text-align:center;margin:10px 0;}
+        .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
+        .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+        .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+        .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
+        .password-change{background:#f9f9f9;padding:15px;border-radius:8px;margin-top:20px;}
+        .admin-section{margin-bottom:30px;}
+        .admin-section h3{margin-top:0;}
+        @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
     </style>
 </head>
 <body>
@@ -77,31 +53,19 @@
         <a href="#gallery">Galleria</a>
         <a href="#about">Chi Sono</a>
         <a href="#contact">Contatti</a>
-        <a href="#" onclick="toggleAdmin()" aria-label="Accedi all'area riservata">Area Riservata</a>
+        <a href="#" onclick="toggleAdmin()">Area Riservata</a>
     </nav>
 
-    <section id="home">
-        <h2>Home</h2>
-        <p id="home-text">Caricamento...</p>
-    </section>
-
-    <section id="gallery">
-        <h2>Galleria Opere</h2>
-        <div class="gallery" id="gallery-container"></div>
-    </section>
-
-    <section id="about">
-        <h2>Chi è ViAmo</h2>
-        <p id="about-text">Caricamento...</p>
-    </section>
-
+    <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
+    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
+    <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
-            <input type="text" name="user_name" placeholder="Il tuo nome" required aria-label="Nome">
-            <input type="email" name="user_email" placeholder="La tua email" required aria-label="Email">
-            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required aria-label="Messaggio"></textarea>
-            <button type="submit">Invia Messaggio</button>
+            <input type="text" name="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" placeholder="La tua email" required>
+            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+            <button type="submit">Invia</button>
             <div id="form-feedback"></div>
         </form>
     </section>
@@ -113,7 +77,7 @@
 
         <div id="login-section">
             <form id="login-form">
-                <input type="password" id="admin-password" placeholder="Password Admin" required aria-label="Password">
+                <input type="password" id="admin-password" placeholder="Password Admin" required>
                 <div class="error" id="login-error">Password errata.</div>
                 <button type="submit">Accedi</button>
             </form>
@@ -122,268 +86,286 @@
         <div id="admin-panel" style="display:none;">
             <button onclick="logout()">Esci</button>
 
-            <h3>Modifica Banner</h3>
-            <form id="banner-form">
-                <input type="url" id="new-banner" placeholder="URL Banner" required>
-                <button type="submit">Aggiorna</button>
-                <div id="banner-feedback"></div>
-            </form>
+            <!-- BANNER CON UPLOAD -->
+            <div class="admin-section">
+                <h3>Modifica Banner</h3>
+                <form id="banner-form">
+                    <label>Nuovo Banner (JPG/PNG)</label>
+                    <input type="file" id="banner-file" accept="image/*">
+                    <img id="banner-preview" class="preview-img" alt="Anteprima banner">
+                    <button type="submit">Aggiorna Banner</button>
+                    <div id="banner-feedback"></div>
+                </form>
+            </div>
 
-            <h3>Testo Home</h3>
-            <form id="home-form">
-                <textarea id="new-home-text" rows="3" required></textarea>
-                <button type="submit">Aggiorna</button>
-            </form>
+            <!-- TESTO HOME -->
+            <div class="admin-section">
+                <h3>Testo Sezione Home</h3>
+                <form id="home-form">
+                    <textarea id="new-home-text" rows="4" required></textarea>
+                    <button type="submit">Aggiorna</button>
+                </form>
+            </div>
 
-            <h3>Descrizione Artista</h3>
-            <form id="about-form">
-                <textarea id="new-about-text" rows="3" required></textarea>
-                <button type="submit">Aggiorna</button>
-            </form>
+            <!-- TESTO CHI SONO -->
+            <div class="admin-section">
+                <h3>Testo Sezione "Chi è ViAmo"</h3>
+                <form id="about-form">
+                    <textarea id="new-about-text" rows="4" required></textarea>
+                    <button type="submit">Aggiorna</button>
+                </form>
+            </div>
 
-            <h3>Aggiungi/Modifica Opera</h3>
-            <form id="gallery-form">
-                <input type="text" id="gallery-title" placeholder="Titolo" required>
-                <input type="text" id="gallery-desc" placeholder="Descrizione" required>
-                <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
-                <input type="url" id="gallery-image" placeholder="URL Immagine" required>
-                <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
-                <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none; background:#e74c3c;">Annulla</button>
-                <div id="gallery-feedback"></div>
-            </form>
+            <!-- GALLERIA CON UPLOAD -->
+            <div class="admin-section">
+                <h3>Aggiungi/Modifica Opera</h3>
+                <form id="gallery-form">
+                    <input type="text" id="gallery-title" placeholder="Titolo" required>
+                    <input type="text" id="gallery-desc" placeholder="Descrizione" required>
+                    <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
+                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
 
-            <h3>Email Contatti</h3>
-            <form id="email-form">
-                <input type="email" id="new-email" required>
-                <button type="submit">Aggiorna</button>
-            </form>
+                    <label>Immagine Principale</label>
+                    <input type="file" id="gallery-image-file" accept="image/*" required>
+                    <img id="preview-main" class="preview-img" alt="Anteprima">
 
-            <h3>Testo Footer</h3>
-            <form id="footer-form">
-                <textarea id="new-footer-text" rows="2" required></textarea>
-                <button type="submit">Aggiorna</button>
-            </form>
+                    <label>Rendering (opzionale)</label>
+                    <input type="file" id="gallery-rendering-file" accept="image/*">
+                    <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
+
+                    <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
+                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
+                    <div id="gallery-feedback"></div>
+                </form>
+            </div>
+
+            <!-- CAMBIO PASSWORD -->
+            <div class="password-change">
+                <h3>Cambia Password Admin</h3>
+                <form id="password-form">
+                    <input type="password" id="old-password" placeholder="Password attuale" required>
+                    <input type="password" id="new-password" placeholder="Nuova password" required minlength="6">
+                    <input type="password" id="confirm-password" placeholder="Conferma" required>
+                    <button type="submit">Cambia</button>
+                    <div id="password-feedback"></div>
+                </form>
+            </div>
         </div>
     </section>
 
-    <footer id="footer-text">&copy; 2025 ViAmo Art. Tutti i diritti riservati.</footer>
+    <footer id="footer-text">© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
 
     <script>
-        // === CONFIGURAZIONE ===
         const EMAILJS_SERVICE = 'service_slktprw';
         const EMAILJS_TEMPLATE = 'template_hms1a09';
-        const ADMIN_PASSWORD_HASH = 'IyNWZW51czIwMjU='; // #Venus2025 in base64 (ancora non sicuro, ma meglio)
 
-        // === DATI ===
-        let artworks = JSON.parse(localStorage.getItem('artworks')) || [
-            { id: 1, title: 'Tramonti d\'Estate', desc: 'Olio su tela, 2023', dimensions: '50x70 cm', price: 500, image: 'Opere/tramonti-destate.jpg' },
-            { id: 2, title: 'Riflessi Lunari', desc: 'Acrilico, 2022', dimensions: '60x80 cm', price: 450, image: 'Opere/riflessi-lunari.jpg' },
-            { id: 3, title: 'Abbraccio della Natura', desc: 'Tecnica mista, 2024', dimensions: '70x100 cm', price: 600, image: 'Opere/abbraccio-natura.jpg' },
-            { id: 4, title: 'Marilyn', desc: 'Acrilico, 2025', dimensions: '50x70 cm', price: 700, image: 'Opere/Marilyn1.jpg' }
-        ];
+        let artworks = [], homeText = '', aboutText = '', bannerData = '';
+        let adminPasswordHash = '';
+        let loggedIn = false, editingId = null;
 
-        let homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
-        let aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
-        let footerText = localStorage.getItem('footerText') || '&copy; 2025 ViAmo Art. Tutti i diritti riservati.';
-        let contactEmail = localStorage.getItem('contactEmail') || 'viamoarte@gmail.com';
-        let bannerUrl = localStorage.getItem('bannerUrl') || 'Opere/banner.jpg';
-        let loggedIn = false;
-        let editingId = null;
+        function loadData() {
+            artworks = JSON.parse(localStorage.getItem('artworks')) || [];
+            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
+            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
+            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
+            adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('#Venus2025');
+            if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
+        }
+        loadData();
 
-        // === INIZIALIZZAZIONE ===
+        // Inizializza testi e banner
         document.getElementById('home-text').textContent = homeText;
         document.getElementById('about-text').textContent = aboutText;
-        document.getElementById('footer-text').innerHTML = footerText.replace(/&copy;/g, '©');
-        document.getElementById('banner').src = bannerUrl;
-        renderGallery();
+        document.getElementById('banner').src = bannerData;
 
-        // === FUNZIONI ===
-        function showFeedback(elementId, message, isSuccess = true) {
-            const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.className = 'feedback ' + (isSuccess ? 'success' : 'error');
+        function showFeedback(id, msg, ok = true) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.className = 'feedback ' + (ok ? 'success' : 'error');
             el.style.display = 'block';
             setTimeout(() => el.style.display = 'none', 3000);
         }
 
         function renderGallery() {
-            const container = document.getElementById('gallery-container');
-            container.innerHTML = artworks.map(art => `
+            const c = document.getElementById('gallery-container');
+            c.innerHTML = artworks.map(a => `
                 <div class="artwork">
-                    <img src="${art.image}" alt="${art.title}" loading="lazy" onerror="this.src='Opere/placeholder.jpg'">
-                    <h3>${art.title}</h3>
-                    <p>Dimensioni: ${art.dimensions}</p>
-                    <p>Prezzo: €${art.price}</p>
-                    <a href="artwork.html?id=${art.id}">Dettagli</a>
-                    ${loggedIn ? `
-                        <button onclick="startEdit(${art.id})">Modifica</button>
-                        <button onclick="deleteArtwork(${art.id})" style="background:#e74c3c;">Elimina</button>
-                    ` : ''}
+                    <img src="${a.image}" alt="${a.title}" loading="lazy">
+                    <h3>${a.title}</h3>
+                    <p>Dimensioni: ${a.dimensions}</p>
+                    <p>Prezzo: €${a.price}</p>
+                    <a href="artwork.html?id=${a.id}">Dettagli</a>
+                    ${loggedIn ? `<button onclick="startEdit(${a.id})">Modifica</button>
+                                 <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
                 </div>
             `).join('');
         }
 
-        function toggleAdmin() {
-            const admin = document.getElementById('admin');
-            admin.style.display = admin.style.display === 'block' ? 'none' : 'block';
+        function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
+        function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
+
+        // Anteprima file
+        function previewFile(inputId, previewId, callback) {
+            const file = document.getElementById(inputId).files[0];
+            const preview = document.getElementById(previewId);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    if (callback) callback(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
         }
 
-        function logout() {
-            loggedIn = false;
-            editingId = null;
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('admin-password').value = '';
-            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
-            document.getElementById('cancel-edit').style.display = 'none';
-            renderGallery();
-        }
+        // BANNER UPLOAD
+        document.getElementById('banner-file').addEventListener('change', () => {
+            previewFile('banner-file', 'banner-preview', data => bannerData = data);
+        });
+
+        document.getElementById('banner-form').addEventListener('submit', e => {
+            e.preventDefault();
+            if (!bannerData.startsWith('data:')) {
+                showFeedback('banner-feedback', 'Seleziona un file!', false);
+                return;
+            }
+            document.getElementById('banner').src = bannerData;
+            localStorage.setItem('bannerData', bannerData);
+            showFeedback('banner-feedback', 'Banner aggiornato!');
+        });
+
+        // TESTI HOME E ABOUT
+        ['home', 'about'].forEach(section => {
+            const form = document.getElementById(section + '-form');
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const text = document.getElementById('new-' + section + '-text').value.trim();
+                if (!text) return showFeedback(section + '-feedback', 'Testo vuoto!', false);
+                if (section === 'home') homeText = text;
+                if (section === 'about') aboutText = text;
+                localStorage.setItem(section + 'Text', text);
+                document.getElementById(section + '-text').textContent = text;
+                showFeedback(section + '-feedback', 'Aggiornato!');
+            });
+        });
+
+        // GALLERIA
+        document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
+        document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
 
         function startEdit(id) {
-            const art = artworks.find(a => a.id === id);
+            const art = artworks.find(x => x.id === id);
             if (!art) return;
             editingId = id;
             document.getElementById('gallery-title').value = art.title;
             document.getElementById('gallery-desc').value = art.desc;
             document.getElementById('gallery-dimensions').value = art.dimensions;
             document.getElementById('gallery-price').value = art.price;
-            document.getElementById('gallery-image').value = art.image;
+            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
+            if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
             document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
             document.getElementById('cancel-edit').style.display = 'inline-block';
-            document.getElementById('gallery-form').scrollIntoView();
         }
 
         function cancelEdit() {
             editingId = null;
             document.getElementById('gallery-form').reset();
+            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
             document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
             document.getElementById('cancel-edit').style.display = 'none';
         }
 
         function deleteArtwork(id) {
-            if (!confirm('Eliminare questa opera?')) return;
-            artworks = artworks.filter(a => a.id !== id);
+            if (!confirm('Eliminare?')) return;
+            artworks = artworks.filter(x => x.id !== id);
             localStorage.setItem('artworks', JSON.stringify(artworks));
             renderGallery();
-            showFeedback('gallery-feedback', 'Opera eliminata!');
+            showFeedback('gallery-feedback', 'Eliminata!');
         }
 
-        function validateImage(url, callback) {
-            const img = new Image();
-            img.onload = () => callback(true);
-            img.onerror = () => callback(false);
-            img.src = url;
-        }
-
-        // === EVENTI ===
-        document.getElementById('login-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const input = document.getElementById('admin-password').value;
-            if (btoa(input) === atob(ADMIN_PASSWORD_HASH)) {
-                loggedIn = true;
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('login-error').style.display = 'none';
-                document.getElementById('new-banner').value = bannerUrl;
-                document.getElementById('new-home-text').value = homeText;
-                document.getElementById('new-about-text').value = aboutText;
-                document.getElementById('new-email').value = contactEmail;
-                document.getElementById('new-footer-text').value = footerText;
-                renderGallery();
-            } else {
-                document.getElementById('login-error').style.display = 'block';
-            }
-        });
-
-        // Banner
-        document.getElementById('banner-form').addEventListener('submit', e => {
-            e.preventDefault();
-            const url = document.getElementById('new-banner').value.trim();
-            if (!url) return;
-            bannerUrl = url;
-            document.getElementById('banner').src = url;
-            localStorage.setItem('bannerUrl', url);
-            showFeedback('banner-feedback', 'Banner aggiornato!');
-        });
-
-        // Home, About, Footer, Email
-        ['home', 'about', 'email', 'footer'].forEach(section => {
-            document.getElementById(section + '-form').addEventListener('submit', e => {
-                e.preventDefault();
-                const value = document.getElementById('new-' + section + '-text').value.trim();
-                if (!value) return;
-                if (section === 'home') homeText = value;
-                if (section === 'about') aboutText = value;
-                if (section === 'email') contactEmail = value;
-                if (section === 'footer') footerText = value;
-
-                localStorage.setItem(section + 'Text', value);
-                if (section === 'footer') {
-                    document.getElementById('footer-text').innerHTML = value.replace(/&copy;/g, '©');
-                } else {
-                    document.getElementById(section + '-text').textContent = value;
-                }
-                showFeedback(section + '-feedback', 'Aggiornato!', true);
-            });
-        });
-
-        // Galleria
         document.getElementById('gallery-form').addEventListener('submit', e => {
             e.preventDefault();
             const title = document.getElementById('gallery-title').value.trim();
             const desc = document.getElementById('gallery-desc').value.trim();
             const dimensions = document.getElementById('gallery-dimensions').value.trim();
             const price = parseInt(document.getElementById('gallery-price').value);
-            const image = document.getElementById('gallery-image').value.trim();
+            const imageFile = document.getElementById('gallery-image-file').files[0];
+            const renderingFile = document.getElementById('gallery-rendering-file').files[0];
 
-            if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !image) {
-                showFeedback('gallery-feedback', 'Compila tutti i campi!', false);
+            if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !imageFile) {
+                showFeedback('gallery-feedback', 'Compila i campi obbligatori!', false);
                 return;
             }
 
-            validateImage(image, isValid => {
-                if (!isValid) {
-                    showFeedback('gallery-feedback', 'Immagine non trovata!', false);
-                    return;
-                }
-
-                if (editingId) {
-                    const index = artworks.findIndex(a => a.id === editingId);
-                    artworks[index] = { id: editingId, title, desc, dimensions, price, image };
-                    cancelEdit();
-                } else {
-                    artworks.push({ id: Date.now(), title, desc, dimensions, price, image });
-                }
-
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                renderGallery();
-                e.target.reset();
-                showFeedback('gallery-feedback', editingId ? 'Opera modificata!' : 'Opera aggiunta!');
-            });
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const image = ev.target.result;
+                if (renderingFile) {
+                    const reader2 = new FileReader();
+                    reader2.onload = ev2 => saveArtwork({ title, desc, dimensions, price, image, rendering: ev2.target.result });
+                    reader2.readAsDataURL(renderingFile);
+                } else saveArtwork({ title, desc, dimensions, price, image });
+            };
+            reader.readAsDataURL(imageFile);
         });
 
-        // Contatto - EmailJS CORRETTO
+        function saveArtwork(data) {
+            if (editingId) {
+                const i = artworks.findIndex(x => x.id === editingId);
+                artworks[i] = { id: editingId, ...data };
+                cancelEdit();
+            } else {
+                artworks.push({ id: Date.now(), ...data });
+            }
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            renderGallery();
+            showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta!');
+        }
+
+        // LOGIN
+        document.getElementById('login-form').addEventListener('submit', e => {
+            e.preventDefault();
+            if (btoa(document.getElementById('admin-password').value) === adminPasswordHash) {
+                loggedIn = true;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('login-error').style.display = 'none';
+                document.getElementById('new-home-text').value = homeText;
+                document.getElementById('new-about-text').value = aboutText;
+                renderGallery();
+            } else document.getElementById('login-error').style.display = 'block';
+        });
+
+        // CAMBIO PASSWORD
+        document.getElementById('password-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const old = document.getElementById('old-password').value;
+            const newP = document.getElementById('new-password').value;
+            const conf = document.getElementById('confirm-password').value;
+            if (btoa(old) !== adminPasswordHash) return showFeedback('password-feedback', 'Password attuale errata!', false);
+            if (newP !== conf) return showFeedback('password-feedback', 'Le password non coincidono!', false);
+            if (newP.length < 6) return showFeedback('password-feedback', 'Minimo 6 caratteri!', false);
+            adminPasswordHash = btoa(newP);
+            localStorage.setItem('adminPasswordHash', adminPasswordHash);
+            showFeedback('password-feedback', 'Password aggiornata!');
+            e.target.reset();
+        });
+
+        // Contatto
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const button = this.querySelector('button');
-            button.disabled = true;
-            button.textContent = 'Invio in corso...';
-
+            const btn = this.querySelector('button');
+            btn.disabled = true; btn.textContent = 'Invio...';
             emailjs.sendForm(EMAILJS_SERVICE, EMAILJS_TEMPLATE, this)
-                .then(() => {
-                    showFeedback('form-feedback', 'Messaggio inviato con successo!', true);
-                    this.reset();
-                })
-                .catch(err => {
-                    console.error('EmailJS Error:', err);
-                    showFeedback('form-feedback', 'Errore invio. Riprova.', false);
-                })
-                .finally(() => {
-                    button.disabled = false;
-                    button.textContent = 'Invia Messaggio';
-                });
+                .then(() => { showFeedback('form-feedback', 'Inviato!'); this.reset(); })
+                .catch(() => showFeedback('form-feedback', 'Errore.', false))
+                .finally(() => { btn.disabled = false; btn.textContent = 'Invia Messaggio'; });
         });
+
+        renderGallery();
     </script>
 </body>
 </html>
