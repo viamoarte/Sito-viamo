@@ -10,7 +10,11 @@
 
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
+    <script>
+        (function(){
+            emailjs.init("z2kCGkszIchfP51G_"); // PUBLIC KEY
+        })();
+    </script>
 
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
@@ -59,13 +63,15 @@
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
+
+    <!-- FORM CONTATTAMI -->
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
-            <input type="text" name="user_name" placeholder="Il tuo nome" required>
-            <input type="email" name="user_email" placeholder="La tua email" required>
-            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
-            <button type="submit">Invia</button>
+            <input type="text" name="user_name" placeholder="Il tuo nome" required aria-label="Il tuo nome">
+            <input type="email" name="user_email" placeholder="La tua email" required aria-label="La tua email">
+            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required aria-label="Il tuo messaggio"></textarea>
+            <button type="submit">Invia Messaggio</button>
             <div id="form-feedback"></div>
         </form>
     </section>
@@ -90,17 +96,17 @@
             <div class="admin-section">
                 <h3>Modifica Banner</h3>
                 <form id="banner-form">
-                    <label>Nuovo Banner (JPG/PNG)</label>
+                    <label>Nuovo Banner</label>
                     <input type="file" id="banner-file" accept="image/*">
-                    <img id="banner-preview" class="preview-img" alt="Anteprima banner">
-                    <button type="submit">Aggiorna Banner</button>
+                    <img id="banner-preview" class="preview-img" alt="Anteprima">
+                    <button type="submit">Aggiorna</button>
                     <div id="banner-feedback"></div>
                 </form>
             </div>
 
             <!-- TESTO HOME -->
             <div class="admin-section">
-                <h3>Testo Sezione Home</h3>
+                <h3>Testo Home</h3>
                 <form id="home-form">
                     <textarea id="new-home-text" rows="4" required></textarea>
                     <button type="submit">Aggiorna</button>
@@ -109,14 +115,14 @@
 
             <!-- TESTO CHI SONO -->
             <div class="admin-section">
-                <h3>Testo Sezione "Chi è ViAmo"</h3>
+                <h3>Testo Chi è ViAmo</h3>
                 <form id="about-form">
                     <textarea id="new-about-text" rows="4" required></textarea>
                     <button type="submit">Aggiorna</button>
                 </form>
             </div>
 
-            <!-- GALLERIA CON UPLOAD -->
+            <!-- OPERE CON UPLOAD -->
             <div class="admin-section">
                 <h3>Aggiungi/Modifica Opera</h3>
                 <form id="gallery-form">
@@ -156,9 +162,11 @@
     <footer id="footer-text">© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
 
     <script>
-        const EMAILJS_SERVICE = 'service_slktprw';
-        const EMAILJS_TEMPLATE = 'template_hms1a09';
+        // CONFIG EMAILJS
+        const EMAILJS_SERVICE_ID = 'service_slktprw';
+        const EMAILJS_TEMPLATE_ID = 'template_hms1a09';
 
+        // DATI
         let artworks = [], homeText = '', aboutText = '', bannerData = '';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
@@ -173,7 +181,7 @@
         }
         loadData();
 
-        // Inizializza testi e banner
+        // INIZIALIZZA
         document.getElementById('home-text').textContent = homeText;
         document.getElementById('about-text').textContent = aboutText;
         document.getElementById('banner').src = bannerData;
@@ -183,7 +191,7 @@
             el.textContent = msg;
             el.className = 'feedback ' + (ok ? 'success' : 'error');
             el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 3000);
+            setTimeout(() => el.style.display = 'none', 4000);
         }
 
         function renderGallery() {
@@ -204,7 +212,7 @@
         function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
         function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
 
-        // Anteprima file
+        // ANTEPRIMA FILE
         function previewFile(inputId, previewId, callback) {
             const file = document.getElementById(inputId).files[0];
             const preview = document.getElementById(previewId);
@@ -216,39 +224,30 @@
                     if (callback) callback(e.target.result);
                 };
                 reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-            }
+            } else preview.style.display = 'none';
         }
 
-        // BANNER UPLOAD
-        document.getElementById('banner-file').addEventListener('change', () => {
-            previewFile('banner-file', 'banner-preview', data => bannerData = data);
-        });
-
+        // BANNER
+        document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview', d => bannerData = d));
         document.getElementById('banner-form').addEventListener('submit', e => {
             e.preventDefault();
-            if (!bannerData.startsWith('data:')) {
-                showFeedback('banner-feedback', 'Seleziona un file!', false);
-                return;
-            }
+            if (!bannerData.startsWith('data:')) return showFeedback('banner-feedback', 'Seleziona un file!', false);
             document.getElementById('banner').src = bannerData;
             localStorage.setItem('bannerData', bannerData);
             showFeedback('banner-feedback', 'Banner aggiornato!');
         });
 
-        // TESTI HOME E ABOUT
-        ['home', 'about'].forEach(section => {
-            const form = document.getElementById(section + '-form');
-            form.addEventListener('submit', e => {
+        // TESTI
+        ['home', 'about'].forEach(s => {
+            document.getElementById(s + '-form').addEventListener('submit', e => {
                 e.preventDefault();
-                const text = document.getElementById('new-' + section + '-text').value.trim();
-                if (!text) return showFeedback(section + '-feedback', 'Testo vuoto!', false);
-                if (section === 'home') homeText = text;
-                if (section === 'about') aboutText = text;
-                localStorage.setItem(section + 'Text', text);
-                document.getElementById(section + '-text').textContent = text;
-                showFeedback(section + '-feedback', 'Aggiornato!');
+                const text = document.getElementById('new-' + s + '-text').value.trim();
+                if (!text) return showFeedback(s + '-feedback', 'Testo vuoto!', false);
+                if (s === 'home') homeText = text;
+                if (s === 'about') aboutText = text;
+                localStorage.setItem(s + 'Text', text);
+                document.getElementById(s + '-text').textContent = text;
+                showFeedback(s + '-feedback', 'Aggiornato!');
             });
         });
 
@@ -354,15 +353,26 @@
             e.target.reset();
         });
 
-        // Contatto
+        // FORM CONTATTAMI – FUNZIONANTE
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
-            btn.disabled = true; btn.textContent = 'Invio...';
-            emailjs.sendForm(EMAILJS_SERVICE, EMAILJS_TEMPLATE, this)
-                .then(() => { showFeedback('form-feedback', 'Inviato!'); this.reset(); })
-                .catch(() => showFeedback('form-feedback', 'Errore.', false))
-                .finally(() => { btn.disabled = false; btn.textContent = 'Invia Messaggio'; });
+            btn.disabled = true;
+            btn.textContent = 'Invio in corso...';
+
+            emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
+                .then(() => {
+                    showFeedback('form-feedback', 'Messaggio inviato con successo!');
+                    this.reset();
+                })
+                .catch((error) => {
+                    console.error('EmailJS Error:', error);
+                    showFeedback('form-feedback', 'Errore: messaggio non inviato. Riprova.', false);
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Invia Messaggio';
+                });
         });
 
         renderGallery();
