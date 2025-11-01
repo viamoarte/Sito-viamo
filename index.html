@@ -68,9 +68,9 @@
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
-            <input type="text" id="user_name" placeholder="Il tuo nome" required>
-            <input type="email" id="user_email" placeholder="La tua email" required>
-            <textarea id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+            <input type="text" name="user_name" id="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" id="user_email" placeholder="La tua email" required>
+            <textarea name="message" id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
             <button type="submit">Invia Messaggio</button>
             <div id="form-feedback"></div>
         </form>
@@ -156,8 +156,8 @@
     <script>
         // CONFIG EMAILJS
         const SERVICE_ID = 'service_rdfzdc8';
-        const TEMPLATE_TO_ADMIN = 'template_b4cgblx';  // A te
-        const TEMPLATE_TO_USER = 'template_xyz789';   // Risposta automatica
+        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';     // A te
+        const TEMPLATE_AUTOREPLY = 'template_07bn298';    // Risposta automatica
 
         // DATI
         let artworks = [], homeText = '', aboutText = '', bannerData = '';
@@ -345,18 +345,15 @@
             e.target.reset();
         });
 
-        // FORM CONTATTAMI – INVIA A TE + RISPOSTA AL MITTENTE
+        // FORM CONTATTAMI – CON AUTOREPLY
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
             btn.disabled = true;
             btn.textContent = 'Invio in corso...';
 
-            const data = {
-                user_name: document.getElementById('user_name').value,
-                user_email: document.getElementById('user_email').value,
-                message: document.getElementById('message').value
-            };
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
 
             // 1. INVIA A TE
             emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
@@ -366,18 +363,18 @@
                 message: data.message
             })
             .then(() => {
-                // 2. INVIA RISPOSTA AL MITTENTE
-                return emailjs.send(SERVICE_ID, TEMPLATE_TO_USER, {
+                // 2. INVIA AUTOREPLY AL MITTENTE
+                return emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
                     to_email: data.user_email,
                     user_name: data.user_name
                 });
             })
             .then(() => {
-                showFeedback('form-feedback', 'Messaggio inviato! Riceverai una risposta.');
+                showFeedback('form-feedback', 'Messaggio inviato! Riceverai una risposta automatica.');
                 this.reset();
             })
             .catch((error) => {
-                console.error('Errore:', error);
+                console.error('EmailJS Error:', error);
                 showFeedback('form-feedback', 'Errore: ' + (error.text || 'Controlla console'), false);
             })
             .finally(() => {
