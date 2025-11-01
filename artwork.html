@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dettagli opera di ViAmo">
+    <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, street art">
+    <meta name="author" content="ViAmo Art">
     <title>ViAmo - Dettagli Opera</title>
+
+    <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
+    <script>
+        (function(){
+            emailjs.init("z2kCGkszIchfP51G_"); // PUBLIC KEY
+        })();
+    </script>
+
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
         header{background:#2c3e50;color:#fff;padding:15px;text-align:center;}
@@ -33,41 +43,58 @@
     </style>
 </head>
 <body>
-    <header><h1>ViAmo – Dettagli Opera</h1></header>
-    <nav>
+    <header>
+        <h1>ViAmo – Dettagli Opera</h1>
+    </header>
+
+    <nav aria-label="Navigazione principale">
         <a href="index.html">Home</a>
         <a href="index.html#gallery">Galleria</a>
         <a href="index.html#about">Chi Sono</a>
         <a href="index.html#contact">Contatti</a>
     </nav>
+
     <section class="artwork-details">
         <h2 id="artwork-title">Caricamento…</h2>
         <img id="artwork-image" alt="" loading="lazy">
         <p id="artwork-desc"></p>
         <p id="artwork-dimensions"></p>
         <p id="artwork-price"></p>
-        <button id="rendering-btn" style="display:none;">Visualizza con Rendering</button>
+
+        <button id="rendering-btn" style="display:none;">Visualizza in un ambiente</button>
+
         <p class="error" id="error-message" style="display:none;">Opera non trovata.</p>
-        <h3>Chiedi Informazioni</h3>
+
+        <h3>Chiedi Informazioni per Questa Opera</h3>
         <form id="inquiry-form">
-            <input type="text" name="user_name" placeholder="Il tuo nome" required>
-            <input type="email" name="user_email" placeholder="La tua email" required>
+            <input type="text" name="user_name" id="inquiry-name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" id="inquiry-email" placeholder="La tua email" required>
             <textarea name="message" id="inquiry-message" rows="5" required></textarea>
-            <button type="submit">Invia</button>
+            <button type="submit">Invia Richiesta</button>
             <div id="inquiry-feedback"></div>
         </form>
+
         <a href="index.html#gallery" class="back-link">Torna alla Galleria</a>
     </section>
+
+    <!-- LIGHTBOX -->
     <div class="lightbox" id="lightbox">
-        <span class="close-lightbox" onclick="closeLightbox()">X</span>
-        <img id="lightbox-img" src="" alt="Rendering">
+        <span class="close-lightbox" onclick="closeLightbox()">×</span>
+        <img id="lightbox-img" src="" alt="Rendering ad alta risoluzione">
     </div>
+
     <script>
-        const EMAILJS_SERVICE_ID = 'service_slktprw';
-        const EMAILJS_TEMPLATE_ID = 'template_hms1a09';
+        // CONFIG EMAILJS
+        const SERVICE_ID = 'service_rdfzdc8';
+        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';     // A te
+        const TEMPLATE_AUTOREPLY = 'template_07bn298';    // Risposta automatica
+
+        // CARICA OPERA
         const artworks = JSON.parse(localStorage.getItem('artworks')) || [];
-        const id = parseInt(new URLSearchParams(location.search).get('id'));
+        const urlParams = new URLSearchParams(location.search);
+        const id = parseInt(urlParams.get('id'));
         const artwork = artworks.find(a => a.id === id);
+
         const $ = id => document.getElementById(id);
 
         if (artwork) {
@@ -78,37 +105,78 @@
             $('artwork-dimensions').textContent = `Dimensioni: ${artwork.dimensions}`;
             $('artwork-price').textContent = `Prezzo: €${artwork.price}`;
             $('error-message').style.display = 'none';
-            $('inquiry-message').value = `Richiesta per "${artwork.title}"`;
+
+            // Precompila messaggio
+            $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
+
+            // Rendering
             if (artwork.rendering) {
                 $('rendering-btn').style.display = 'block';
-                $('rendering-btn').onclick = () => { $('lightbox-img').src = artwork.rendering; $('lightbox').style.display = 'flex'; };
+                $('rendering-btn').onclick = () => {
+                    $('lightbox-img').src = artwork.rendering;
+                    $('lightbox').style.display = 'flex';
+                };
             }
         } else {
             $('artwork-title').textContent = 'Opera non trovata';
             $('error-message').style.display = 'block';
         }
 
+        // FEEDBACK
         function showFeedback(msg, ok = true) {
             const el = $('inquiry-feedback');
-            el.textContent = msg;
-            el.className = 'feedback ' + (ok ? 'success' : 'error');
-            el.style.display = 'block';
-            setTimeout(() => el.style.display = 'none', 4000);
+            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 4000);
         }
 
-        function closeLightbox() { $('lightbox').style.display = 'none'; $('lightbox-img').src = ''; }
+        // CHIUDI LIGHTBOX
+        function closeLightbox() {
+            $('lightbox').style.display = 'none';
+            $('lightbox-img').src = '';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
+        // FORM RICHIESTA
         $('inquiry-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
-            btn.disabled = true; btn.textContent = 'Invio...';
-            emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
-                .then(() => { showFeedback('Inviato!'); this.reset(); if (artwork) $('inquiry-message').value = `Richiesta per "${artwork.title}"`; })
-                .catch(() => showFeedback('Errore.', false))
-                .finally(() => { btn.disabled = false; btn.textContent = 'Invia'; });
-        });
+            btn.disabled = true;
+            btn.textContent = 'Invio...';
 
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+            const data = {
+                user_name: $('inquiry-name').value,
+                user_email: $('inquiry-email').value,
+                message: $('inquiry-message').value
+            };
+
+            // 1. INVIA A TE
+            emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
+                to_email: 'viamoarte@gmail.com',
+                user_name: data.user_name,
+                user_email: data.user_email,
+                message: data.message
+            })
+            .then(() => {
+                // 2. INVIA AUTOREPLY
+                return emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
+                    to_email: data.user_email,
+                    user_name: data.user_name
+                });
+            })
+            .then(() => {
+                showFeedback('Richiesta inviata! Riceverai una risposta.');
+                this.reset();
+                if (artwork) $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
+            })
+            .catch((error) => {
+                console.error('Errore:', error);
+                showFeedback('Errore: ' + (error.text || 'Controlla console'), false);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = 'Invia Richiesta';
+            });
+        });
     </script>
 </body>
 </html>
