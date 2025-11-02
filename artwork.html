@@ -45,7 +45,7 @@
 
     <section class="artwork-details">
         <h2 id="artwork-title">Caricamento…</h2>
-        <img id="artwork-image" alt="" loading="lazy">
+        <img id="artwork-image" src="" alt="" loading="lazy">
         <p id="artwork-desc"></p>
         <p id="artwork-dimensions"></p>
         <p id="artwork-price"></p>
@@ -69,18 +69,11 @@
     <!-- LIGHTBOX -->
     <div class="lightbox" id="lightbox">
         <span class="close-lightbox" onclick="closeLightbox()">X</span>
-        <img id="lightbox-img" src="" alt="Rendering ad alta risoluzione">
+        <img id="lightbox-img" src="" alt="Rendering">
     </div>
 
     <script>
-        // EmailJS
-        (function(){ emailjs.init("z2kCGkszIchfP51G_"); })();
-
-        const SERVICE_ID = 'service_rdfzdc8';
-        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';
-        const TEMPLATE_AUTOREPLY = 'template_07bn298';
-
-        // CARICA OPERA DA localStorage
+        // CARICA OPERE DA localStorage
         const artworks = JSON.parse(localStorage.getItem('artworks')) || [];
         const urlParams = new URLSearchParams(location.search);
         const id = parseInt(urlParams.get('id'));
@@ -91,7 +84,6 @@
         if (artwork) {
             $('artwork-title').textContent = artwork.title;
             $('artwork-image').src = artwork.image;
-            $('artwork-image').alt = `Opera "${artwork.title}"`;
             $('artwork-desc').textContent = artwork.desc;
             $('artwork-dimensions').textContent = `Dimensioni: ${artwork.dimensions}`;
             $('artwork-price').textContent = `Prezzo: €${artwork.price}`;
@@ -100,7 +92,7 @@
             // Precompila messaggio
             $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
 
-            // Rendering
+            // RENDERING
             if (artwork.rendering) {
                 $('rendering-btn').style.display = 'block';
                 $('rendering-btn').onclick = () => {
@@ -113,13 +105,6 @@
             $('error-message').style.display = 'block';
         }
 
-        // FEEDBACK
-        function showFeedback(msg, ok = true) {
-            const el = $('form-feedback');
-            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 4000);
-        }
-
         // CHIUDI LIGHTBOX
         function closeLightbox() {
             $('lightbox').style.display = 'none';
@@ -127,40 +112,30 @@
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-        // FORM RICHIESTA
-        $('contact-form').addEventListener('submit', function(e) {
+        // FORM CONTATTO
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Invio...';
-
             const data = {
                 user_name: this.user_name.value,
                 user_email: this.user_email.value,
                 message: this.message.value
             };
 
-            emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
+            // EmailJS (opzionale)
+            emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
                 to_email: 'viamoarte@gmail.com',
-                user_name: data.user_name,
-                user_email: data.user_email,
-                message: data.message
-            })
-            .then(() => emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
-                to_email: data.user_email,
-                user_name: data.user_name
-            }))
-            .then(() => {
-                showFeedback('Richiesta inviata! Riceverai una risposta.');
+                ...data
+            }).then(() => {
+                showFeedback('Messaggio inviato!');
                 this.reset();
-                if (artwork) $('inquiry-message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
-            })
-            .catch(() => showFeedback('Errore.', false))
-            .finally(() => {
-                btn.disabled = false;
-                btn.textContent = 'Invia Messaggio';
-            });
+            }).catch(() => showFeedback('Errore invio', false));
         });
+
+        function showFeedback(msg, ok = true) {
+            const el = $('form-feedback');
+            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 3000);
+        }
     </script>
 </body>
 </html>
