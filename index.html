@@ -101,16 +101,19 @@
             <!-- OPERE -->
             <div class="admin-section">
                 <h3>Aggiungi Opera</h3>
-                <input type="text" id="gallery-title" placeholder="Titolo" required>
-                <input type="text" id="gallery-desc" placeholder="Descrizione" required>
-                <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
-                <input type="file" id="gallery-image-file" accept="image/*" required>
-                <img id="preview-main" class="preview-img" alt="Anteprima">
-                <input type="file" id="gallery-rendering-file" accept="image/*">
-                <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
-                <button onclick="addArtwork()">Aggiungi</button>
-                <div id="gallery-feedback"></div>
+                <form id="gallery-form">
+                    <input type="text" id="gallery-title" placeholder="Titolo" required>
+                    <input type="text" id="gallery-desc" placeholder="Descrizione" required>
+                    <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
+                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
+                    <input type="file" id="gallery-image-file" accept="image/*" required>
+                    <img id="preview-main" class="preview-img" alt="Anteprima">
+                    <input type="file" id="gallery-rendering-file" accept="image/*">
+                    <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
+                    <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
+                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
+                    <div id="gallery-feedback"></div>
+                </form>
             </div>
 
             <!-- BACKUP JSON -->
@@ -170,7 +173,7 @@
                 document.getElementById('login-error').style.display = 'none';
                 document.getElementById('new-home-text').value = homeText;
                 document.getElementById('new-about-text').value = aboutText;
-                renderGallery(); // MOSTRA PULSANTI ADMIN
+                renderGallery();
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
@@ -183,7 +186,7 @@
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('admin-password').value = '';
             document.getElementById('login-error').style.display = 'none';
-            renderGallery(); // NASCONDE PULSANTI ADMIN
+            renderGallery();
         }
 
         function updateBanner() {
@@ -223,6 +226,9 @@
             }
         }
 
+        // GALLERIA
+        let editingId = null;
+
         function addArtwork() {
             const title = document.getElementById('gallery-title').value.trim();
             const desc = document.getElementById('gallery-desc').value.trim();
@@ -242,11 +248,18 @@
                 artworks.push({ id, title, desc, dimensions, price, image });
                 localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
-                document.getElementById('gallery-form').reset();
-                document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+                resetForm();
                 showFeedback('gallery-feedback', 'Opera aggiunta!');
             };
             reader.readAsDataURL(imageFile);
+        }
+
+        function resetForm() {
+            document.getElementById('gallery-form').reset();
+            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
+            document.getElementById('cancel-edit').style.display = 'none';
+            editingId = null;
         }
 
         function editArtwork(id) {
@@ -260,6 +273,11 @@
             document.getElementById('preview-main').style.display = 'block';
             editingId = id;
             document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+            document.getElementById('cancel-edit').style.display = 'inline-block';
+        }
+
+        function cancelEdit() {
+            resetForm();
         }
 
         function deleteArtwork(id) {
@@ -269,6 +287,40 @@
                 renderGallery();
             }
         }
+
+        // SUBMIT FORM
+        document.getElementById('gallery-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (editingId) {
+                // MODIFICA
+                const art = artworks.find(a => a.id === editingId);
+                art.title = document.getElementById('gallery-title').value.trim();
+                art.desc = document.getElementById('gallery-desc').value.trim();
+                art.dimensions = document.getElementById('gallery-dimensions').value.trim();
+                art.price = parseInt(document.getElementById('gallery-price').value);
+                const imageFile = document.getElementById('gallery-image-file').files[0];
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        art.image = e.target.result;
+                        saveAndRefresh();
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    saveAndRefresh();
+                }
+            } else {
+                // AGGIUNGI
+                addArtwork();
+            }
+
+            function saveAndRefresh() {
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                renderGallery();
+                resetForm();
+                showFeedback('gallery-feedback', 'Opera modificata!');
+            }
+        });
 
         // ESPORTA JSON
         function exportJSON() {
