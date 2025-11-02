@@ -76,7 +76,7 @@
         // CARICA OPERE DA localStorage
         const artworks = JSON.parse(localStorage.getItem('artworks')) || [];
         const urlParams = new URLSearchParams(location.search);
-        const id = parseInt(urlParams.get('id'));
+        const id = Number(urlParams.get('id')); // CORRETTO: Number() invece di parseInt()
         const artwork = artworks.find(a => a.id === id);
 
         const $ = id => document.getElementById(id);
@@ -121,7 +121,6 @@
                 message: this.message.value
             };
 
-            // EmailJS (opzionale)
             emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
                 to_email: 'viamoarte@gmail.com',
                 ...data
