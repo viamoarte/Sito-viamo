@@ -52,7 +52,7 @@
     </nav>
 
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
-    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
+    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container">Caricamento...</div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
 
     <section id="contact">
@@ -118,7 +118,7 @@
 
             <!-- SALVA SU GITHUB -->
             <div class="admin-section">
-                <h3>Sincronizza con GitHub</h3>
+                <h3>Sincronizza</h3>
                 <button onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
                 <div id="github-feedback"></div>
             </div>
@@ -136,19 +136,24 @@
         const ADMIN_PASS = '#Venus2025';
         let loggedIn = false, editingId = null;
 
-        // CARICA DA GITHUB
+        // CARICA DA GITHUB CON FALLBACK
         async function loadFromGitHub() {
             try {
                 const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
+                if (!res.ok) throw new Error('File non trovato');
                 const data = await res.json();
                 artworks = data.artworks || [];
                 homeText = data.homeText || 'Benvenuti nel mondo di ViAmo...';
                 aboutText = data.aboutText || 'Sono ViAmo, artista di street art...';
                 bannerData = data.bannerData || 'Opere/banner.jpg';
-                renderAll();
             } catch (e) {
-                showFeedback('gallery-feedback', 'Errore caricamento da GitHub', false);
+                // FALLBACK: dati di esempio
+                homeText = 'Benvenuti nel mondo di ViAmo...';
+                aboutText = 'Sono ViAmo, artista di street art...';
+                bannerData = 'Opere/banner.jpg';
+                artworks = [];
             }
+            renderAll();
         }
 
         function renderAll() {
@@ -160,6 +165,10 @@
 
         function renderGallery() {
             const c = document.getElementById('gallery-container');
+            if (artworks.length === 0) {
+                c.innerHTML = '<p>Nessuna opera ancora aggiunta.</p>';
+                return;
+            }
             c.innerHTML = artworks.map(a => `
                 <div class="artwork">
                     <img src="${a.image}" alt="${a.title}" loading="lazy">
@@ -305,7 +314,7 @@
 
         // SALVA SU GITHUB
         async function saveToGitHub() {
-            const btn = document.querySelector('#github-feedback + button');
+            const btn = document.querySelector('#github-feedback').previousElementSibling;
             btn.disabled = true;
             btn.textContent = 'Salvataggio...';
 
