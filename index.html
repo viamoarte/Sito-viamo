@@ -27,7 +27,6 @@
         input[type=file]{margin:10px 0;padding:8px;}
         button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1.1em;}
         button:hover{background:#34495e;}
-        button:disabled{background:#95a5a6;color:#7f8c8d;}
         #admin{display:none;}
         .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
@@ -35,11 +34,12 @@
         .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
         .admin-section{margin-bottom:30px;}
         .admin-section h3{margin-top:0;}
+        .backup-section button{margin:5px;}
     </style>
 </head>
 <body>
     <header>
-        <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
+        <img id="banner" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a4f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Banner ViAmo" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
 
@@ -52,7 +52,7 @@
     </nav>
 
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
-    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container">Caricamento...</div></section>
+    <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
 
     <section id="contact">
@@ -116,60 +116,36 @@
                 </form>
             </div>
 
-            <!-- SALVA SU GITHUB -->
-            <div class="admin-section">
-                <h3>Sincronizza</h3>
-                <button onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
-                <div id="github-feedback"></div>
+            <!-- BACKUP JSON -->
+            <div class="admin-section backup-section">
+                <h3>Backup Dati</h3>
+                <button onclick="exportJSON()" style="background:#27ae60;">Esporta JSON</button>
+                <input type="file" id="import-file" accept=".json" style="margin:10px 0;">
+                <button onclick="importJSON()" style="background:#2980b9;">Importa JSON</button>
+                <div id="backup-feedback"></div>
             </div>
         </div>
     </section>
 
     <script>
-        // GITHUB CONFIG
-        const GITHUB_RAW = 'https://raw.githubusercontent.com/viamoarte/viamoarte.github.io/main/data.json';
-        const GITHUB_API = 'https://api.github.com/repos/viamoarte/viamoarte.github.io/contents/data.json';
-        const GITHUB_TOKEN = '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';
-
         // DATI
-        let artworks = [], homeText = '', aboutText = '', bannerData = '';
+        let artworks = JSON.parse(localStorage.getItem('artworks')) || [];
+        let homeText = localStorage.getItem('homeText') || 'Benvenuti nel mio mondo artistico.';
+        let aboutText = localStorage.getItem('aboutText') || 'Sono ViAmo, artista di street art.';
+        let bannerData = localStorage.getItem('bannerData') || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a4f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80';
         const ADMIN_PASS = '#Venus2025';
-        let loggedIn = false, editingId = null;
+        let loggedIn = false;
+        let editingId = null;
 
-        // CARICA DA GITHUB CON FALLBACK
-        async function loadFromGitHub() {
-            try {
-                const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
-                if (!res.ok) throw new Error('File non trovato');
-                const data = await res.json();
-                artworks = data.artworks || [];
-                homeText = data.homeText || 'Benvenuti nel mondo di ViAmo...';
-                aboutText = data.aboutText || 'Sono ViAmo, artista di street art...';
-                bannerData = data.bannerData || 'Opere/banner.jpg';
-            } catch (e) {
-                // FALLBACK: dati di esempio
-                homeText = 'Benvenuti nel mondo di ViAmo...';
-                aboutText = 'Sono ViAmo, artista di street art...';
-                bannerData = 'Opere/banner.jpg';
-                artworks = [];
-            }
-            renderAll();
-        }
-
-        function renderAll() {
-            document.getElementById('home-text').textContent = homeText;
-            document.getElementById('about-text').textContent = aboutText;
-            document.getElementById('banner').src = bannerData;
-            renderGallery();
-        }
+        // INIZIO
+        document.getElementById('home-text').textContent = homeText;
+        document.getElementById('about-text').textContent = aboutText;
+        document.getElementById('banner').src = bannerData;
+        renderGallery();
 
         function renderGallery() {
-            const c = document.getElementById('gallery-container');
-            if (artworks.length === 0) {
-                c.innerHTML = '<p>Nessuna opera ancora aggiunta.</p>';
-                return;
-            }
-            c.innerHTML = artworks.map(a => `
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = artworks.map(a => `
                 <div class="artwork">
                     <img src="${a.image}" alt="${a.title}" loading="lazy">
                     <h3>${a.title}</h3>
@@ -182,10 +158,16 @@
             `).join('');
         }
 
-        // LOGIN
+        function toggleAdmin() {
+            document.getElementById('admin').style.display = 
+                document.getElementById('admin').style.display === 'block' ? 'none' : 'block';
+        }
+
         function login() {
-            if (document.getElementById('admin-password').value === ADMIN_PASS) {
+            const pass = document.getElementById('admin-password').value;
+            if (pass === ADMIN_PASS) {
                 loggedIn = true;
+                editingId = null;
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('login-error').style.display = 'none';
@@ -199,6 +181,7 @@
 
         function logout() {
             loggedIn = false;
+            editingId = null;
             document.getElementById('login-section').style.display = 'block';
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('admin-password').value = '';
@@ -213,6 +196,7 @@
             reader.onload = e => {
                 bannerData = e.target.result;
                 document.getElementById('banner').src = bannerData;
+                localStorage.setItem('bannerData', bannerData);
                 document.getElementById('banner-preview').src = bannerData;
                 document.getElementById('banner-preview').style.display = 'block';
             };
@@ -224,6 +208,7 @@
             if (!text) return;
             if (section === 'home') homeText = text;
             if (section === 'about') aboutText = text;
+            localStorage.setItem(`${section}Text`, text);
             document.getElementById(`${section}-text`).textContent = text;
         }
 
@@ -272,6 +257,7 @@
                     artworks.push({ id, title, desc, dimensions, price, image });
                 }
 
+                localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
                 resetForm();
                 showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta!');
@@ -308,38 +294,47 @@
         function deleteArtwork(id) {
             if (confirm('Eliminare?')) {
                 artworks = artworks.filter(a => a.id !== id);
+                localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
             }
         }
 
-        // SALVA SU GITHUB
-        async function saveToGitHub() {
-            const btn = document.querySelector('#github-feedback').previousElementSibling;
-            btn.disabled = true;
-            btn.textContent = 'Salvataggio...';
+        // ESPORTA JSON
+        function exportJSON() {
+            const data = { artwork, homeText, aboutText, bannerData };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'viamo-backup.json';
+            a.click();
+            showFeedback('backup-feedback', 'Dati esportati!');
+        }
 
-            const data = { artworks, homeText, aboutText, bannerData };
-            const content = btoa(JSON.stringify(data, null, 2));
+        // IMPORTERA JSON
+        function importJSON() {
+            const file = document.getElementById('import-file').files[0];
+            if (!file) return showFeedback('backup-feedback', 'Seleziona un file!', false);
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    artworks = data.artworks || [];
+                    homeText = data.homeText || homeText;
+                    aboutText = data.aboutText || aboutText;
+                    bannerData = data.bannerData || bannerData;
 
-            try {
-                const res = await fetch(GITHUB_API);
-                const file = await res.json();
-                const sha = file.sha;
+                    localStorage.setItem('artworks', JSON.stringify(artworks));
+                    localStorage.setItem('homeText', homeText);
+                    localStorage.setItem('aboutText', aboutText);
+                    localStorage.setItem('bannerData', bannerData);
 
-                await fetch(GITHUB_API, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Aggiornamento sito', content, sha })
-                });
-
-                showFeedback('github-feedback', 'Salvato su GitHub! Ricarica tra 10s.');
-                setTimeout(() => location.reload(), 10000);
-            } catch (e) {
-                showFeedback('github-feedback', 'Errore salvataggio', false);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Salva su GitHub';
-            }
+                    location.reload();
+                } catch {
+                    showFeedback('backup-feedback', 'File non valido!', false);
+                }
+            };
+            reader.readAsText(file);
         }
 
         // CONTATTO
@@ -377,11 +372,8 @@
         function showFeedback(id, msg, ok = true) {
             const el = document.getElementById(id);
             el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 4000);
+            setTimeout(() => el.innerHTML = '', 3000);
         }
-
-        // AVVIO
-        loadFromGitHub();
     </script>
 </body>
 </html>
