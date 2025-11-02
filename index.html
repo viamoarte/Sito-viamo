@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ViAmo - Galleria d'Arte</title>
 
-    <!-- Google Drive API -->
-    <script src="https://apis.google.com/js/api.js"></script>
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
@@ -27,9 +25,8 @@
         form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
         input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
         input[type=file]{margin:10px 0;padding:8px;}
-        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
+        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1.1em;}
         button:hover{background:#34495e;}
-        button:disabled{background:#95a5a6;color:#7f8c8d;}
         #admin{display:none;}
         .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
@@ -38,8 +35,6 @@
         .admin-section{margin-bottom:30px;}
         .admin-section h3{margin-top:0;}
         .backup-section button{margin:5px;}
-        .google-auth{margin:10px 0;text-align:center;}
-        .google-auth button{background:#4285F4;color:#fff;}
     </style>
 </head>
 <body>
@@ -118,16 +113,6 @@
                 <div id="gallery-feedback"></div>
             </div>
 
-            <!-- GOOGLE DRIVE -->
-            <div class="admin-section">
-                <h3>Google Drive</h3>
-                <div class="google-auth">
-                    <button id="auth-btn" onclick="handleAuth()">Accedi con Google</button>
-                    <button id="upload-btn" onclick="uploadToDrive()" style="display:none;">Carica Immagini su Drive</button>
-                </div>
-                <div id="drive-feedback"></div>
-            </div>
-
             <!-- BACKUP JSON -->
             <div class="admin-section backup-section">
                 <h3>Backup Dati</h3>
@@ -147,6 +132,7 @@
         let bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
         const ADMIN_PASS = '#Venus2025';
         let loggedIn = false;
+        let editingId = null;
 
         // INIZIO
         document.getElementById('home-text').textContent = homeText;
@@ -178,10 +164,13 @@
             const pass = document.getElementById('admin-password').value;
             if (pass === ADMIN_PASS) {
                 loggedIn = true;
+                editingId = null;
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('login-error').style.display = 'none';
                 document.getElementById('new-home-text').value = homeText;
                 document.getElementById('new-about-text').value = aboutText;
+                renderGallery(); // MOSTRA PULSANTI ADMIN
             } else {
                 document.getElementById('login-error').style.display = 'block';
             }
@@ -189,10 +178,12 @@
 
         function logout() {
             loggedIn = false;
+            editingId = null;
             document.getElementById('login-section').style.display = 'block';
             document.getElementById('admin-panel').style.display = 'none';
             document.getElementById('admin-password').value = '';
             document.getElementById('login-error').style.display = 'none';
+            renderGallery(); // NASCONDE PULSANTI ADMIN
         }
 
         function updateBanner() {
@@ -203,6 +194,8 @@
                 bannerData = e.target.result;
                 document.getElementById('banner').src = bannerData;
                 localStorage.setItem('bannerData', bannerData);
+                document.getElementById('banner-preview').src = bannerData;
+                document.getElementById('banner-preview').style.display = 'block';
             };
             reader.readAsDataURL(file);
         }
@@ -236,7 +229,6 @@
             const dimensions = document.getElementById('gallery-dimensions').value.trim();
             const price = parseInt(document.getElementById('gallery-price').value);
             const imageFile = document.getElementById('gallery-image-file').files[0];
-            const renderingFile = document.getElementById('gallery-rendering-file').files[0];
 
             if (!title || !desc || !dimensions || isNaN(price) || !imageFile) {
                 showFeedback('gallery-feedback', 'Compila tutti i campi!', false);
@@ -246,142 +238,39 @@
             const reader = new FileReader();
             reader.onload = e => {
                 const image = e.target.result;
-                let rendering = null;
-                if (renderingFile) {
-                    const reader2 = new FileReader();
-                    reader2.onload = e2 => {
-                        rendering = e2.target.result;
-                        finalize();
-                    };
-                    reader2.readAsDataURL(renderingFile);
-                } else {
-                    finalize();
-                }
-
-                function finalize() {
-                    const id = Date.now();
-                    artworks.push({ id, title, desc, dimensions, price, image, rendering });
-                    localStorage.setItem('artworks', JSON.stringify(artworks));
-                    renderGallery();
-                    document.getElementById('gallery-form').reset();
-                    document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
-                    showFeedback('gallery-feedback', 'Opera aggiunta!');
-                }
+                const id = Date.now();
+                artworks.push({ id, title, desc, dimensions, price, image });
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                renderGallery();
+                document.getElementById('gallery-form').reset();
+                document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+                showFeedback('gallery-feedback', 'Opera aggiunta!');
             };
             reader.readAsDataURL(imageFile);
         }
 
-        // GOOGLE DRIVE
-        const CLIENT_ID = 'INSERISCI_TUO_CLIENT_ID.apps.googleusercontent.com';
-        const API_KEY = 'INSERISCI_TUA_API_KEY';
-        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-
-        let tokenClient;
-        let gapiInited = false, gisInited = false;
-
-        function gapiLoad() {
-            gapi.load('client', async () => {
-                await gapi.client.init({
-                    apiKey: API_KEY,
-                    discoveryDocs: [DISCOVERY_DOC],
-                });
-                gapiInited = true;
-                maybeEnableButtons();
-            });
+        function editArtwork(id) {
+            const art = artworks.find(a => a.id === id);
+            if (!art) return;
+            document.getElementById('gallery-title').value = art.title;
+            document.getElementById('gallery-desc').value = art.desc;
+            document.getElementById('gallery-dimensions').value = art.dimensions;
+            document.getElementById('gallery-price').value = art.price;
+            document.getElementById('preview-main').src = art.image;
+            document.getElementById('preview-main').style.display = 'block';
+            editingId = id;
+            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
         }
 
-        function gisLoad() {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: SCOPES,
-                callback: (resp) => {
-                    if (resp.error) throw resp;
-                    document.getElementById('auth-btn').style.display = 'none';
-                    document.getElementById('upload-btn').style.display = 'inline-block';
-                },
-            });
-            gisInited = true;
-            maybeEnableButtons();
-        }
-
-        function maybeEnableButtons() {
-            if (gapiInited && gisInited) {
-                document.getElementById('auth-btn').disabled = false;
-            }
-        }
-
-        function handleAuth() {
-            tokenClient.callback = async (resp) => {
-                if (resp.error) throw resp;
-                document.getElementById('auth-btn').style.display = 'none';
-                document.getElementById('upload-btn').style.display = 'inline-block';
-            };
-
-            if (gapi.client.getToken() === null) {
-                tokenClient.requestAccessToken({prompt: 'consent'});
-            } else {
-                tokenClient.requestAccessToken({prompt: ''});
-            }
-        }
-
-        async function uploadToDrive() {
-            const btn = document.getElementById('upload-btn');
-            btn.disabled = true;
-            btn.textContent = 'Caricamento...';
-
-            try {
-                for (const art of artworks) {
-                    if (art.image && !art.image.startsWith('https://')) {
-                        const url = await uploadFile(art.image, `${art.id}_main.jpg`);
-                        art.image = url;
-                    }
-                    if (art.rendering && !art.rendering.startsWith('https://')) {
-                        const url = await uploadFile(art.rendering, `${art.id}_rendering.jpg`);
-                        art.rendering = url;
-                    }
-                }
+        function deleteArtwork(id) {
+            if (confirm('Eliminare?')) {
+                artworks = artworks.filter(a => a.id !== id);
                 localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
-                showFeedback('drive-feedback', 'Immagini caricate su Drive!');
-            } catch (err) {
-                showFeedback('drive-feedback', 'Errore upload', false);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Carica Immagini su Drive';
             }
         }
 
-        async function uploadFile(base64, filename) {
-            const blob = base64ToBlob(base64);
-            const metadata = { name: filename, mimeType: blob.type };
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            form.append('file', blob);
-
-            const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                method: 'POST',
-                headers: new Headers({ 'Authorization': 'Bearer ' + gapi.client.getToken().access_token }),
-                body: form
-            });
-            const file = await res.json();
-            await gapi.client.drive.permissions.create({
-                fileId: file.id,
-                requestBody: { role: 'reader', type: 'anyone' }
-            });
-            return `https://drive.google.com/uc?id=${file.id}`;
-        }
-
-        function base64ToBlob(base64) {
-            const [header, data] = base64.split(',');
-            const mime = header.match(/:(.*?);/)[1];
-            const binary = atob(data);
-            const array = [];
-            for (let i = 0; i < binary.length; i++) array.push(binary.charCodeAt(i));
-            return new Blob([new Uint8Array(array)], { type: mime });
-        }
-
-        // ESPORTA / IMPORTERA JSON
+        // ESPORTA JSON
         function exportJSON() {
             const data = { artworks, homeText, aboutText, bannerData };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -393,6 +282,7 @@
             showFeedback('backup-feedback', 'Dati esportati!');
         }
 
+        // IMPORTERA JSON
         function importJSON() {
             const file = document.getElementById('import-file').files[0];
             if (!file) return showFeedback('backup-feedback', 'Seleziona un file!', false);
@@ -455,10 +345,6 @@
             el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
             setTimeout(() => el.innerHTML = '', 3000);
         }
-
-        // CARICA GOOGLE API
-        gapiLoad();
-        gisLoad();
     </script>
 </body>
 </html>
