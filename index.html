@@ -43,8 +43,6 @@
         .password-change{background:#f9f9f9;padding:15px;border-radius:8px;margin-top:20px;}
         .admin-section{margin-bottom:30px;}
         .admin-section h3{margin-top:0;}
-        .github-sync{margin:10px 0;font-size:0.9em;}
-        .github-sync span{color:green;font-weight:bold;}
         @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
     </style>
 </head>
@@ -139,15 +137,6 @@
                 </form>
             </div>
 
-            <!-- GITHUB SYNC -->
-            <div class="admin-section">
-                <h3>Sincronizzazione GitHub</h3>
-                <p class="github-sync">Dati caricati da GitHub: <span id="github-status">In attesa...</span></p>
-                <button onclick="exportData()" style="background:#27ae60;">Esporta Dati (JSON)</button>
-                <p><small>Carica il file su GitHub: <code>data.json</code></small></p>
-                <div id="github-feedback"></div>
-            </div>
-
             <!-- PASSWORD -->
             <div class="password-change">
                 <h3>Cambia Password Admin</h3>
@@ -162,46 +151,18 @@
         </div>
     </section>
 
-    <footer>© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
+    <footer id="footer-text">© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
 
     <script>
         // CONFIG EMAILJS
         const SERVICE_ID = 'service_rdfzdc8';
-        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';
-        const TEMPLATE_AUTOREPLY = 'template_07bn298';
-
-        // GITHUB URL – TUO REPO
-        const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
+        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';     // A te
+        const TEMPLATE_AUTOREPLY = 'template_07bn298';    // Risposta automatica
 
         // DATI
         let artworks = [], homeText = '', aboutText = '', bannerData = '';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
-
-        // CARICA DA GITHUB SE LOCALSTORAGE VUOTO
-        async function loadFromGitHub() {
-            try {
-                const res = await fetch(GITHUB_DATA_URL + '?t=' + Date.now());
-                if (!res.ok) throw new Error('File non trovato');
-                const data = await res.json();
-
-                if (!localStorage.getItem('artworks')) artworks = data.artworks || [];
-                if (!localStorage.getItem('homeText')) homeText = data.homeText || homeText;
-                if (!localStorage.getItem('aboutText')) aboutText = data.aboutText || aboutText;
-                if (!localStorage.getItem('bannerData')) bannerData = data.bannerData || bannerData;
-
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                localStorage.setItem('homeText', homeText);
-                localStorage.setItem('aboutText', aboutText);
-                localStorage.setItem('bannerData', bannerData);
-
-                document.getElementById('github-status').textContent = 'SÌ';
-                document.getElementById('github-status').style.color = 'green';
-            } catch (err) {
-                document.getElementById('github-status').textContent = 'NO';
-                document.getElementById('github-status').style.color = 'red';
-            }
-        }
 
         function loadData() {
             artworks = JSON.parse(localStorage.getItem('artworks')) || [];
@@ -211,17 +172,11 @@
             adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('#Venus2025');
             if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
         }
-
         loadData();
-        if (!localStorage.getItem('artworks')) loadFromGitHub().then(renderAll);
-        else renderAll();
 
-        function renderAll() {
-            document.getElementById('home-text').textContent = homeText;
-            document.getElementById('about-text').textContent = aboutText;
-            document.getElementById('banner').src = bannerData;
-            renderGallery();
-        }
+        document.getElementById('home-text').textContent = homeText;
+        document.getElementById('about-text').textContent = aboutText;
+        document.getElementById('banner').src = bannerData;
 
         function showFeedback(id, msg, ok = true) {
             const el = document.getElementById(id);
@@ -390,7 +345,7 @@
             e.target.reset();
         });
 
-        // FORM CONTATTAMI
+        // FORM CONTATTAMI – CON AUTOREPLY
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = this.querySelector('button');
@@ -400,18 +355,22 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
 
+            // 1. INVIA A TE
             emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
                 to_email: 'viamoarte@gmail.com',
                 user_name: data.user_name,
                 user_email: data.user_email,
                 message: data.message
             })
-            .then(() => emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
-                to_email: data.user_email,
-                user_name: data.user_name
-            }))
             .then(() => {
-                showFeedback('form-feedback', 'Messaggio inviato! Riceverai una risposta.');
+                // 2. INVIA AUTOREPLY AL MITTENTE
+                return emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
+                    to_email: data.user_email,
+                    user_name: data.user_name
+                });
+            })
+            .then(() => {
+                showFeedback('form-feedback', 'Messaggio inviato! Riceverai una risposta automatica.');
                 this.reset();
             })
             .catch((error) => {
@@ -423,18 +382,6 @@
                 btn.textContent = 'Invia Messaggio';
             });
         });
-
-        // ESPORTA DATI
-        function exportData() {
-            const data = { artworks, homeText, aboutText, bannerData };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'data.json';
-            a.click();
-            showFeedback('github-feedback', 'File esportato! Caricalo su GitHub: <code>data.json</code>');
-        }
 
         renderGallery();
     </script>
