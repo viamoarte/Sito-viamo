@@ -63,7 +63,7 @@
             <div id="form-feedback"></div>
         </form>
 
-        <a href="index.html#gallery" class="back-link">← Torna alla Galleria</a>
+        <a href="index.html#gallery" class="back-link">Torna alla Galleria</a>
     </section>
 
     <!-- LIGHTBOX -->
@@ -80,7 +80,7 @@
         const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';
         const TEMPLATE_AUTOREPLY = 'template_07bn298';
 
-        // CARICA OPERA
+        // CARICA OPERA DA localStorage
         const artworks = JSON.parse(localStorage.getItem('artworks')) || [];
         const urlParams = new URLSearchParams(location.search);
         const id = parseInt(urlParams.get('id'));
