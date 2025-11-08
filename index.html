@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ViAmo - Vincenza Amodio</title>
+
+    <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
 
@@ -137,7 +139,7 @@
     </div>
 
     <script>
-        // GITHUB CONFIG (FUNZIONA!)
+        // GITHUB
         const GITHUB_RAW = 'https://raw.githubusercontent.com/viamoarte/viamoarte.github.io/main/data.json';
         const GITHUB_API = 'https://api.github.com/repos/viamoarte/viamoarte.github.io/contents/data.json';
         const GITHUB_TOKEN = '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';
@@ -239,6 +241,20 @@
             if (section === 'home') homeText = text;
             if (section === 'about') aboutText = text;
             document.getElementById(`${section}-text`).textContent = text;
+        }
+
+        // ANTEPRIMA
+        document.getElementById('gallery-image-file').addEventListener('change', () => preview('gallery-image-file', 'preview-main'));
+        document.getElementById('gallery-rendering-file').addEventListener('change', () => preview('gallery-rendering-file', 'preview-rendering'));
+
+        function preview(inputId, previewId) {
+            const file = document.getElementById(inputId).files[0];
+            const img = document.getElementById(previewId);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
+                reader.readAsDataURL(file);
+            }
         }
 
         // GALLERIA
@@ -355,7 +371,7 @@
             reader.readAsText(file);
         }
 
-        // SALVA SU GITHUB (FUNZIONA!)
+        // SALVA SU GITHUB (2 SECONDI)
         async function saveToGitHub() {
             const btn = document.querySelector('[onclick="saveToGitHub()"]');
             btn.disabled = true;
@@ -365,7 +381,7 @@
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
 
             try {
-                const res = await fetch(GITHUB_API);
+                const res = await fetch(GITHUB_API + '?t=' + Date.now());
                 let sha = '';
                 if (res.ok) {
                     const file = await res.json();
@@ -376,7 +392,8 @@
                     method: 'PUT',
                     headers: { 
                         'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-GitHub-Api-Version': '2022-11-28'
                     },
                     body: JSON.stringify({ 
                         message: 'Aggiornamento automatico', 
@@ -386,8 +403,8 @@
                 });
 
                 if (response.ok) {
-                    showFeedback('github-feedback', 'SALVATO SU GITHUB! Ricarica tra 5s.');
-                    setTimeout(() => location.reload(), 5000);
+                    showFeedback('github-feedback', 'SALVATO IN 2 SECONDI! Ricarica ora.');
+                    setTimeout(() => location.reload(), 3000);
                 } else {
                     const error = await response.json();
                     showFeedback('github-feedback', 'Errore: ' + error.message, false);
