@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ViAmo - Vincenza Amodio, street art e pop culture">
-    <title>ViAmo - Galleria d'Arte</title>
+    <title>ViAmo - Vincenza Amodio</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>(function(){emailjs.init("z2kCGkszIchfP51G_");})();</script>
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
-        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;}
-        #banner{width:100%;max-height:350px;object-fit:cover;}
-        nav{background:#34495e;padding:10px;text-align:center;}
+        header{background:#2c3e50;color:#fff;padding:20px;text-align:center;}
+        #banner{width:100%;max-height:400px;object-fit:cover;}
+        nav{background:#34495e;padding:15px;text-align:center;}
         nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
         nav a:hover{text-decoration:underline;}
-        section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
-        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
-        .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
-        .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
-        .artwork button, .artwork a{display:inline-block;margin:8px 4px;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;cursor:pointer;}
-        .artwork button:hover, .artwork a:hover{background:#34495e;}
-        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;}
+        section{padding:30px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
+        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:25px;padding:20px;}
+        .artwork{border:1px solid #ddd;padding:20px;text-align:center;background:#fff;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,.1);}
+        .artwork img{width:100%;height:220px;object-fit:cover;border-radius:8px;}
+        .artwork button,.artwork a{display:inline-block;margin:10px 5px;padding:10px 16px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;cursor:pointer;}
+        .artwork button:hover,.artwork a:hover{background:#34495e;}
+        button{background:#2c3e50;color:#fff;border:none;padding:12px 20px;border-radius:5px;cursor:pointer;margin:10px 5px;}
         button:hover{background:#34495e;}
-        #admin{display:none;}
-        .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
-        .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
-        .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
-        .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
-        .admin-section{margin-bottom:30px;}
-        @media (max-width:600px){nav a{display:block;margin:10px 0;}}
+        input,textarea,select{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;width:100%;box-sizing:border-box;}
+        #admin{display:none;background:#fff;padding:30px;border-radius:10px;margin:20px;box-shadow:0 0 20px rgba(0,0,0,.2);}
+        .feedback{padding:15px;border-radius:5px;margin:15px 0;text-align:center;font-weight:bold;}
+        .success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+        .error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+        .preview-img{max-width:100%;max-height:200px;margin:15px 0;border-radius:8px;display:none;}
+        @media (max-width:600px){nav a{display:block;margin:15px 0;}}
     </style>
 </head>
 <body>
     <header>
-        <img id="banner" src="Opere/banner.jpg" alt="Banner" loading="lazy">
+        <img id="banner" src="Opere/banner.jpg" alt="ViAmo Art" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
     <nav>
@@ -41,7 +40,7 @@
         <a href="#gallery">Galleria</a>
         <a href="#about">Chi Sono</a>
         <a href="#contact">Contatti</a>
-        <a href="#" onclick="toggleAdmin()">Area Riservata</a>
+        <a href="javascript:toggleAdmin()">Area Riservata</a>
     </nav>
 
     <section id="home"><h2>Home</h2><div id="home-text">Caricamento...</div></section>
@@ -53,8 +52,8 @@
         <form id="contact-form">
             <input type="text" name="user_name" placeholder="Nome" required>
             <input type="email" name="user_email" placeholder="Email" required>
-            <textarea name="message" placeholder="Messaggio" rows="5" required></textarea>
-            <button type="submit">Invia</button>
+            <textarea name="message" placeholder="Messaggio" rows="6" required></textarea>
+            <button type="submit">Invia Messaggio</button>
             <div id="form-feedback"></div>
         </form>
     </section>
@@ -62,366 +61,283 @@
     <section id="admin">
         <h2>Area Amministratore</h2>
         <div id="login-section">
-            <input type="password" id="admin-password" placeholder="Password" required>
+            <input type="password" id="admin-pass" placeholder="Password" required>
             <button onclick="login()">Accedi</button>
-            <div class="error" id="login-error" style="display:none;color:red;">Password errata</div>
+            <div id="login-error" class="error" style="display:none;">Password errata!</div>
         </div>
 
         <div id="admin-panel" style="display:none;">
             <button onclick="logout()" style="background:#e74c3c;">Esci</button>
 
-            <div class="admin-section">
-                <h3>Gestione Dati</h3>
-                <input type="file" id="import-file" accept=".json" style="display:none;">
-                <button onclick="document.getElementById('import-file').click()">Importa data.json</button>
-                <button onclick="exportData()">Esporta data.json</button>
-                <button onclick="forceGitHubSync()">Sync GitHub</button>
-                <div id="sync-feedback"></div>
-            </div>
+            <h3>Gestione Dati</h3>
+            <input type="file" id="import-file" accept=".json" style="display:none;">
+            <button onclick="document.getElementById('import-file').click()">Importa data.json</button>
+            <button onclick="exportData()">Esporta data.json</button>
+            <button onclick="syncGitHub()">Sync GitHub</button>
+            <div id="sync-msg"></div>
 
-            <div class="admin-section">
-                <h3>Banner</h3>
-                <input type="file" id="banner-file" accept="image/*">
-                <img id="banner-preview" class="preview-img" alt="">
-                <button onclick="updateBanner()">Aggiorna</button>
-            </div>
+            <h3>Banner</h3>
+            <input type="file" id="banner-file" accept="image/*">
+            <img id="banner-preview" class="preview-img" alt="">
+            <button onclick="updateBanner()">Aggiorna Banner</button>
 
-            <div class="admin-section">
-                <h3>Testo Home (HTML consentito)</h3>
-                <textarea id="new-home-text" rows="6"></textarea>
-                <button onclick="updateHome()">Aggiorna</button>
-            </div>
+            <h3>Testo Home (HTML ok)</h3>
+            <textarea id="home-input" rows="6"></textarea>
+            <button onclick="saveHome()">Salva Home</button>
 
-            <div class="admin-section">
-                <h3>Testo Chi Sono (HTML consentito)</h3>
-                <textarea id="new-about-text" rows="6"></textarea>
-                <button onclick="updateAbout()">Aggiorna</button>
-            </div>
+            <h3>Testo Chi Sono</h3>
+            <textarea id="about-input" rows="6"></textarea>
+            <button onclick="saveAbout()">Salva Chi Sono</button>
 
-            <div class="admin-section">
-                <h3>Aggiungi/Modifica Opera</h3>
-                <form id="gallery-form">
-                    <input type="text" id="gallery-title" placeholder="Titolo" required>
-                    <input type="text" id="gallery-desc" placeholder="Descrizione" required>
-                    <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" required>
-                    <input type="file" id="gallery-image-file" accept="image/*" required>
-                    <img id="preview-main" class="preview-img" alt="">
-                    <input type="file" id="gallery-rendering-file" accept="image/*">
-                    <img id="preview-rendering" class="preview-img" alt="">
-                    <button type="submit">Salva Opera</button>
-                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
-                </form>
-                <div id="gallery-feedback"></div>
-            </div>
+            <h3>Aggiungi/Modifica Opera</h3>
+            <form id="art-form">
+                <input type="text" id="title" placeholder="Titolo" required>
+                <input type="text" id="desc" placeholder="Descrizione" required>
+                <input type="text" id="dim" placeholder="Dimensioni" required>
+                <input type="number" id="price" placeholder="Prezzo €" required>
+                <input type="file" id="img-main" accept="image/*" required>
+                <img id="prev-main" class="preview-img" alt="">
+                <input type="file" id="img-rend" accept="image/*">
+                <img id="prev-rend" class="preview-img" alt="">
+                <button type="submit">Salva Opera</button>
+                <button type="button" onclick="resetForm()" id="cancel-btn" style="display:none;background:#e74c3c;">Annulla</button>
+            </form>
+            <div id="art-msg"></div>
 
-            <div class="admin-section">
-                <h3>Password</h3>
-                <input type="password" id="old-password" placeholder="Vecchia">
-                <input type="password" id="new-password" placeholder="Nuova">
-                <button onclick="changePassword()">Cambia</button>
-                <div id="password-feedback"></div>
-            </div>
+            <h3>Cambia Password</h3>
+            <input type="password" id="old-p" placeholder="Vecchia">
+            <input type="password" id="new-p" placeholder="Nuova">
+            <button onclick="changePass()">Cambia</button>
+            <div id="pass-msg"></div>
         </div>
     </section>
 
-    <footer>© 2025 ViAmo Art</footer>
+    <footer>© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
 
     <script>
-        // === IndexedDB per immagini grandi ===
-        const dbPromise = indexedDB.open('ViAmoDB', 1);
-        dbPromise.onupgradeneeded = e => e.target.result.createObjectStore('images', {keyPath: 'id'});
-        
-        let db;
-        dbPromise.onsuccess = e => { db = e.target.result; loadAll(); };
-        dbPromise.onerror = () => alert('Errore IndexedDB');
+        let data = { artworks: [], homeText: "", aboutText: "", banner: "Opere/banner.jpg" };
+        let editingId = null;
+        const PASS_HASH = "adminHash";
+        let hash = localStorage.getItem(PASS_HASH) || btoa("ViAmo2025!");
+        if (!localStorage.getItem(PASS_HASH)) localStorage.setItem(PASS_HASH, hash);
 
-        // === Variabili ===
-        let artworks = [], homeText = '', aboutText = '', bannerData = '';
-        let adminHash = localStorage.getItem('adminHash') || btoa('ViAmo2025!');
-        if (!localStorage.getItem('adminHash')) localStorage.setItem('adminHash', adminHash);
-        let token = localStorage.getItem('ghToken') || '';
-        let loggedIn = false, editingId = null;
+        function $(id) { return document.getElementById(id); }
 
-        const GITHUB_RAW = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
-
-        // === Carica tutto ===
-        async function loadAll() {
-            // LocalStorage
-            artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-            homeText = localStorage.getItem('homeText') || '<p>Benvenuta nel mondo di ViAmo!</p>';
-            aboutText = localStorage.getItem('aboutText') || '<p>Vincenza Amodio, in arte ViAmo...</p>';
-            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
-
-            // Immagini da IndexedDB
-            for (let art of artworks) {
-                if (art.image && art.image.startsWith('db:')) {
-                    art.image = await getImage(art.image);
-                }
-                if (art.rendering && art.rendering.startsWith('db:')) {
-                    art.rendering = await getImage(art.rendering);
-                }
-            }
-            if (bannerData.startsWith('db:')) {
-                bannerData = await getImage(bannerData);
-            }
-
-            renderAll();
-            syncGitHubStatus();
-        }
-
-        function renderAll() {
-            document.getElementById('home-text').innerHTML = homeText;
-            document.getElementById('about-text').innerHTML = aboutText;
-            document.getElementById('banner').src = bannerData + '?t=' + Date.now();
+        function load() {
+            const saved = localStorage.getItem("viamo_data");
+            if (saved) data = JSON.parse(saved);
+            $("home-text").innerHTML = data.homeText || "Benvenuta nel mondo di ViAmo!";
+            $("about-text").innerHTML = data.aboutText || "Vincenza Amodio, in arte ViAmo...";
+            $("banner").src = data.banner + "?t=" + Date.now();
             renderGallery();
         }
 
+        function save() {
+            localStorage.setItem("viamo_data", JSON.stringify(data));
+        }
+
         function renderGallery() {
-            const c = document.getElementById('gallery-container');
-            c.innerHTML = artworks.map(a => `
+            const container = $("gallery-container");
+            container.innerHTML = data.artworks.map(a => `
                 <div class="artwork">
                     <img src="${a.image}" alt="${a.title}" loading="lazy">
                     <h3>${a.title}</h3>
-                    <p>${a.dimensions}</p>
-                    <p>€${a.price}</p>
+                    <p>${a.desc}</p>
+                    <p>Dimensioni: ${a.dim}</p>
+                    <p>Prezzo: €${a.price}</p>
                     <a href="artwork.html?id=${a.id}">Dettagli</a>
-                    ${loggedIn ? `
-                        <button onclick="editArt(${a.id})">Modifica</button>
-                        <button onclick="deleteArt(${a.id})" style="background:#e74c3c;">Elimina</button>
+                    ${location.hash === "#admin" ? `
+                        <button onclick="edit(${a.id})">Modifica</button>
+                        <button onclick="del(${a.id})" style="background:#e74c3c;">Elimina</button>
                     ` : ''}
                 </div>
             `).join('');
         }
 
-        // === IndexedDB helpers ===
-        async function saveImage(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = async () => {
-                    const id = 'img_' + Date.now();
-                    const tx = db.transaction('images', 'readwrite');
-                    tx.objectStore('images').put({id, data: reader.result});
-                    await tx.complete;
-                    resolve('db:' + id);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function getImage(key) {
-            return new Promise((resolve) => {
-                const tx = db.transaction('images');
-                const req = tx.objectStore('images').get(key.replace('db:', ''));
-                req.onsuccess = () => resolve(req.result ? req.result.data : 'Opere/placeholder.jpg');
-            });
-        }
-
-        // === Admin ===
         window.login = () => {
-            const pass = document.getElementById('admin-password').value;
-            if (btoa(pass) === adminHash) {
-                loggedIn = true;
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('new-home-text').value = homeText;
-                document.getElementById('new-about-text').value = aboutText;
+            if (btoa($("admin-pass").value) === hash) {
+                $("login-section").style.display = "none";
+                $("admin-panel").style.display = "block";
+                $("home-input").value = data.homeText;
+                $("about-input").value = data.aboutText;
+                location.hash = "#admin";
+                renderGallery();
             } else {
-                document.getElementById('login-error').style.display = 'block';
+                $("login-error").style.display = "block";
             }
         };
 
         window.logout = () => {
-            loggedIn = false;
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-            document.getElementById('admin-password').value = '';
+            $("login-section").style.display = "block";
+            $("admin-panel").style.display = "none";
+            $("admin-pass").value = "";
+            location.hash = "";
+            renderGallery();
         };
 
         window.toggleAdmin = () => {
-            const el = document.getElementById('admin');
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+            $("admin").style.display = $("admin").style.display === "block" ? "none" : "block";
         };
 
-        // === Modifica opera ===
-        window.editArt = (id) => {
-            const art = artworks.find(a => a.id === id);
+        window.edit = (id) => {
+            const art = data.artworks.find(a => a.id === id);
             editingId = id;
-            document.getElementById('gallery-title').value = art.title;
-            document.getElementById('gallery-desc').value = art.desc;
-            document.getElementById('gallery-dimensions').value = art.dimensions;
-            document.getElementById('gallery-price').value = art.price;
-            document.getElementById('preview-main').src = art.image;
-            document.getElementById('preview-main').style.display = 'block';
-            if (art.rendering) {
-                document.getElementById('preview-rendering').src = art.rendering;
-                document.getElementById('preview-rendering').style.display = 'block';
-            }
-            document.querySelector('#gallery-form button[type="submit"]').textContent = 'Salva Modifiche';
-            document.getElementById('cancel-edit').style.display = 'inline-block';
+            $("title").value = art.title;
+            $("desc").value = art.desc;
+            $("dim").value = art.dim;
+            $("price").value = art.price;
+            $("prev-main").src = art.image; $("prev-main").style.display = "block";
+            if (art.rendering) { $("prev-rend").src = art.rendering; $("prev-rend").style.display = "block"; }
+            $("art-form").querySelector("button[type=submit]").textContent = "Salva Modifiche";
+            $("cancel-btn").style.display = "inline-block";
         };
 
-        window.deleteArt = (id) => {
-            if (confirm('Eliminare?')) {
-                artworks = artworks.filter(a => a.id !== id);
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                renderGallery();
+        window.del = (id) => {
+            if (confirm("Eliminare?")) {
+                data.artworks = data.artworks.filter(a => a.id !== id);
+                save(); renderGallery();
+                msg("art-msg", "Opera eliminata!", true);
             }
         };
 
-        window.cancelEdit = () => {
+        window.resetForm = () => {
             editingId = null;
-            document.getElementById('gallery-form').reset();
-            document.querySelectorAll('.preview-img').forEach(i => i.style.display = 'none');
-            document.querySelector('#gallery-form button[type="submit"]').textContent = 'Aggiungi Opera';
-            document.getElementById('cancel-edit').style.display = 'none';
+            $("art-form").reset();
+            document.querySelectorAll(".preview-img").forEach(i => i.style.display = "none");
+            $("art-form").querySelector("button[type=submit]").textContent = "Salva Opera";
+            $("cancel-btn").style.display = "none";
         };
 
-        // === Gallery form ===
-        document.getElementById('gallery-form').onsubmit = async (e) => {
+        $("art-form").onsubmit = (e) => {
             e.preventDefault();
-            const title = document.getElementById('gallery-title').value.trim();
-            const desc = document.getElementById('gallery-desc').value.trim();
-            const dim = document.getElementById('gallery-dimensions').value.trim();
-            const price = document.getElementById('gallery-price').value;
-            const imgFile = document.getElementById('gallery-image-file').files[0];
-            const rendFile = document.getElementById('gallery-rendering-file').files[0];
+            const f = e.target;
+            const file = f.img-main.files[0];
+            if (!file) return msg("art-msg", "Immagine principale obbligatoria!", false);
 
-            if (!title || !desc || !dim || !price || !imgFile) return alert('Compila tutto!');
-
-            const image = await saveImage(imgFile);
-            const rendering = rendFile ? await saveImage(rendFile) : null;
-
-            const art = { id: editingId || Date.now(), title, desc, dimensions: dim, price: parseInt(price), image, rendering };
-
-            if (editingId) {
-                const i = artworks.findIndex(a => a.id === editingId);
-                artworks[i] = art;
-                cancelEdit();
-                alert('Modificata!');
-            } else {
-                artworks.push(art);
-                alert('Aggiunta!');
-            }
-
-            localStorage.setItem('artworks', JSON.stringify(artworks));
-            renderGallery();
-            e.target.reset();
+            const reader = new FileReader();
+            reader.onload = () => {
+                const art = {
+                    id: editingId || Date.now(),
+                    title: f.title.value,
+                    desc: f.desc.value,
+                    dim: f.dim.value,
+                    price: f.price.value,
+                    image: reader.result
+                };
+                if (f.img-rend.files[0]) {
+                    const r2 = new FileReader();
+                    r2.onload = () => { art.rendering = r2.result; saveArt(art); };
+                    r2.readAsDataURL(f.img-rend.files[0]);
+                } else saveArt(art);
+            };
+            reader.readAsDataURL(file);
         };
 
-        // === Anteprime ===
-        ['gallery-image-file', 'gallery-rendering-file', 'banner-file'].forEach(id => {
-            document.getElementById(id).onchange = () => {
-                const file = document.getElementById(id).files[0];
+        function saveArt(art) {
+            if (editingId) {
+                const i = data.artworks.findIndex(a => a.id === editingId);
+                data.artworks[i] = art;
+                msg("art-msg", "Modificata!", true);
+            } else {
+                data.artworks.push(art);
+                msg("art-msg", "Aggiunta!", true);
+            }
+            save(); renderGallery(); resetForm();
+        }
+
+        ["img-main","img-rend","banner-file"].forEach(id => {
+            $(id).onchange = () => {
+                const file = $(id).files[0];
                 if (file) {
-                    const prevId = id === 'banner-file' ? 'banner-preview' : id === 'gallery-image-file' ? 'preview-main' : 'preview-rendering';
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        document.getElementById(prevId).src = e.target.result;
-                        document.getElementById(prevId).style.display = 'block';
-                    };
-                    reader.readAsDataURL(file);
+                    const prev = id === "banner-file" ? "banner-preview" : id === "img-main" ? "prev-main" : "prev-rend";
+                    const r = new FileReader();
+                    r.onload = () => { $(prev).src = r.result; $(prev).style.display = "block"; };
+                    r.readAsDataURL(file);
                 }
             };
         });
 
-        // === Aggiornamenti rapidi ===
-        window.updateBanner = async () => {
-            const file = document.getElementById('banner-file').files[0];
-            if (!file) return alert('Seleziona immagine');
-            bannerData = await saveImage(file);
-            localStorage.setItem('bannerData', bannerData);
-            renderAll();
+        window.updateBanner = () => {
+            const file = $("banner-file").files[0];
+            if (!file) return msg("sync-msg", "Seleziona immagine!", false);
+            const r = new FileReader();
+            r.onload = () => {
+                data.banner = r.result;
+                save();
+                $("banner").src = data.banner + "?t=" + Date.now();
+                msg("sync-msg", "Banner aggiornato!", true);
+            };
+            r.readAsDataURL(file);
         };
 
-        window.updateHome = () => {
-            homeText = document.getElementById('new-home-text').value;
-            localStorage.setItem('homeText', homeText);
-            renderAll();
+        window.saveHome = () => { data.homeText = $("home-input").value; save(); $("home-text").innerHTML = data.homeText; msg("sync-msg", "Home aggiornato!", true); };
+        window.saveAbout = () => { data.aboutText = $("about-input").value; save(); $("about-text").innerHTML = data.aboutText; msg("sync-msg", "Chi Sono aggiornato!", true); };
+
+        window.changePass = () => {
+            const old = $("old-p").value;
+            const nw = $("new-p").value;
+            if (btoa(old) !== hash) return msg("pass-msg", "Password attuale errata!", false);
+            if (nw.length < 6) return msg("pass-msg", "Minimo 6 caratteri!", false);
+            hash = btoa(nw);
+            localStorage.setItem(PASS_HASH, hash);
+            msg("pass-msg", "Password cambiata!", true);
+            $("old-p").value = $("new-p").value = "";
         };
 
-        window.updateAbout = () => {
-            aboutText = document.getElementById('new-about-text').value;
-            localStorage.setItem('aboutText', aboutText);
-            renderAll();
-        };
-
-        window.changePassword = () => {
-            const old = document.getElementById('old-password').value;
-            const nuovo = document.getElementById('new-password').value;
-            if (btoa(old) !== adminHash) return alert('Password attuale sbagliata');
-            if (nuovo.length < 6) return alert('Minimo 6 caratteri');
-            adminHash = btoa(nuovo);
-            localStorage.setItem('adminHash', adminHash);
-            alert('Password cambiata!');
-        };
-
-        // === Import/Export ===
-        document.getElementById('import-file').onchange = async (e) => {
+        $("import-file").onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            const text = await file.text();
-            const data = JSON.parse(text);
-            artworks = data.artworks || [];
-            homeText = data.homeText || '';
-            aboutText = data.aboutText || '';
-            bannerData = data.bannerData || '';
-            localStorage.setItem('artworks', JSON.stringify(artworks));
-            localStorage.setItem('homeText', homeText);
-            localStorage.setItem('aboutText', aboutText);
-            localStorage.setItem('bannerData', bannerData);
-            location.reload();
+            const r = new FileReader();
+            r.onload = () => {
+                try {
+                    data = JSON.parse(r.result);
+                    save();
+                    load();
+                    msg("sync-msg", "Importato con successo!", true);
+                } catch { msg("sync-msg", "File non valido!", false); }
+            };
+            r.readAsText(file);
         };
 
         window.exportData = () => {
-            const data = { artworks, homeText, aboutText, bannerData };
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'data.json'; a.click();
+            const a = document.createElement("a");
+            a.href = url; a.download = "data.json"; a.click();
+            msg("sync-msg", "Esportato!", true);
         };
 
-        window.forceGitHubSync = async () => {
-            if (!token) {
-                token = prompt('GitHub Token (repo scope):');
-                if (token) localStorage.setItem('ghToken', token);
-            }
-            try {
-                const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
-                const data = await res.json();
-                artworks = data.artworks || [];
-                homeText = data.homeText || '';
-                aboutText = data.aboutText || '';
-                bannerData = data.bannerData || '';
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                localStorage.setItem('homeText', homeText);
-                localStorage.setItem('aboutText', aboutText);
-                localStorage.setItem('bannerData', bannerData);
-                location.reload();
-            } catch { alert('Errore sync'); }
+        window.syncGitHub = () => {
+            const url = "https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json";
+            fetch(url).then(r => r.json()).then(d => {
+                data = d;
+                save();
+                load();
+                msg("sync-msg", "Sincronizzato da GitHub!", true);
+            }).catch(() => msg("sync-msg", "Errore GitHub", false));
         };
 
-        function syncGitHubStatus() {
-            fetch(GITHUB_RAW).then(r => {
-                document.getElementById('sync-feedback').innerHTML = r.ok ?
-                    '<span style="color:green;">GitHub sincronizzato</span>' :
-                    '<span style="color:red;">GitHub non raggiungibile</span>';
-            });
+        function msg(id, text, ok = true) {
+            const el = $(id);
+            el.innerHTML = `<div class="feedback ${ok ? "success" : "error"}">${text}</div>`;
+            setTimeout(() => el.innerHTML = "", 4000);
         }
 
-        // === Email ===
-        document.getElementById('contact-form').onsubmit = (e) => {
+        $("contact-form").onsubmit = (e) => {
             e.preventDefault();
-            emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
-                to_email: 'viamoarte@gmail.com',
+            emailjs.send("service_rdfzdc8", "template_pxpn0pv", {
+                to_email: "viamoarte@gmail.com",
                 user_name: e.target.user_name.value,
                 user_email: e.target.user_email.value,
                 message: e.target.message.value
             }).then(() => {
-                alert('Messaggio inviato!');
+                msg("form-feedback", "Messaggio inviato!", true);
                 e.target.reset();
-            }).catch(() => alert('Errore invio'));
+            }).catch(() => msg("form-feedback", "Errore invio", false));
         };
+
+        load();
+        if (location.hash === "#admin") login();
     </script>
 </body>
 </html>
