@@ -130,7 +130,7 @@
                     <div id="backup-feedback"></div>
                 </div>
 
-                <!-- SALVA SU GITHUB (TURBO) -->
+                <!-- SALVA SU GITHUB -->
                 <div class="admin-section">
                     <h3>Sincronizza</h3>
                     <button type="button" onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
@@ -373,7 +373,7 @@
             reader.readAsText(file);
         }
 
-        // SALVA SU GITHUB (TURBO - 2 SECONDI)
+        // SALVA SU GITHUB (TURBO)
         async function saveToGitHub() {
             const btn = document.querySelector('[onclick="saveToGitHub()"]');
             btn.disabled = true;
