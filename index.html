@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ViAmo - Galleria d'Arte</title>
-
-    <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function(){ emailjs.init("z2kCGkszIchfP51G_"); })();
-    </script>
+    <script>(function(){ emailjs.init("z2kCGkszIchfP51G_"); })();</script>
 
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
@@ -27,8 +23,7 @@
         input[type=file]{margin:10px 0;padding:8px;}
         button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1.1em;}
         button:hover{background:#34495e;}
-        button:disabled{background:#95a5a6;color:#7f8c8d;}
-        #admin{display:none;}
+        #admin{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:30px;border-radius:15px;box-shadow:0 0 30px rgba(0,0,0,.5);z-index:1000;width:90%;max-width:500px;}
         .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
         .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
@@ -66,36 +61,37 @@
         </form>
     </section>
 
-    <!-- ADMIN -->
+    <!-- AREA RISERVATA (MODALE) -->
     <section id="admin">
         <h2>Area Amministratore</h2>
         <div id="login-section">
             <input type="password" id="admin-password" placeholder="Password" required>
-            <button onclick="login()">Accedi</button>
-            <div id="login-error" style="color:red;display:none;">Password errata</div>
+            <!-- PULSANTE CON type="button" -->
+            <button type="button" onclick="login()">Accedi</button>
+            <div id="login-error" style="color:red;display:none;margin-top:10px;">Password errata</div>
         </div>
 
         <div id="admin-panel" style="display:none;">
-            <button onclick="logout()">Esci</button>
+            <button type="button" onclick="logout()">Esci</button>
 
             <!-- BANNER -->
             <div class="admin-section">
                 <h3>Banner</h3>
                 <input type="file" id="banner-file" accept="image/*">
                 <img id="banner-preview" class="preview-img" alt="Anteprima">
-                <button onclick="updateBanner()">Aggiorna</button>
+                <button type="button" onclick="updateBanner()">Aggiorna</button>
             </div>
 
             <!-- TESTI -->
             <div class="admin-section">
                 <h3>Testo Home</h3>
                 <textarea id="new-home-text" rows="4"></textarea>
-                <button onclick="updateText('home')">Aggiorna</button>
+                <button type="button" onclick="updateText('home')">Aggiorna</button>
             </div>
             <div class="admin-section">
                 <h3>Testo Chi Sono</h3>
                 <textarea id="new-about-text" rows="4"></textarea>
-                <button onclick="updateText('about')">Aggiorna</button>
+                <button type="button" onclick="updateText('about')">Aggiorna</button>
             </div>
 
             <!-- OPERE -->
@@ -119,7 +115,7 @@
             <!-- SALVA SU GITHUB -->
             <div class="admin-section">
                 <h3>Sincronizza con GitHub</h3>
-                <button onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
+                <button type="button" onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
                 <div id="github-feedback"></div>
             </div>
         </div>
@@ -136,7 +132,7 @@
         const ADMIN_PASS = '#Venus2025';
         let loggedIn = false, editingId = null;
 
-        // CARICA DA GITHUB (CREA FILE SE NON ESISTE)
+        // CARICA DA GITHUB O CREA FILE
         async function loadFromGitHub() {
             try {
                 const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
@@ -150,13 +146,11 @@
                     throw new Error('File non trovato');
                 }
             } catch (e) {
-                // CREA FILE SU GITHUB
                 await createDataJsonOnGitHub();
             }
             renderAll();
         }
 
-        // CREA data.json SU GITHUB
         async function createDataJsonOnGitHub() {
             const defaultData = {
                 artworks: [],
@@ -165,16 +159,14 @@
                 bannerData: "https://picsum.photos/1200/400?random=1"
             };
             const content = btoa(JSON.stringify(defaultData, null, 2));
-
             try {
                 await fetch(GITHUB_API, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: 'Creazione data.json', content })
                 });
-                showFeedback('github-feedback', 'File data.json creato su GitHub!');
             } catch (e) {
-                showFeedback('github-feedback', 'Errore creazione file', false);
+                console.error(e);
             }
         }
 
@@ -198,13 +190,18 @@
                     <p>${a.dimensions}</p>
                     <p>€${a.price}</p>
                     <a href="artwork.html?id=${a.id}">Dettagli</a>
-                    ${loggedIn ? `<button onclick="editArtwork(${a.id})">Modifica</button>
-                                 <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
+                    ${loggedIn ? `<button type="button" onclick="editArtwork(${a.id})">Modifica</button>
+                                 <button type="button" onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
                 </div>
             `).join('');
         }
 
-        // LOGIN
+        // AREA RISERVATA
+        function toggleAdmin() {
+            const admin = document.getElementById('admin');
+            admin.style.display = admin.style.display === 'block' ? 'none' : 'block';
+        }
+
         function login() {
             if (document.getElementById('admin-password').value === ADMIN_PASS) {
                 loggedIn = true;
@@ -228,6 +225,7 @@
             renderGallery();
         }
 
+        // BANNER
         function updateBanner() {
             const file = document.getElementById('banner-file').files[0];
             if (!file) return;
@@ -241,6 +239,7 @@
             reader.readAsDataURL(file);
         }
 
+        // TESTI
         function updateText(section) {
             const text = document.getElementById(`new-${section}-text`).value.trim();
             if (!text) return;
@@ -266,22 +265,18 @@
         // GALLERIA
         document.getElementById('gallery-form').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const title = document.getElementById('gallery-title').value.trim();
             const desc = document.getElementById('gallery-desc').value.trim();
             const dimensions = document.getElementById('gallery-dimensions').value.trim();
             const price = parseInt(document.getElementById('gallery-price').value);
             const imageFile = document.getElementById('gallery-image-file').files[0];
-
             if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !imageFile) {
                 showFeedback('gallery-feedback', 'Compila tutti i campi obbligatori!', false);
                 return;
             }
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const image = e.target.result;
-
                 if (editingId) {
                     const art = artworks.find(a => a.id === editingId);
                     art.title = title;
@@ -293,7 +288,6 @@
                     const id = Date.now();
                     artworks.push({ id, title, desc, dimensions, price, image });
                 }
-
                 renderGallery();
                 resetForm();
                 showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta!');
@@ -336,13 +330,11 @@
 
         // SALVA SU GITHUB
         async function saveToGitHub() {
-            const btn = document.querySelector('#github-feedback').previousElementSibling;
+            const btn = document.querySelector('[onclick="saveToGitHub()"]');
             btn.disabled = true;
             btn.textContent = 'Salvataggio...';
-
             const data = { artworks, homeText, aboutText, bannerData };
             const content = btoa(JSON.stringify(data, null, 2));
-
             try {
                 const res = await fetch(GITHUB_API);
                 let sha = '';
@@ -350,14 +342,12 @@
                     const file = await res.json();
                     sha = file.sha;
                 }
-
                 await fetch(GITHUB_API, {
                     method: 'PUT',
                     headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: 'Aggiornamento sito', content, sha })
                 });
-
-                showFeedback('github-feedback', 'Salvato su GitHub! Ricarica tra 10s.');
+                showFeedback('github-feedback', 'Salvato! Ricarica tra 10s.');
                 setTimeout(() => location.reload(), 10000);
             } catch (e) {
                 showFeedback('github-feedback', 'Errore salvataggio', false);
@@ -366,38 +356,6 @@
                 btn.textContent = 'Salva su GitHub';
             }
         }
-
-        // CONTATTO
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Invio...';
-
-            const data = {
-                user_name: this.user_name.value,
-                user_email: this.user_email.value,
-                message: this.message.value
-            };
-
-            emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
-                to_email: 'viamoarte@gmail.com',
-                ...data
-            })
-            .then(() => emailjs.send('service_rdfzdc8', 'template_07bn298', {
-                to_email: data.user_email,
-                user_name: data.user_name
-            }))
-            .then(() => {
-                showFeedback('form-feedback', 'Inviato!');
-                this.reset();
-            })
-            .catch(() => showFeedback('form-feedback', 'Errore', false))
-            .finally(() => {
-                btn.disabled = false;
-                btn.textContent = 'Invia Messaggio';
-            });
-        });
 
         function showFeedback(id, msg, ok = true) {
             const el = document.getElementById(id);
