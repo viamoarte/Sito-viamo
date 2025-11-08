@@ -139,7 +139,7 @@
                 </form>
             </div>
 
-            <!-- GITHUB + IMPORT -->
+            <!-- GITHUB -->
             <div class="admin-section">
                 <h3>Sincronizzazione GitHub</h3>
                 <p class="github-sync">Dati caricati da GitHub: <span id="github-status">In attesa...</span></p>
@@ -149,10 +149,10 @@
                 <div id="github-feedback"></div>
             </div>
 
-            <!-- NUOVA SEZIONE: IMPORT JSON -->
+            <!-- IMPORT JSON -->
             <div class="admin-section">
                 <h3>Ripristino da Backup</h3>
-                <p>Carica un file <code>data.json</code> per ripristinare tutto il sito in un click</p>
+                <p>Carica un file <code>data.json</code> per ripristinare tutto</p>
                 <input type="file" id="import-json-file" accept=".json,application/json">
                 <button onclick="importFromJson()" style="background:#e67e22;margin-top:10px;">Importa e Ripristina Tutto</button>
                 <div id="import-feedback"></div>
@@ -187,29 +187,30 @@
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
 
-        // PROTEZIONE ANTI-DEFACEMENT
+        // ANTI-DEFACEMENT
         setInterval(() => {
-            if (localStorage.getItem('artworks') === '[]' || localStorage.getItem('artworks') === null) {
-                if (artworks.length > 0) {
-                    console.warn("Rilevato tentativo di cancellazione dati!");
-                    localStorage.clear();
-                    location.reload();
-                }
+            if ((localStorage.getItem('artworks') === '[]' || !localStorage.getItem('artworks')) && artworks.length > 0) {
+                console.warn("Tentativo di cancellazione dati!");
+                localStorage.clear();
+                location.reload();
             }
         }, 8000);
 
-        // PRIMO ACCESSO: FORZA PASSWORD
-        if (!localStorage.getItem('adminPasswordHash')) {
+        // PRIMO ACCESSO + FIX BLOCCO
+        const savedHash = localStorage.getItem('adminPasswordHash');
+        if (!savedHash || savedHash === 'undefined' || savedHash === 'null' || savedHash === '') {
             setTimeout(() => {
-                const p = prompt("PRIMO ACCESSO AL SITO\n\nCrea una PASSWORD ADMIN FORTE:\n• Minimo 10 caratteri\n• Numeri e simboli obbligatori");
+                const p = prompt("PRIMO ACCESSO o PASSWORD DANNEGGIATA\n\nCrea una PASSWORD ADMIN FORTE:\n• Minimo 10 caratteri\n• Numeri e simboli obbligatori\n\nEsempio: ViAmo2025!street");
                 if (p && p.length >= 10 && /[0-9]/.test(p) && /[^A-Za-z0-9]/.test(p)) {
                     localStorage.setItem('adminPasswordHash', btoa(p));
-                    alert("Password salvata!\nRicarica la pagina.");
+                    alert("Password salvata! Ricarica la pagina.");
                     location.reload();
                 } else {
-                    alert("Password non valida. Riprova.");
+                    alert("Password non valida. Ricarica e riprova.");
                 }
             }, 800);
+        } else {
+            adminPasswordHash = savedHash;
         }
 
         async function loadFromGitHub(force = false) {
@@ -217,13 +218,11 @@
                 const res = await fetch(GITHUB_DATA_URL + '?t=' + Date.now());
                 if (!res.ok) throw new Error('Non trovato');
                 const data = await res.json();
-                
                 if (force || !localStorage.getItem('artworks')) {
                     artworks = data.artworks || [];
-                    homeText = data.homeText || homeText;
-                    aboutText = data.aboutText || aboutText;
-                    bannerData = data.bannerData || bannerData;
-                    
+                    homeText = data.homeText || '';
+                    aboutText = data.aboutText || '';
+                    bannerData = data.bannerData || '';
                     localStorage.setItem('artworks', JSON.stringify(artworks));
                     localStorage.setItem('homeText', homeText);
                     localStorage.setItem('aboutText', aboutText);
@@ -238,21 +237,17 @@
         }
 
         function forceSyncFromGitHub() {
-            if (confirm("Sincronizzare ORA da GitHub? (sovrascrive dati locali)")) {
-                localStorage.removeItem('artworks');
-                localStorage.removeItem('homeText');
-                localStorage.removeItem('aboutText');
-                localStorage.removeItem('bannerData');
+            if (confirm("Sincronizzare ORA da GitHub? (sovrascrive tutto)")) {
+                ['artworks','homeText','aboutText','bannerData'].forEach(k => localStorage.removeItem(k));
                 loadFromGitHub(true).then(() => location.reload());
             }
         }
 
         function loadData() {
-            artworks = JSON.parse(localStorage.getItem('artworks')) || [];
+            artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
             homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
             aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
             bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
-            adminPasswordHash = localStorage.getItem('adminPasswordHash');
         }
 
         loadData();
@@ -271,7 +266,218 @@
             setTimeout(() => el.innerHTML = '', 5000);
         }
 
-        // === NUOVA FUNZIONE: IMPORT JSON ===
+        function toggleAdmin() {
+            const admin = document.getElementById('admin');
+            admin.style.display = admin.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function logout() {
+            loggedIn = false; editingId = null;
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            renderGallery();
+        }
+
+        function renderGallery() {
+            const c = document.getElementById('gallery-container');
+            c.innerHTML = artworks.map(a => `
+                <div class="artwork">
+                    <img src="${a.image}" alt="${a.title}" loading="lazy">
+                    <h3>${a.title}</h3>
+                    <p>Dimensioni: ${a.dimensions}</p>
+                    <p>Prezzo: €${a.price}</p>
+                    <a href="artwork.html?id=${a.id}">Dettagli</a>
+                    ${loggedIn ? `<button onclick="startEdit(${a.id})">Modifica</button>
+                                 <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // COMPRESSIONE IMMAGINI
+        function compressImage(file, callback) {
+            if (file.size < 1000000) return callback(URL.createObjectURL(file));
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const max = 1200;
+                if (img.width > max) {
+                    canvas.width = max;
+                    canvas.height = img.height * (max / img.width);
+                } else {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                }
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                callback(canvas.toDataURL('image/webp', 0.85));
+            };
+            img.src = URL.createObjectURL(file);
+        }
+
+        function previewFile(inputId, previewId) {
+            const file = document.getElementById(inputId).files[0];
+            const preview = document.getElementById(previewId);
+            if (file) {
+                if (file.size > 8 * 1024 * 1024) {
+                    showFeedback('gallery-feedback', 'File troppo grande! Max 8MB', false);
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // EVENTI
+        document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview'));
+        document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
+        document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
+
+        document.getElementById('banner-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const file = document.getElementById('banner-file').files[0];
+            if (!file) return showFeedback('banner-feedback', 'Seleziona un file!', false);
+            if (file.size > 8 * 1024 * 1024) return showFeedback('banner-feedback', 'Max 8MB!', false);
+            compressImage(file, dataUrl => {
+                bannerData = dataUrl;
+                document.getElementById('banner').src = bannerData;
+                localStorage.setItem('bannerData', bannerData);
+                showFeedback('banner-feedback', 'Banner aggiornato!');
+            });
+        });
+
+        ['home', 'about'].forEach(s => {
+            document.getElementById(s + '-form').addEventListener('submit', e => {
+                e.preventDefault();
+                const text = document.getElementById('new-' + s + '-text').value.trim();
+                if (!text) return;
+                if (s === 'home') homeText = text;
+                if (s === 'about') aboutText = text;
+                localStorage.setItem(s + 'Text', text);
+                document.getElementById(s + '-text').textContent = text;
+                showFeedback(s + '-feedback', 'Aggiornato!');
+            });
+        });
+
+        function startEdit(id) {
+            const art = artworks.find(x => x.id === id);
+            editingId = id;
+            document.getElementById('gallery-title').value = art.title;
+            document.getElementById('gallery-desc').value = art.desc;
+            document.getElementById('gallery-dimensions').value = art.dimensions;
+            document.getElementById('gallery-price').value = art.price;
+            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
+            if (art.rendering) {
+                document.getElementById('preview-rendering').src = art.rendering;
+                document.getElementById('preview-rendering').style.display = 'block';
+            }
+            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+            document.getElementById('cancel-edit').style.display = 'inline-block';
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('gallery-form').reset();
+            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
+            document.getElementById('cancel-edit').style.display = 'none';
+        }
+
+        function deleteArtwork(id) {
+            if (!confirm('Eliminare definitivamente?')) return;
+            artworks = artworks.filter(x => x.id !== id);
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            renderGallery();
+            showFeedback('gallery-feedback', 'Opera eliminata!');
+        }
+
+        document.getElementById('gallery-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const title = document.getElementById('gallery-title').value.trim();
+            const desc = document.getElementById('gallery-desc').value.trim();
+            const dimensions = document.getElementById('gallery-dimensions').value.trim();
+            const price = parseInt(document.getElementById('gallery-price').value);
+            const imageFile = document.getElementById('gallery-image-file').files[0];
+            const renderingFile = document.getElementById('gallery-rendering-file').files[0];
+
+            if (!title || !desc || !dimensions || isNaN(price) || price <= 0 || !imageFile) {
+                showFeedback('gallery-feedback', 'Compila tutti i campi!', false);
+                return;
+            }
+            if (imageFile.size > 8 * 1024 * 1024) {
+                showFeedback('gallery-feedback', 'Immagine troppo grande (max 8MB)', false);
+                return;
+            }
+
+            compressImage(imageFile, compressedImage => {
+                const saveData = { title, desc, dimensions, price, image: compressedImage };
+                if (renderingFile) {
+                    if (renderingFile.size > 8 * 1024 * 1024) {
+                        showFeedback('gallery-feedback', 'Rendering troppo grande', false);
+                        return;
+                    }
+                    compressImage(renderingFile, compressedRendering => {
+                        saveData.rendering = compressedRendering;
+                        finalizeSave(saveData);
+                    });
+                } else {
+                    finalizeSave(saveData);
+                }
+            });
+
+            function finalizeSave(data) {
+                if (editingId) {
+                    const i = artworks.findIndex(x => x.id === editingId);
+                    artworks[i] = { id: editingId, ...data };
+                    cancelEdit();
+                } else {
+                    artworks.push({ id: Date.now(), ...data });
+                }
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                renderGallery();
+                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta!');
+                e.target.reset();
+                document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+            }
+        });
+
+        // LOGIN
+        document.getElementById('login-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const input = document.getElementById('admin-password').value;
+            if (btoa(input) === adminPasswordHash) {
+                loggedIn = true;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('login-error').style.display = 'none';
+                document.getElementById('new-home-text').value = homeText;
+                document.getElementById('new-about-text').value = aboutText;
+                renderGallery();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+
+        // CAMBIO PASSWORD
+        document.getElementById('password-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const old = document.getElementById('old-password').value;
+            const newP = document.getElementById('new-password').value;
+            const conf = document.getElementById('confirm-password').value;
+
+            if (btoa(old) !== adminPasswordHash) return showFeedback('password-feedback', 'Password attuale errata!', false);
+            if (newP !== conf) return showFeedback('password-feedback', 'Le password non coincidono!', false);
+            if (newP.length < 10 || !/[0-9]/.test(newP) || !/[^A-Za-z0-9]/.test(newP)) {
+                return showFeedback('password-feedback', 'Min 10 caratteri + numeri + simboli', false);
+            }
+
+            adminPasswordHash = btoa(newP);
+            localStorage.setItem('adminPasswordHash', adminPasswordHash);
+            showFeedback('password-feedback', 'Password aggiornata!');
+            e.target.reset();
+        });
+
+        // IMPORT JSON
         function importFromJson() {
             const fileInput = document.getElementById('import-json-file');
             const file = fileInput.files[0];
@@ -284,33 +490,81 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-
                     if (!data.artworks || !data.homeText || !data.aboutText || !data.bannerData) {
-                        throw new Error("File JSON non valido: mancano dati obbligatori");
+                        throw new Error("Struttura JSON non valida");
                     }
 
-                    if (confirm("ATTENZIONE: Questo sovrascriverà TUTTO il sito (opere, testi, banner).\nContinuare?")) {
+                    if (confirm("Sovrascrivere TUTTO con questo backup?")) {
                         localStorage.setItem('artworks', JSON.stringify(data.artworks));
                         localStorage.setItem('homeText', data.homeText);
                         localStorage.setItem('aboutText', data.aboutText);
                         localStorage.setItem('bannerData', data.bannerData);
-
                         showFeedback('import-feedback', 'Ripristino completato! Ricaricamento...');
                         setTimeout(() => location.reload(), 1500);
                     }
                 } catch (err) {
-                    showFeedback('import-feedback', 'Errore: file JSON non valido!', false);
-                    console.error(err);
+                    showFeedback('import-feedback', 'File JSON non valido!', false);
                 }
             };
             reader.readAsText(file);
         }
 
-        // ... (tutto il resto del codice rimane identico: renderGallery, compressione, login, ecc.)
-        // (Per brevità non lo ripeto, ma è tutto incluso nella versione precedente)
+        // CONTATTI, EXPORT, PUSH (come prima)
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            btn.disabled = true; btn.textContent = 'Invio...';
+            const data = Object.fromEntries(new FormData(this));
+            emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
+                to_email: 'viamoarte@gmail.com',
+                user_name: data.user_name,
+                user_email: data.user_email,
+                message: data.message
+            })
+            .then(() => emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, { to_email: data.user_email, user_name: data.user_name }))
+            .then(() => {
+                showFeedback('form-feedback', 'Messaggio inviato!');
+                this.reset();
+            })
+            .catch(() => showFeedback('form-feedback', 'Errore invio', false))
+            .finally(() => { btn.disabled = false; btn.textContent = 'Invia Messaggio'; });
+        });
 
-        // [QUI VA TUTTO IL CODICE PRECEDENTE CHE HAI GIÀ: renderGallery, compressImage, eventi, login, ecc.]
-        // Lo ometto solo per non fare un messaggio troppo lungo, ma nella versione reale è tutto incluso!
+        function exportData() {
+            const data = { artworks, homeText, aboutText, bannerData };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'data.json'; a.click();
+            showFeedback('github-feedback', 'File esportato!');
+        }
+
+        async function getCurrentSha() {
+            try {
+                const res = await fetch(GITHUB_API);
+                const data = await res.json();
+                return data.sha;
+            } catch { return null; }
+        }
+
+        async function pushToGitHub() {
+            const token = prompt("GitHub Personal Access Token");
+            if (!token) return;
+            const data = { artworks, homeText, aboutText, bannerData };
+            const content = btoa(JSON.stringify(data, null, 2));
+            const sha = await getCurrentSha();
+
+            fetch(GITHUB_API, {
+                method: 'PUT',
+                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Aggiornamento da admin', content, sha })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.content) showFeedback('github-feedback', 'Push su GitHub OK!');
+                else showFeedback('github-feedback', 'Errore push', false);
+            });
+        }
 
         renderGallery();
     </script>
