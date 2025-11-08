@@ -3,49 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Scopri le opere uniche di ViAmo, artista di street art e pop culture.">
-    <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, galleria, street art">
-    <meta name="author" content="ViAmo Art">
+    <meta name="description" content="ViAmo - Vincenza Amodio, street art e pop culture">
     <title>ViAmo - Galleria d'Arte</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function(){ emailjs.init("z2kCGkszIchfP51G_"); })();
-    </script>
+    <script>(function(){emailjs.init("z2kCGkszIchfP51G_");})();</script>
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
-        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;position:relative;}
-        #banner{width:100%;max-height:350px;object-fit:cover;display:block;}
+        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;}
+        #banner{width:100%;max-height:350px;object-fit:cover;}
         nav{background:#34495e;padding:10px;text-align:center;}
         nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
-        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-height:70vh;overflow-y:auto;padding:10px;}
+        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;}
         .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
         .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}
-        .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
-        .artwork a:hover,.artwork button:hover{background:#34495e;}
-        form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
-        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
-        input[type=file]{margin:10px 0;padding:8px;}
-        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
+        .artwork button, .artwork a{display:inline-block;margin:8px 4px;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;cursor:pointer;}
+        .artwork button:hover, .artwork a:hover{background:#34495e;}
+        button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;}
         button:hover{background:#34495e;}
         #admin{display:none;}
-        .error{color:red;display:none;text-align:center;margin:10px 0;}
         .feedback{padding:10px;border-radius:5px;margin:10px 0;text-align:center;}
         .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
         .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
         .preview-img{max-width:100%;max-height:150px;margin:10px 0;border-radius:5px;display:none;}
         .admin-section{margin-bottom:30px;}
-        .admin-section h3{margin-top:0;}
-        .github-sync{margin:10px 0;font-size:0.9em;}
-        .github-sync span{color:green;font-weight:bold;}
-        .import-export button{margin:5px;}
-        @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
+        @media (max-width:600px){nav a{display:block;margin:10px 0;}}
     </style>
 </head>
 <body>
     <header>
-        <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
+        <img id="banner" src="Opere/banner.jpg" alt="Banner" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
     <nav>
@@ -56,17 +44,17 @@
         <a href="#" onclick="toggleAdmin()">Area Riservata</a>
     </nav>
 
-    <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
+    <section id="home"><h2>Home</h2><div id="home-text">Caricamento...</div></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
-    <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
+    <section id="about"><h2>Chi è ViAmo</h2><div id="about-text">Caricamento...</div></section>
 
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
-            <input type="text" name="user_name" placeholder="Il tuo nome" required>
-            <input type="email" name="user_email" placeholder="La tua email" required>
-            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
-            <button type="submit">Invia Messaggio</button>
+            <input type="text" name="user_name" placeholder="Nome" required>
+            <input type="email" name="user_email" placeholder="Email" required>
+            <textarea name="message" placeholder="Messaggio" rows="5" required></textarea>
+            <button type="submit">Invia</button>
             <div id="form-feedback"></div>
         </form>
     </section>
@@ -74,48 +62,40 @@
     <section id="admin">
         <h2>Area Amministratore</h2>
         <div id="login-section">
-            <form id="login-form">
-                <input type="password" id="admin-password" placeholder="Password Admin" required>
-                <div class="error" id="login-error">Password errata.</div>
-                <button type="submit">Accedi</button>
-            </form>
+            <input type="password" id="admin-password" placeholder="Password" required>
+            <button onclick="login()">Accedi</button>
+            <div class="error" id="login-error" style="display:none;color:red;">Password errata</div>
         </div>
 
         <div id="admin-panel" style="display:none;">
             <button onclick="logout()" style="background:#e74c3c;">Esci</button>
 
-            <div class="admin-section import-export">
+            <div class="admin-section">
                 <h3>Gestione Dati</h3>
                 <input type="file" id="import-file" accept=".json" style="display:none;">
                 <button onclick="document.getElementById('import-file').click()">Importa data.json</button>
                 <button onclick="exportData()">Esporta data.json</button>
-                <button onclick="forceGitHubSync()">Forza Sync GitHub (Token)</button>
+                <button onclick="forceGitHubSync()">Sync GitHub</button>
                 <div id="sync-feedback"></div>
             </div>
 
             <div class="admin-section">
-                <h3>Modifica Banner</h3>
-                <form id="banner-form">
-                    <input type="file" id="banner-file" accept="image/*">
-                    <img id="banner-preview" class="preview-img" alt="Anteprima">
-                    <button type="submit">Aggiorna Banner</button>
-                    <div id="banner-feedback"></div>
-                </form>
+                <h3>Banner</h3>
+                <input type="file" id="banner-file" accept="image/*">
+                <img id="banner-preview" class="preview-img" alt="">
+                <button onclick="updateBanner()">Aggiorna</button>
             </div>
 
             <div class="admin-section">
-                <h3>Testo Home</h3>
-                <form id="home-form">
-                    <textarea id="new-home-text" rows="4" required></textarea>
-                    <button type="submit">Aggiorna</button>
-                </form>
+                <h3>Testo Home (HTML consentito)</h3>
+                <textarea id="new-home-text" rows="6"></textarea>
+                <button onclick="updateHome()">Aggiorna</button>
             </div>
+
             <div class="admin-section">
-                <h3>Testo Chi Sono</h3>
-                <form id="about-form">
-                    <textarea id="new-about-text" rows="4" required></textarea>
-                    <button type="submit  type="submit">Aggiorna</button>
-                </form>
+                <h3>Testo Chi Sono (HTML consentito)</h3>
+                <textarea id="new-about-text" rows="6"></textarea>
+                <button onclick="updateAbout()">Aggiorna</button>
             </div>
 
             <div class="admin-section">
@@ -124,62 +104,70 @@
                     <input type="text" id="gallery-title" placeholder="Titolo" required>
                     <input type="text" id="gallery-desc" placeholder="Descrizione" required>
                     <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
+                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" required>
                     <input type="file" id="gallery-image-file" accept="image/*" required>
-                    <img id="preview-main" class="preview-img" alt="Anteprima">
+                    <img id="preview-main" class="preview-img" alt="">
                     <input type="file" id="gallery-rendering-file" accept="image/*">
-                    <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
-                    <button type="submit" id="gallery-submit-btn">Aggiungi Opera</button>
-                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla Modifica</button>
-                    <div id="gallery-feedback"></div>
+                    <img id="preview-rendering" class="preview-img" alt="">
+                    <button type="submit">Salva Opera</button>
+                    <button type="button" onclick="cancelEdit()" id="cancel-edit" style="display:none;background:#e74c3c;">Annulla</button>
                 </form>
+                <div id="gallery-feedback"></div>
             </div>
 
             <div class="admin-section">
-                <h3>GitHub Sync</h3>
-                <p class="github-sync">Dati da GitHub: <span id="github-status">Caricamento...</span></p>
-                <p>Token salvato: <span id="token-status">No</span></p>
-            </div>
-
-            <div class="admin-section">
-                <h3>Cambia Password Admin</h3>
-                <form id="password-form">
-                    <input type="password" id="old-password" placeholder="Password attuale" required>
-                    <input type="password" id="new-password" placeholder="Nuova password" required minlength="6">
-                    <input type="password" id="confirm-password" placeholder="Conferma" required>
-                    <button type="submit">Cambia Password</button>
-                    <div id="password-feedback"></div>
-                </form>
+                <h3>Password</h3>
+                <input type="password" id="old-password" placeholder="Vecchia">
+                <input type="password" id="new-password" placeholder="Nuova">
+                <button onclick="changePassword()">Cambia</button>
+                <div id="password-feedback"></div>
             </div>
         </div>
     </section>
 
-    <footer>© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
+    <footer>© 2025 ViAmo Art</footer>
 
     <script>
-        const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
-        const GITHUB_API_URL = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/data.json';
+        // === IndexedDB per immagini grandi ===
+        const dbPromise = indexedDB.open('ViAmoDB', 1);
+        dbPromise.onupgradeneeded = e => e.target.result.createObjectStore('images', {keyPath: 'id'});
+        
+        let db;
+        dbPromise.onsuccess = e => { db = e.target.result; loadAll(); };
+        dbPromise.onerror = () => alert('Errore IndexedDB');
 
+        // === Variabili ===
         let artworks = [], homeText = '', aboutText = '', bannerData = '';
-        let adminPasswordHash = localStorage.getItem('adminPasswordHash') || btoa('ViAmo2025Admin!');
-        if (!localStorage.getItem('adminPasswordHash')) localStorage.setItem('adminPasswordHash', adminPasswordHash);
-        let githubToken = localStorage.getItem('githubToken') || '';
+        let adminHash = localStorage.getItem('adminHash') || btoa('ViAmo2025!');
+        if (!localStorage.getItem('adminHash')) localStorage.setItem('adminHash', adminHash);
+        let token = localStorage.getItem('ghToken') || '';
         let loggedIn = false, editingId = null;
 
-        function loadData() {
-            artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio...';
-            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo...';
-            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
-            document.getElementById('token-status').textContent = githubToken ? 'Sì' : 'No';
-            document.getElementById('token-status').style.color = githubToken ? 'green' : 'red';
-        }
+        const GITHUB_RAW = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
 
-        function saveAll() {
-            localStorage.setItem('artworks', JSON.stringify(artworks));
-            localStorage.setItem('homeText', homeText);
-            localStorage.setItem('aboutText', aboutText);
-            localStorage.setItem('bannerData', bannerData);
+        // === Carica tutto ===
+        async function loadAll() {
+            // LocalStorage
+            artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+            homeText = localStorage.getItem('homeText') || '<p>Benvenuta nel mondo di ViAmo!</p>';
+            aboutText = localStorage.getItem('aboutText') || '<p>Vincenza Amodio, in arte ViAmo...</p>';
+            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
+
+            // Immagini da IndexedDB
+            for (let art of artworks) {
+                if (art.image && art.image.startsWith('db:')) {
+                    art.image = await getImage(art.image);
+                }
+                if (art.rendering && art.rendering.startsWith('db:')) {
+                    art.rendering = await getImage(art.rendering);
+                }
+            }
+            if (bannerData.startsWith('db:')) {
+                bannerData = await getImage(bannerData);
+            }
+
+            renderAll();
+            syncGitHubStatus();
         }
 
         function renderAll() {
@@ -190,32 +178,74 @@
         }
 
         function renderGallery() {
-            const container = document.getElementById('gallery-container');
-            container.innerHTML = artworks.map(art => `
+            const c = document.getElementById('gallery-container');
+            c.innerHTML = artworks.map(a => `
                 <div class="artwork">
-                    <img src="${art.image}" alt="${art.title}" loading="lazy">
-                    <h3>${art.title}</h3>
-                    <p>Dimensioni: ${art.dimensions}</p>
-                    <p>Prezzo: €${art.price}</p>
-                    <a href="artwork.html?id=${art.id}">Dettagli</a>
+                    <img src="${a.image}" alt="${a.title}" loading="lazy">
+                    <h3>${a.title}</h3>
+                    <p>${a.dimensions}</p>
+                    <p>€${a.price}</p>
+                    <a href="artwork.html?id=${a.id}">Dettagli</a>
                     ${loggedIn ? `
-                        <button onclick="startEdit(${art.id})">Modifica</button>
-                        <button onclick="deleteArtwork(${art.id})" style="background:#e74c3c;">Elimina</button>
+                        <button onclick="editArt(${a.id})">Modifica</button>
+                        <button onclick="deleteArt(${a.id})" style="background:#e74c3c;">Elimina</button>
                     ` : ''}
                 </div>
             `).join('');
         }
 
-        function showFeedback(id, msg, success = true) {
-            const el = document.getElementById(id);
-            el.innerHTML = `<div class="feedback ${success ? 'success' : 'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 4000);
+        // === IndexedDB helpers ===
+        async function saveImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = async () => {
+                    const id = 'img_' + Date.now();
+                    const tx = db.transaction('images', 'readwrite');
+                    tx.objectStore('images').put({id, data: reader.result});
+                    await tx.complete;
+                    resolve('db:' + id);
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
-        // FUNZIONAMENTO MODIFICA (FIXATO!)
-        window.startEdit = function(id) {
+        async function getImage(key) {
+            return new Promise((resolve) => {
+                const tx = db.transaction('images');
+                const req = tx.objectStore('images').get(key.replace('db:', ''));
+                req.onsuccess = () => resolve(req.result ? req.result.data : 'Opere/placeholder.jpg');
+            });
+        }
+
+        // === Admin ===
+        window.login = () => {
+            const pass = document.getElementById('admin-password').value;
+            if (btoa(pass) === adminHash) {
+                loggedIn = true;
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('new-home-text').value = homeText;
+                document.getElementById('new-about-text').value = aboutText;
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        };
+
+        window.logout = () => {
+            loggedIn = false;
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-password').value = '';
+        };
+
+        window.toggleAdmin = () => {
+            const el = document.getElementById('admin');
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        };
+
+        // === Modifica opera ===
+        window.editArt = (id) => {
             const art = artworks.find(a => a.id === id);
-            if (!art) return;
             editingId = id;
             document.getElementById('gallery-title').value = art.title;
             document.getElementById('gallery-desc').value = art.desc;
@@ -227,226 +257,170 @@
                 document.getElementById('preview-rendering').src = art.rendering;
                 document.getElementById('preview-rendering').style.display = 'block';
             }
-            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+            document.querySelector('#gallery-form button[type="submit"]').textContent = 'Salva Modifiche';
             document.getElementById('cancel-edit').style.display = 'inline-block';
         };
 
-        window.deleteArtwork = function(id) {
-            if (!confirm('Eliminare questa opera?')) return;
-            artworks = artworks.filter(a => a.id !== id);
-            saveAll();
-            renderGallery();
-            showFeedback('gallery-feedback', 'Opera eliminata!');
+        window.deleteArt = (id) => {
+            if (confirm('Eliminare?')) {
+                artworks = artworks.filter(a => a.id !== id);
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                renderGallery();
+            }
         };
 
-        window.cancelEdit = function() {
+        window.cancelEdit = () => {
             editingId = null;
             document.getElementById('gallery-form').reset();
-            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
-            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
+            document.querySelectorAll('.preview-img').forEach(i => i.style.display = 'none');
+            document.querySelector('#gallery-form button[type="submit"]').textContent = 'Aggiungi Opera';
             document.getElementById('cancel-edit').style.display = 'none';
         };
 
-        // Gestione form galleria
-        document.getElementById('gallery-form').onsubmit = function(e) {
+        // === Gallery form ===
+        document.getElementById('gallery-form').onsubmit = async (e) => {
             e.preventDefault();
             const title = document.getElementById('gallery-title').value.trim();
             const desc = document.getElementById('gallery-desc').value.trim();
-            const dimensions = document.getElementById('gallery-dimensions').value.trim();
-            const price = parseInt(document.getElementById('gallery-price').value);
+            const dim = document.getElementById('gallery-dimensions').value.trim();
+            const price = document.getElementById('gallery-price').value;
             const imgFile = document.getElementById('gallery-image-file').files[0];
             const rendFile = document.getElementById('gallery-rendering-file').files[0];
 
-            if (!title || !desc || !dimensions || !price || !imgFile) {
-                showFeedback('gallery-feedback', 'Compila tutti i campi obbligatori!', false);
-                return;
-            }
+            if (!title || !desc || !dim || !price || !imgFile) return alert('Compila tutto!');
 
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                const newArt = { title, desc, dimensions, price, image: ev.target.result };
-                if (rendFile) {
-                    const r2 = new FileReader();
-                    r2.onload = e2 => { newArt.rendering = e2.target.result; saveArt(); };
-                    r2.readAsDataURL(rendFile);
-                } else saveArt();
+            const image = await saveImage(imgFile);
+            const rendering = rendFile ? await saveImage(rendFile) : null;
 
-                function saveArt() {
-                    if (editingId) {
-                        const idx = artworks.findIndex(a => a.id === editingId);
-                        artworks[idx] = { id: editingId, ...newArt };
-                        cancelEdit();
-                        showFeedback('gallery-feedback', 'Opera modificata!');
-                    } else {
-                        newArt.id = Date.now();
-                        artworks.push(newArt);
-                        showFeedback('gallery-feedback', 'Opera aggiunta!');
-                    }
-                    saveAll();
-                    renderGallery();
-                    this.reset();
-                    document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
-                }
-            }.bind(this);
-            reader.readAsDataURL(imgFile);
-        };
+            const art = { id: editingId || Date.now(), title, desc, dimensions: dim, price: parseInt(price), image, rendering };
 
-        // Anteprime
-        document.getElementById('gallery-image-file').onchange = () => preview('gallery-image-file', 'preview-main');
-        document.getElementById('gallery-rendering-file').onchange = () => preview('gallery-rendering-file', 'preview-rendering');
-        document.getElementById('banner-file').onchange = () => preview('banner-file', 'banner-preview');
-        function preview(inputId, imgId) {
-            const file = document.getElementById(inputId).files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    document.getElementById(imgId).src = e.target.result;
-                    document.getElementById(imgId).style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Banner
-        document.getElementById('banner-form').onsubmit = e => {
-            e.preventDefault();
-            const file = document.getElementById('banner-file').files[0];
-            if (!file) return showFeedback('banner-feedback', 'Seleziona un'immagine!', false);
-            const reader = new FileReader();
-            reader.onload = ev => {
-                bannerData = ev.target.result;
-                saveAll();
-                renderAll();
-                showFeedback('banner-feedback', 'Banner aggiornato!');
-            };
-            reader.readAsDataURL(file);
-        };
-
-        // Testi
-        document.getElementById('home-form').onsubmit = e => { e.preventDefault(); homeText = document.getElementById('new-home-text').value; saveAll(); renderAll(); showFeedback('home-form', 'Testo Home aggiornato!'); };
-        document.getElementById('about-form').onsubmit = e => { e.preventDefault(); aboutText = document.getElementById('new-about-text').value; saveAll(); renderAll(); showFeedback('about-form', 'Testo Chi Sono aggiornato!'); };
-
-        // Login
-        document.getElementById('login-form').onsubmit = e => {
-            e.preventDefault();
-            if (btoa(document.getElementById('admin-password').value) === adminPasswordHash) {
-                loggedIn = true;
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('new-home-text').value = homeText;
-                document.getElementById('new-about-text').value = aboutText;
-                renderGallery();
+            if (editingId) {
+                const i = artworks.findIndex(a => a.id === editingId);
+                artworks[i] = art;
+                cancelEdit();
+                alert('Modificata!');
             } else {
-                document.getElementById('login-error').style.display = 'block';
+                artworks.push(art);
+                alert('Aggiunta!');
             }
-        };
 
-        // Cambia password
-        document.getElementById('password-form').onsubmit = e => {
-            e.preventDefault();
-            const old = document.getElementById('old-password').value;
-            const nuovo = document.getElementById('new-password').value;
-            const conf = document.getElementById('confirm-password').value;
-            if (btoa(old) !== adminPasswordHash) return showFeedback('password-feedback', 'Password attuale errata!', false);
-            if (nuovo !== conf) return showFeedback('password-feedback', 'Le password non coincidono!', false);
-            if (nuovo.length < 6) return showFeedback('password-feedback', 'Minimo 6 caratteri!', false);
-            adminPasswordHash = btoa(nuovo);
-            localStorage.setItem('adminPasswordHash', adminPasswordHash);
-            showFeedback('password-feedback', 'Password cambiata con successo!');
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            renderGallery();
             e.target.reset();
         };
 
-        // Import/Export
-        document.getElementById('import-file').onchange = e => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = ev => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    artworks = data.artworks || [];
-                    homeText = data.homeText || '';
-                    aboutText = data.aboutText || '';
-                    bannerData = data.bannerData || '';
-                    saveAll();
-                    renderAll();
-                    showFeedback('sync-feedback', 'File importato con successo!', true);
-                } catch (err) {
-                    showFeedback('sync-feedback', 'File JSON non valido!', false);
+        // === Anteprime ===
+        ['gallery-image-file', 'gallery-rendering-file', 'banner-file'].forEach(id => {
+            document.getElementById(id).onchange = () => {
+                const file = document.getElementById(id).files[0];
+                if (file) {
+                    const prevId = id === 'banner-file' ? 'banner-preview' : id === 'gallery-image-file' ? 'preview-main' : 'preview-rendering';
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        document.getElementById(prevId).src = e.target.result;
+                        document.getElementById(prevId).style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
                 }
             };
-            reader.readAsText(file);
+        });
+
+        // === Aggiornamenti rapidi ===
+        window.updateBanner = async () => {
+            const file = document.getElementById('banner-file').files[0];
+            if (!file) return alert('Seleziona immagine');
+            bannerData = await saveImage(file);
+            localStorage.setItem('bannerData', bannerData);
+            renderAll();
+        };
+
+        window.updateHome = () => {
+            homeText = document.getElementById('new-home-text').value;
+            localStorage.setItem('homeText', homeText);
+            renderAll();
+        };
+
+        window.updateAbout = () => {
+            aboutText = document.getElementById('new-about-text').value;
+            localStorage.setItem('aboutText', aboutText);
+            renderAll();
+        };
+
+        window.changePassword = () => {
+            const old = document.getElementById('old-password').value;
+            const nuovo = document.getElementById('new-password').value;
+            if (btoa(old) !== adminHash) return alert('Password attuale sbagliata');
+            if (nuovo.length < 6) return alert('Minimo 6 caratteri');
+            adminHash = btoa(nuovo);
+            localStorage.setItem('adminHash', adminHash);
+            alert('Password cambiata!');
+        };
+
+        // === Import/Export ===
+        document.getElementById('import-file').onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const text = await file.text();
+            const data = JSON.parse(text);
+            artworks = data.artworks || [];
+            homeText = data.homeText || '';
+            aboutText = data.aboutText || '';
+            bannerData = data.bannerData || '';
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            localStorage.setItem('homeText', homeText);
+            localStorage.setItem('aboutText', aboutText);
+            localStorage.setItem('bannerData', bannerData);
+            location.reload();
         };
 
         window.exportData = () => {
             const data = { artworks, homeText, aboutText, bannerData };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url; a.download = 'data.json'; a.click();
-            showFeedback('sync-feedback', 'data.json esportato!');
         };
 
         window.forceGitHubSync = async () => {
-            if (!githubToken) {
-                const token = prompt('Inserisci GitHub Personal Access Token (scope: repo):');
-                if (token) { localStorage.setItem('githubToken', token); githubToken = token; document.getElementById('token-status').textContent = 'Sì'; document.getElementById('token-status').style.color = 'green'; }
+            if (!token) {
+                token = prompt('GitHub Token (repo scope):');
+                if (token) localStorage.setItem('ghToken', token);
             }
-            showFeedback('sync-feedback', 'Sync in corso...');
             try {
-                const res = await fetch(GITHUB_API_URL, { headers: { Authorization: `token ${githubToken}` } });
-                if (!res.ok) throw new Error('Token non valido');
-                const file = await res.json();
-                const content = JSON.parse(atob(file.content));
-                artworks = content.artworks || [];
-                homeText = content.homeText || '';
-                aboutText = content.aboutText || '';
-                bannerData = content.bannerData || '';
-                saveAll();
-                renderAll();
-                document.getElementById('github-status').textContent = 'SÌ'; document.getElementById('github-status').style.color = 'green';
-                showFeedback('sync-feedback', 'Sincronizzato da GitHub!', true);
-            } catch (err) {
-                showFeedback('sync-feedback', 'Errore: ' + err.message, false);
-            }
+                const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
+                const data = await res.json();
+                artworks = data.artworks || [];
+                homeText = data.homeText || '';
+                aboutText = data.aboutText || '';
+                bannerData = data.bannerData || '';
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                localStorage.setItem('homeText', homeText);
+                localStorage.setItem('aboutText', aboutText);
+                localStorage.setItem('bannerData', bannerData);
+                location.reload();
+            } catch { alert('Errore sync'); }
         };
 
-        // Caricamento iniziale
-        loadData();
-        fetch(GITHUB_DATA_URL + '?t=' + Date.now())
-            .then(r => r.ok ? r.json() : Promise.reject())
-            .then(data => {
-                if (!localStorage.getItem('artworks')) {
-                    artworks = data.artworks || []; homeText = data.homeText || homeText;
-                    aboutText = data.aboutText || aboutText; bannerData = data.bannerData || bannerData;
-                    saveAll();
-                }
-                document.getElementById('github-status').textContent = 'SÌ'; document.getElementById('github-status').style.color = 'green';
-            })
-            .catch(() => { document.getElementById('github-status').textContent = 'NO'; document.getElementById('github-status').style.color = 'red'; })
-            .finally(renderAll);
+        function syncGitHubStatus() {
+            fetch(GITHUB_RAW).then(r => {
+                document.getElementById('sync-feedback').innerHTML = r.ok ?
+                    '<span style="color:green;">GitHub sincronizzato</span>' :
+                    '<span style="color:red;">GitHub non raggiungibile</span>';
+            });
+        }
 
-        window.toggleAdmin = () => document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block';
-        window.logout = () => { loggedIn = false; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); };
-
-        // EmailJS
-        document.getElementById('contact-form').onsubmit = function(e) {
+        // === Email ===
+        document.getElementById('contact-form').onsubmit = (e) => {
             e.preventDefault();
-            const btn = this.querySelector('button');
-            btn.disabled = true; btn.textContent = 'Invio...';
             emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
                 to_email: 'viamoarte@gmail.com',
-                user_name: this.user_name.value,
-                user_email: this.user_email.value,
-                message: this.message.value
-            }).then(() => emailjs.send('service_rdfzdc8', 'template_07bn298', {
-                to_email: this.user_email.value,
-                user_name: this.user_name.value
-            })).then(() => {
-                showFeedback('form-feedback', 'Messaggio inviato!', true);
-                this.reset();
-            }).catch(() => showFeedback('form-feedback', 'Errore invio', false))
-              .finally(() => { btn.disabled = false; btn.textContent = 'Invia Messaggio'; });
+                user_name: e.target.user_name.value,
+                user_email: e.target.user_email.value,
+                message: e.target.message.value
+            }).then(() => {
+                alert('Messaggio inviato!');
+                e.target.reset();
+            }).catch(() => alert('Errore invio'));
         };
     </script>
 </body>
