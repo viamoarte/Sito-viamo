@@ -130,7 +130,7 @@
                     <div id="backup-feedback"></div>
                 </div>
 
-                <!-- SALVA SU GITHUB -->
+                <!-- SALVA SU GITHUB (TURBO) -->
                 <div class="admin-section">
                     <h3>Sincronizza</h3>
                     <button type="button" onclick="saveToGitHub()" style="background:#27ae60;">Salva su GitHub</button>
@@ -373,29 +373,42 @@
             reader.readAsText(file);
         }
 
-        // SALVA SU GITHUB
+        // SALVA SU GITHUB (TURBO - 2 SECONDI)
         async function saveToGitHub() {
             const btn = document.querySelector('[onclick="saveToGitHub()"]');
             btn.disabled = true;
             btn.textContent = 'Salvataggio...';
+
             const data = { artworks, homeText, aboutText, bannerData };
-            const content = btoa(JSON.stringify(data, null, 2));
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+
             try {
-                const res = await fetch(GITHUB_API);
+                const res = await fetch(GITHUB_API + '?t=' + Date.now());
                 let sha = '';
                 if (res.ok) {
                     const file = await res.json();
                     sha = file.sha;
                 }
+
                 await fetch(GITHUB_API, {
                     method: 'PUT',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Update', content, sha })
+                    headers: { 
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify({ 
+                        message: 'Aggiornamento automatico', 
+                        content, 
+                        sha 
+                    })
                 });
-                showFeedback('github-feedback', 'Salvato! Ricarica tra 10s.');
-                setTimeout(() => location.reload(), 10000);
+
+                showFeedback('github-feedback', 'Salvato in 2 secondi! Ricarica ora.');
+                setTimeout(() => location.reload(), 3000);
+                
             } catch (e) {
-                showFeedback('github-feedback', 'Errore', false);
+                showFeedback('github-feedback', 'Errore rete', false);
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Salva su GitHub';
