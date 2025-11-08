@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViAmo - Dettagli Opera</title>
+    <style>
+        body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
+        header{background:#2c3e50;color:#fff;padding:15px;text-align:center;}
+        nav{background:#34495e;padding:10px;text-align:center;}
+        nav a{color:#fff;margin:0 20px;text-decoration:none;font-size:1.1em;}
+        nav a:hover{text-decoration:underline;}
+        .artwork-details{margin:20px auto;padding:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);max-width:800px;text-align:center;}
+        .artwork-details img{max-width:100%;max-height:500px;object-fit:contain;border-radius:8px;margin:15px 0;}
+        .artwork-details p#artwork-desc{text-align:justify;margin:20px 0;}
+        .error{color:#c00;font-weight:bold;margin:20px;}
+        form{display:flex;flex-direction:column;max-width:500px;margin:20px auto;}
+        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
+        button{padding:12px;background:#2c3e50;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1em;}
+        button:hover{background:#34495e;}
+        .back-link{display:inline-block;margin:20px;color:#2c3e50;text-decoration:none;font-size:1.1em;}
+        .back-link:hover{text-decoration:underline;}
+        .feedback{padding:10px;margin:10px auto;max-width:500px;border-radius:5px;text-align:center;}
+        .feedback.success{background:#d4edda;color:#155724;border:1px solid #c3e6cb;}
+        .feedback.error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;}
+        #rendering-btn{margin:20px auto;display:block;padding:12px 30px;background:#1a5276;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:1.1em;}
+        #rendering-btn:hover{background:#21618c;}
+        .lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);justify-content:center;align-items:center;z-index:1000;}
+        .lightbox img{max-width:95%;max-height:95%;object-fit:contain;border:3px solid #fff;border-radius:8px;}
+        .close-lightbox{position:absolute;top:20px;right:30px;color:#fff;font-size:40px;cursor:pointer;z-index:1001;}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ViAmo – Dettagli Opera</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#gallery">Galleria</a>
+        <a href="index.html#about">Chi Sono</a>
+        <a href="index.html#contact">Contatti</a>
+    </nav>
+
+    <section class="artwork-details">
+        <h2 id="artwork-title">Caricamento...</h2>
+        <img id="artwork-image" src="" alt="" loading="lazy">
+        <p id="artwork-desc"></p>
+        <p id="artwork-dimensions"></p>
+        <p id="artwork-price"></p>
+
+        <button id="rendering-btn" style="display:none;">Visualizza con Rendering</button>
+
+        <p class="error" id="error-message" style="display:none;">Opera non trovata.</p>
+
+        <h3>Chiedi Informazioni per Questa Opera</h3>
+        <form id="contact-form">
+            <input type="text" name="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" placeholder="La tua email" required>
+            <textarea name="message" id="inquiry-message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+            <button type="submit">Invia Messaggio</button>
+            <div id="form-feedback"></div>
+        </form>
+
+        <a href="index.html#gallery" class="back-link">Torna alla Galleria</a>
+    </section>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="close-lightbox" onclick="closeLightbox()">X</span>
+        <img id="lightbox-img" src="" alt="Rendering">
+    </div>
+
+    <script>
+        // EmailJS
+        (function(){ emailjs.init("z2kCGkszIchfP51G_"); })();
+
+        const SERVICE_ID = 'service_rdfzdc8';
+        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';
+        const TEMPLATE_AUTOREPLY = 'template_07bn298';
+
+        // GITHUB – STESSO FILE DI INDEX.HTML
+        const GITHUB_RAW = 'https://raw.githubusercontent.com/viamoarte/viamoarte.github.io/main/data.json';
+
+        let artworks = [];
+        const urlParams = new URLSearchParams(location.search);
+        const id = Number(urlParams.get('id')); // Supporta ID grandi
+        let currentArtwork = null;
+
+        const $ = id => document.getElementById(id);
+
+        // CARICA DATI CON ATTESA
+        async function loadData() {
+            try {
+                const res = await fetch(GITHUB_RAW + '?t=' + Date.now());
+                if (!res.ok) throw new Error('File non trovato');
+                const data = await res.json();
+                artworks = data.artworks || [];
+                currentArtwork = artworks.find(a => a.id === id);
+
+                if (currentArtwork) {
+                    $('artwork-title').textContent = currentArtwork.title;
+                    $('artwork-image').src = currentArtwork.image;
+                    $('artwork-desc').textContent = currentArtwork.desc || 'Nessuna descrizione.';
+                    $('artwork-dimensions').textContent = `Dimensioni: ${currentArtwork.dimensions || 'Non specificate'}`;
+                    $('artwork-price').textContent = `Prezzo: €${currentArtwork.price || 'Su richiesta'}`;
+                    $('error-message').style.display = 'none';
+
+                    // Precompila messaggio
+                    $('inquiry-message').value = `Richiesta informazioni per l'opera "${currentArtwork.title}"`;
+
+                    // RENDERING
+                    if (currentArtwork.rendering) {
+                        $('rendering-btn').style.display = 'block';
+                        $('rendering-btn').onclick = () => {
+                            $('lightbox-img').src = currentArtwork.rendering;
+                            $('lightbox').style.display = 'flex';
+                        };
+                    }
+                } else {
+                    $('artwork-title').textContent = 'Opera non trovata';
+                    $('error-message').style.display = 'block';
+                }
+            } catch (e) {
+                $('artwork-title').textContent = 'Errore di caricamento';
+                $('error-message').textContent = 'Impossibile caricare i dati da GitHub. Riprova più tardi.';
+                $('error-message').style.display = 'block';
+            }
+        }
+
+        function closeLightbox() {
+            $('lightbox').style.display = 'none';
+        }
+
+        // FORM CONTATTO
+        $('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Invio...';
+
+            const data = {
+                user_name: this.user_name.value,
+                user_email: this.user_email.value,
+                message: this.message.value
+            };
+
+            emailjs.send(SERVICE_ID, TEMPLATE_TO_ADMIN, {
+                to_email: 'viamoarte@gmail.com',
+                ...data
+            })
+            .then(() => emailjs.send(SERVICE_ID, TEMPLATE_AUTOREPLY, {
+                to_email: data.user_email,
+                user_name: data.user_name
+            }))
+            .then(() => {
+                showFeedback('Inviato! Riceverai una risposta.');
+                this.reset();
+                if (currentArtwork) $('inquiry-message').value = `Richiesta informazioni per l'opera "${currentArtwork.title}"`;
+            })
+            .catch(() => showFeedback('Errore invio.', false))
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = 'Invia Messaggio';
+            });
+        });
+
+        function showFeedback(msg, ok = true) {
+            const el = $('form-feedback');
+            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 4000);
+        }
+
+        // AVVIO CON ATTESA
+        loadData();
+    </script>
+</body>
+</html>
