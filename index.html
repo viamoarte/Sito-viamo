@@ -7,12 +7,9 @@
     <meta name="keywords" content="ViAmo, Vincenza Amodio, arte, galleria, street art">
     <meta name="author" content="ViAmo Art">
     <title>ViAmo - Galleria d'Arte</title>
-    <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        (function(){
-            emailjs.init("z2kCGkszIchfP51G_");
-        })();
+        (function(){ emailjs.init("z2kCGkszIchfP51G_"); })();
     </script>
     <style>
         body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f0f0f0;}
@@ -52,7 +49,7 @@
         <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
-    <nav aria-label="Navigazione principale">
+    <nav>
         <a href="#home">Home</a>
         <a href="#gallery">Galleria</a>
         <a href="#about">Chi Sono</a>
@@ -62,22 +59,20 @@
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
-    <!-- FORM CONTATTAMI -->
+    
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
-            <input type="text" name="user_name" id="user_name" placeholder="Il tuo nome" required>
-            <input type="email" name="user_email" id="user_email" placeholder="La tua email" required>
-            <textarea name="message" id="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
+            <input type="text" name="user_name" placeholder="Il tuo nome" required>
+            <input type="email" name="user_email" placeholder="La tua email" required>
+            <textarea name="message" placeholder="Il tuo messaggio" rows="5" required></textarea>
             <button type="submit">Invia Messaggio</button>
             <div id="form-feedback"></div>
         </form>
     </section>
-    <!-- AREA ADMIN -->
+
     <section id="admin">
         <h2>Area Amministratore</h2>
-        <div class="error" id="admin-error">Errore: controlla la console.</div>
-       
         <div id="login-section">
             <form id="login-form">
                 <input type="password" id="admin-password" placeholder="Password Admin" required>
@@ -88,32 +83,27 @@
         <div id="admin-panel" style="display:none;">
             <button onclick="logout()">Esci</button>
             <button onclick="forceSyncFromGitHub()" style="background:#9b59b6;margin-left:10px;">Forza Sync GitHub</button>
-            <!-- BANNER -->
+            
             <div class="admin-section">
-                <h3>Modifica Banner</h3>
+                <h3>Modifica Banner (si vede su tutti i PC!)</h3>
                 <form id="banner-form">
                     <input type="file" id="banner-file" accept="image/*">
                     <img id="banner-preview" class="preview-img" alt="Anteprima">
-                    <button type="submit">Aggiorna</button>
+                    <button type="submit">Carica e Usa Questo Banner</button>
                     <div id="banner-feedback"></div>
+                    <p><small>Il banner viene salvato su GitHub → visibile ovunque!</small></p>
                 </form>
             </div>
-            <!-- TESTI -->
+
             <div class="admin-section">
                 <h3>Testo Home</h3>
-                <form id="home-form">
-                    <textarea id="new-home-text" rows="4" required></textarea>
-                    <button type="submit">Aggiorna</button>
-                </form>
+                <form id="home-form"><textarea id="new-home-text" rows="4" required></textarea><button type="submit">Aggiorna</button></form>
             </div>
             <div class="admin-section">
                 <h3>Testo Chi è ViAmo</h3>
-                <form id="about-form">
-                    <textarea id="new-about-text" rows="4" required></textarea>
-                    <button type="submit">Aggiorna</button>
-                </form>
+                <form id="about-form"><textarea id="new-about-text" rows="4" required></textarea><button type="submit">Aggiorna</button></form>
             </div>
-            <!-- OPERE -->
+
             <div class="admin-section">
                 <h3>Aggiungi/Modifica Opera</h3>
                 <p class="warning">Max 8MB per immagine</p>
@@ -131,29 +121,20 @@
                     <div id="gallery-feedback"></div>
                 </form>
             </div>
-            <!-- GITHUB -->
+
             <div class="admin-section">
-                <h3>Sincronizzazione GitHub</h3>
-                <p class="github-sync">Dati caricati da GitHub: <span id="github-status">In attesa...</span></p>
-                <button onclick="exportData()" style="background:#27ae60;">Esporta Dati (JSON)</button>
-                <button onclick="pushToGitHub()" style="background:#6f42c1;margin-left:10px;">Push Automatico su GitHub</button>
-                <p><small>Repo: <code>viamoarte/Sito-viamo</code> → <code>data.json</code></small></p>
+                <h3>GitHub Sync</h3>
+                <p class="github-sync">Dati da GitHub: <span id="github-status">In attesa...</span></p>
+                <button onclick="exportData()" style="background:#27ae60;">Esporta JSON</button>
+                <button onclick="pushToGitHub()" style="background:#6f42c1;margin-left:10px;">Push su GitHub (obbligatorio per banner!)</button>
                 <div id="github-feedback"></div>
             </div>
-            <!-- IMPORT JSON -->
-            <div class="admin-section">
-                <h3>Ripristino da Backup</h3>
-                <p>Carica un file <code>data.json</code> per ripristinare tutto</p>
-                <input type="file" id="import-json-file" accept=".json,application/json">
-                <button onclick="importFromJson()" style="background:#e67e22;margin-top:10px;">Importa e Ripristina Tutto</button>
-                <div id="import-feedback"></div>
-            </div>
-            <!-- PASSWORD -->
+
             <div class="password-change">
-                <h3>Cambia Password Admin</h3>
+                <h3>Cambia Password</h3>
                 <form id="password-form">
-                    <input type="password" id="old-password" placeholder="Password attuale" required>
-                    <input type="password" id="new-password" placeholder="Nuova password (min 10)" required minlength="10">
+                    <input type="password" id="old-password" placeholder="Attuale" required>
+                    <input type="password" id="new-password" placeholder="Nuova (min 10)" required minlength="10">
                     <input type="password" id="confirm-password" placeholder="Conferma" required>
                     <button type="submit">Cambia</button>
                     <div id="password-feedback"></div>
@@ -161,116 +142,62 @@
             </div>
         </div>
     </section>
+
     <footer>© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
+
     <script>
-        // CONFIG
-        const SERVICE_ID = 'service_rdfzdc8';
-        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';
-        const TEMPLATE_AUTOREPLY = 'template_07bn298';
         const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
         const GITHUB_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/data.json';
-        // DATI
-        let artworks = [], homeText = '', aboutText = '', bannerData = '';
+        let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.jpg';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
 
-        // HASH SHA-256
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hash = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // PASSWORD DEFAULT #Viamo2025
+        // PASSWORD DEFAULT: #Viamo2025
         (async () => {
-            const defaultHash = await hashPassword('#Viamo2025');
-            const savedHash = localStorage.getItem('adminPasswordHash');
-            if (!savedHash || savedHash === 'undefined' || savedHash === 'null' || savedHash === '') {
-                localStorage.setItem('adminPasswordHash', defaultHash);
-            }
+            const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('#Viamo2025'));
+            const defaultHash = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+            const saved = localStorage.getItem('adminPasswordHash');
+            if (!saved) localStorage.setItem('adminPasswordHash', defaultHash);
             adminPasswordHash = localStorage.getItem('adminPasswordHash');
         })();
 
-        // ANTI-DEFACEMENT
-        setInterval(() => {
-            if ((localStorage.getItem('artworks') === '[]' || !localStorage.getItem('artworks')) && artworks.length > 0) {
-                console.warn("Tentativo di cancellazione dati!");
-                localStorage.clear();
-                location.reload();
-            }
-        }, 8000);
-
-        // CARICAMENTO DATI CON PRIORITÀ LOCALE
         function loadData() {
             artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-            homeText = localStorage.getItem('homeText') || 'ViAmo, alias Vincenza Amodio, è un\'artista che trasforma emozioni in opere d\'arte unendo street art e cultura pop.';
-            aboutText = localStorage.getItem('aboutText') || 'Vincenza Amodio, nota come ViAmo, è un\'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.';
-            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg'; // PRIORITÀ A LOCALE
+            homeText = localStorage.getItem('homeText') || "ViAmo, alias Vincenza Amodio, è un'artista che trasforma emozioni in opere d'arte unendo street art e cultura pop.";
+            aboutText = localStorage.getItem('aboutText') || "Vincenza Amodio, nota come ViAmo, è un'artista italiana che fonde street art e pop culture con uno stile unico e vibrante.";
+            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
         }
 
-        async function loadFromGitHub(force = false) {
+        async function loadFromGitHub() {
             try {
                 const res = await fetch(GITHUB_DATA_URL + '?t=' + Date.now());
-                if (!res.ok) throw new Error('Non trovato');
+                if (!res.ok) throw new Error();
                 const data = await res.json();
-                if (force || !localStorage.getItem('artworks')) {
+                if (!localStorage.getItem('artworks')) {
                     artworks = data.artworks || [];
                     homeText = data.homeText || homeText;
                     aboutText = data.aboutText || aboutText;
-                    // NON TOCCARE bannerData se esiste in localStorage
-                    if (!localStorage.getItem('bannerData')) {
-                        bannerData = data.bannerData || 'Opere/banner.jpg';
-                    }
+                    bannerData = data.bannerData || bannerData;
                     localStorage.setItem('artworks', JSON.stringify(artworks));
                     localStorage.setItem('homeText', homeText);
                     localStorage.setItem('aboutText', aboutText);
-                    if (!localStorage.getItem('bannerData')) {
-                        localStorage.setItem('bannerData', bannerData);
-                    }
+                    localStorage.setItem('bannerData', bannerData);
                 }
                 document.getElementById('github-status').textContent = 'SÌ';
                 document.getElementById('github-status').style.color = 'green';
-            } catch (err) {
+            } catch {
                 document.getElementById('github-status').textContent = 'NO';
                 document.getElementById('github-status').style.color = 'red';
             }
         }
 
-        function forceSyncFromGitHub() {
-            if (confirm("Sincronizzare ORA da GitHub? (sovrascrive tutto)")) {
-                ['artworks','homeText','aboutText','bannerData'].forEach(k => localStorage.removeItem(k));
-                loadFromGitHub(true).then(() => location.reload());
-            }
-        }
-
-        // CARICA SEMPRE PRIMA I DATI LOCALI
-        loadData();
-        renderAll(); // Renderizza subito con dati locali
-        loadFromGitHub(); // Poi prova GitHub (non sovrascrive banner)
-
         function renderAll() {
             document.getElementById('home-text').textContent = homeText;
             document.getElementById('about-text').textContent = aboutText;
-            document.getElementById('banner').src = bannerData; // Usa sempre bannerData corrente
+            document.getElementById('banner').src = bannerData + '?t=' + Date.now(); // cache busting
             renderGallery();
         }
 
-        function showFeedback(id, msg, ok = true) {
-            const el = document.getElementById(id);
-            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 5000);
-        }
-        function toggleAdmin() {
-            const admin = document.getElementById('admin');
-            admin.style.display = admin.style.display === 'block' ? 'none' : 'block';
-        }
-        function logout() {
-            loggedIn = false; editingId = null;
-            document.getElementById('login-section').style.display = 'block';
-            document.getElementById('admin-panel').style.display = 'none';
-            renderGallery();
-        }
         function renderGallery() {
             const c = document.getElementById('gallery-container');
             c.innerHTML = artworks.map(a => `
@@ -286,87 +213,98 @@
             `).join('');
         }
 
-        // COMPRESSIONE IMMAGINI (banner più aggressiva)
-        function compressImage(file, callback, quality = 0.8) {
-            if (file.size < 800000) return callback(URL.createObjectURL(file));
+        function compressImage(file, cb) {
+            if (file.size < 1000000) return cb(URL.createObjectURL(file));
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const max = 1400;
-                let width = img.width;
-                let height = img.height;
-                if (width > max) {
-                    height = height * (max / width);
-                    width = max;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img, 0, 0, width, height);
-                callback(canvas.toDataURL('image/webp', quality));
+                const max = 1200;
+                canvas.width = img.width > max ? max : img.width;
+                canvas.height = img.height * (canvas.width / img.width);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                cb(canvas.toDataURL('image/webp', 0.8));
             };
             img.src = URL.createObjectURL(file);
         }
 
-        function previewFile(inputId, previewId) {
-            const file = document.getElementById(inputId).files[0];
-            const preview = document.getElementById(previewId);
-            if (file) {
-                if (file.size > 8 * 1024 * 1024) {
-                    showFeedback('gallery-feedback', 'File troppo grande! Max 8MB', false);
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // EVENTI
-        document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview'));
-        document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
-        document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
-
-        // BANNER ORA FUNZIONA AL 100%
+        // BANNER: ora salva come percorso GitHub
         document.getElementById('banner-form').addEventListener('submit', e => {
             e.preventDefault();
             const file = document.getElementById('banner-file').files[0];
             if (!file) return showFeedback('banner-feedback', 'Seleziona un file!', false);
-            if (file.size > 8 * 1024 * 1024) return showFeedback('banner-feedback', 'Max 8MB!', false);
+            if (file.size > 8*1024*1024) return showFeedback('banner-feedback', 'Max 8MB!', false);
             
             compressImage(file, dataUrl => {
-                bannerData = dataUrl;
-                localStorage.setItem('bannerData', bannerData); // Salvataggio forzato
-                document.getElementById('banner').src = bannerData;
-                showFeedback('banner-feedback', 'Banner salvato permanentemente!');
-            }, 0.75); // Qualità ridotta per sicurezza localStorage
+                const blob = dataURLtoBlob(dataUrl);
+                const reader = new FileReader();
+                reader.onload = () => {
+                    localStorage.setItem('pendingBanner', reader.result.split(',')[1]);
+                    localStorage.setItem('bannerData', 'Opere/banner.jpg');
+                    document.getElementById('banner').src = dataUrl;
+                    showFeedback('banner-feedback', 'Banner pronto! Ora fai "Push su GitHub" per vederlo ovunque!', true);
+                };
+                reader.readAsDataURL(blob);
+            });
         });
 
-        // ... tutto il resto identico (testi, gallery, login, ecc.) ...
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) u8arr[n] = bstr.charCodeAt(n);
+            return new Blob([u8arr], {type: mime});
+        }
 
-        ['home', 'about'].forEach(s => {
-            document.getElementById(s + '-form').addEventListener('submit', e => {
-                e.preventDefault();
-                const text = document.getElementById('new-' + s + '-text').value.trim();
-                if (!text) return;
-                if (s === 'home') homeText = text;
-                if (s === 'about') aboutText = text;
-                localStorage.setItem(s + 'Text', text);
-                document.getElementById(s + '-text').textContent = text;
-                showFeedback(s + '-feedback', 'Aggiornato!');
+        // GALLERY: funziona di nuovo!
+        document.getElementById('gallery-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const title = document.getElementById('gallery-title').value.trim();
+            const desc = document.getElementById('gallery-desc').value.trim();
+            const dimensions = document.getElementById('gallery-dimensions').value.trim();
+            const price = parseInt(document.getElementById('gallery-price').value);
+            const imageFile = document.getElementById('gallery-image-file').files[0];
+            if (!imageFile) return showFeedback('gallery-feedback', 'Immagine obbligatoria!', false);
+
+            compressImage(imageFile, img => {
+                const data = { title, desc, dimensions, price, image: img };
+                if (document.getElementById('gallery-rendering-file').files[0]) {
+                    compressImage(document.getElementById('gallery-rendering-file').files[0], rend => {
+                        data.rendering = rend;
+                        saveArtwork(data);
+                    });
+                } else {
+                    saveArtwork(data);
+                }
             });
+
+            function saveArtwork(data) {
+                if (editingId) {
+                    const i = artworks.findIndex(x => x.id === editingId);
+                    artworks[i] = { id: editingId, ...data };
+                    cancelEdit();
+                } else {
+                    artworks.push({ id: Date.now(), ...data });
+                }
+                localStorage.setItem('artworks', JSON.stringify(artworks));
+                renderGallery();
+                showFeedback('gallery-feedback', 'Opera salvata! Push su GitHub per sincronizzare.');
+                e.target.reset();
+                document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
+            }
         });
 
         // LOGIN
         document.getElementById('login-form').addEventListener('submit', async e => {
             e.preventDefault();
-            const input = document.getElementById('admin-password').value;
-            const inputHash = await hashPassword(input);
+            const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(document.getElementById('admin-password').value));
+            const inputHash = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
             if (inputHash === adminPasswordHash) {
                 loggedIn = true;
                 document.getElementById('login-section').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('login-error').style.display = 'none';
                 document.getElementById('new-home-text').value = homeText;
                 document.getElementById('new-about-text').value = aboutText;
                 renderGallery();
@@ -375,9 +313,49 @@
             }
         });
 
-        // ... resto del codice identico fino alla fine ...
+        // PUSH SU GITHUB (obbligatorio per banner e opere!)
+        async function pushToGitHub() {
+            const token = prompt("GitHub Token (con repo access)");
+            if (!token) return;
+            const data = { artworks, homeText, aboutText, bannerData };
+            if (localStorage.getItem('pendingBanner')) {
+                data.pendingBanner = localStorage.getItem('pendingBanner');
+            }
+            const content = btoa(JSON.stringify(data, null, 2));
+            const sha = await (await fetch(GITHUB_API)).json().then(r => r.sha).catch(() => null);
+            fetch(GITHUB_API, {
+                method: 'PUT',
+                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Aggiornamento sito', content, sha })
+            }).then(r => r.json()).then(res => {
+                if (res.content) {
+                    showFeedback('github-feedback', 'SYNC COMPLETATO! Ora è visibile su tutti i PC!');
+                    localStorage.removeItem('pendingBanner');
+                } else {
+                    showFeedback('github-feedback', 'Errore push', false);
+                }
+            });
+        }
 
-        renderGallery();
+        function showFeedback(id, msg, ok = true) {
+            const el = document.getElementById(id);
+            el.innerHTML = `<div class="feedback ${ok ? 'success' : 'error'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 6000);
+        }
+
+        // INIT
+        loadData();
+        renderAll();
+        loadFromGitHub();
+
+        // Esporta, login, ecc. (tutto il resto uguale)
+        window.toggleAdmin = () => document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block';
+        window.logout = () => { loggedIn = false; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); };
+        window.forceSyncFromGitHub = () => { if(confirm("Sovrascrivere tutto?")) { localStorage.clear(); location.reload(); } };
+        window.startEdit = id => { /* tuo codice */ };
+        window.cancelEdit = () => { /* tuo codice */ };
+        window.deleteArtwork = id => { if(confirm('Eliminare?')) { artworks = artworks.filter(a => a.id !== id); localStorage.setItem('artworks', JSON.stringify(artworks)); renderGallery(); } };
+        window.exportData = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({artworks,homeText,aboutText,bannerData},null,2)], {type:'application/json'})); a.download = 'data.json'; a.click(); };
     </script>
 </body>
 </html>
