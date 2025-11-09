@@ -37,6 +37,7 @@
         .admin-section{margin-bottom:30px;}
         .github-sync span{color:green;font-weight:bold;}
         .warning{color:#d35400;font-weight:bold;}
+        .import-section{background:#e8f5e9;padding:15px;border-radius:8px;margin-top:20px;}
         @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
     </style>
 </head>
@@ -81,7 +82,7 @@
             <button onclick="forceSyncFromGitHub()" style="background:#9b59b6;margin-left:10px;">Forza Sync GitHub</button>
             
             <div class="admin-section">
-                <h3>Modifica Banner (visibile su tutti i PC)</h3>
+                <h3>Modifica Banner</h3>
                 <form id="banner-form">
                     <input type="file" id="banner-file" accept="image/*">
                     <img id="banner-preview" class="preview-img" alt="Anteprima">
@@ -121,8 +122,17 @@
                 <h3>GitHub Sync</h3>
                 <p class="github-sync">Dati da GitHub: <span id="github-status">In attesa...</span></p>
                 <button onclick="exportData()" style="background:#27ae60;">Esporta JSON</button>
-                <button onclick="pushToGitHub()" style="background:#6f42c1;margin-left:10px;">PUSH SU GITHUB (OBBLIGATORIO)</button>
+                <button onclick="pushToGitHub()" style="background:#6f42c1;margin-left:10px;">PUSH SU GITHUB</button>
                 <div id="github-feedback"></div>
+            </div>
+
+            <!-- NUOVA SEZIONE: CARICA data.json -->
+            <div class="import-section">
+                <h3>Ripristina da Backup (data.json)</h3>
+                <p>Carica un file <code>data.json</code> per ripristinare opere, testi e banner</p>
+                <input type="file" id="import-json-file" accept=".json,application/json">
+                <button onclick="importFromJson()" style="background:#e67e22;margin-top:10px;">IMPORTA E RIPRISTINA TUTTO</button>
+                <div id="import-feedback"></div>
             </div>
 
             <div class="password-change">
@@ -172,10 +182,16 @@
                     homeText = data.homeText || homeText;
                     aboutText = data.aboutText || aboutText;
                     bannerData = data.bannerData || bannerData;
-                    ['artworks','homeText','aboutText','bannerData'].forEach(k => localStorage.setItem(k, k==='artworks'?JSON.stringify(artworks):eval(k)));
+                    ['artworks','homeText','aboutText','bannerData'].forEach(k => 
+                        localStorage.setItem(k, k==='artworks' ? JSON.stringify(artworks) : (k==='homeText'?homeText:(k==='aboutText'?aboutText:bannerData)))
+                    );
                 }
-                document.getElementById('github-status').textContent = 'SÌ'; document.getElementById('github-status').style.color = 'green';
-            } catch { document.getElementById('github-status').textContent = 'NO'; document.getElementById('github-status').style.color = 'red'; }
+                document.getElementById('github-status').textContent = 'SÌ'; 
+                document.getElementById('github-status').style.color = 'green';
+            } catch { 
+                document.getElementById('github-status').textContent = 'NO'; 
+                document.getElementById('github-status').style.color = 'red'; 
+            }
         }
 
         function renderAll() {
@@ -227,39 +243,40 @@
             }
         }
 
-        // FUNZIONI ADMIN (ORA COMPLETE!)
-        function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
-        function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
-        function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto?")) { localStorage.clear(); location.reload(); } }
-
-        function startEdit(id) {
-            const art = artworks.find(x => x.id === id);
-            editingId = id;
-            document.getElementById('gallery-title').value = art.title;
-            document.getElementById('gallery-desc').value = art.desc;
-            document.getElementById('gallery-dimensions').value = art.dimensions;
-            document.getElementById('gallery-price').value = art.price;
-            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
-            if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
-            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
-            document.getElementById('cancel-edit').style.display = 'inline-block';
-        }
-
-        function cancelEdit() {
-            editingId = null;
-            document.getElementById('gallery-form').reset();
-            document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
-            document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera';
-            document.getElementById('cancel-edit').style.display = 'none';
-        }
-
-        function deleteArtwork(id) {
-            if (confirm('Eliminare?')) {
-                artworks = artworks.filter(a => a.id !== id);
-                localStorage.setItem('artworks', JSON.stringify(artworks));
-                renderGallery();
-                showFeedback('gallery-feedback', 'Opera eliminata!');
+        // === IMPORTA data.json ===
+        function importFromJson() {
+            const fileInput = document.getElementById('import-json-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                showFeedback('import-feedback', 'Seleziona un file data.json!', false);
+                return;
             }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.artworks || !data.homeText || !data.aboutText || !data.bannerData) {
+                        throw new Error("File non valido");
+                    }
+                    if (confirm("Ripristinare TUTTO dal backup? (opere, testi, banner)")) {
+                        artworks = data.artworks;
+                        homeText = data.homeText;
+                        aboutText = data.aboutText;
+                        bannerData = data.bannerData;
+
+                        localStorage.setItem('artworks', JSON.stringify(artworks));
+                        localStorage.setItem('homeText', homeText);
+                        localStorage.setItem('aboutText', aboutText);
+                        localStorage.setItem('bannerData', bannerData);
+
+                        showFeedback('import-feedback', 'Backup ripristinato! Ricaricamento...', true);
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                } catch (err) {
+                    showFeedback('import-feedback', 'File data.json non valido!', false);
+                }
+            };
+            reader.readAsText(file);
         }
 
         // BANNER
@@ -271,11 +288,11 @@
                 localStorage.setItem('pendingBanner', dataUrl.split(',')[1]);
                 localStorage.setItem('bannerData', 'Opere/banner.jpg');
                 document.getElementById('banner').src = dataUrl;
-                showFeedback('banner-feedback', 'Banner pronto! Ora fai PUSH SU GITHUB', true);
+                showFeedback('banner-feedback', 'Banner pronto! Fai PUSH SU GITHUB', true);
             });
         });
 
-        // GALLERY FORM – ORA FUNZIONA!
+        // GALLERY FORM
         document.getElementById('gallery-form').addEventListener('submit', e => {
             e.preventDefault();
             const title = document.getElementById('gallery-title').value.trim();
@@ -305,13 +322,13 @@
                 }
                 localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
-                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Ora fai PUSH');
+                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Fai PUSH');
                 e.target.reset();
                 document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
             }
         });
 
-        // LOGIN
+        // LOGIN, PUSH, ecc. (tutto funzionante come prima)
         document.getElementById('login-form').addEventListener('submit', async e => {
             e.preventDefault();
             const input = document.getElementById('admin-password').value;
@@ -329,7 +346,6 @@
             }
         });
 
-        // PUSH SU GITHUB
         async function pushToGitHub() {
             const token = prompt("GitHub Personal Access Token (repo scope)");
             if (!token) return;
@@ -343,7 +359,7 @@
                 body: JSON.stringify({ message: 'Update da admin', content, sha })
             }).then(r => r.json()).then(res => {
                 if (res.content) {
-                    showFeedback('github-feedback', 'SYNC COMPLETATO! Tutto visibile ovunque!');
+                    showFeedback('github-feedback', 'SYNC COMPLETATO!');
                     localStorage.removeItem('pendingBanner');
                 } else showFeedback('github-feedback', 'Errore push', false);
             });
@@ -361,12 +377,18 @@
             a.download = 'data.json'; a.click();
         }
 
-        // EVENTI PREVIEW
+        // FUNZIONI GLOBALI
+        function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
+        function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
+        function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto?")) { localStorage.clear(); location.reload(); } }
+        function startEdit(id) { /* codice completo come sopra */ const art = artworks.find(x => x.id === id); editingId = id; document.getElementById('gallery-title').value = art.title; document.getElementById('gallery-desc').value = art.desc; document.getElementById('gallery-dimensions').value = art.dimensions; document.getElementById('gallery-price').value = art.price; document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block'; if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; } document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche'; document.getElementById('cancel-edit').style.display = 'inline-block'; }
+        function cancelEdit() { editingId = null; document.getElementById('gallery-form').reset(); document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none'); document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera'; document.getElementById('cancel-edit').style.display = 'none'; }
+        function deleteArtwork(id) { if (confirm('Eliminare?')) { artworks = artworks.filter(a => a.id !== id); localStorage.setItem('artworks', JSON.stringify(artworks)); renderGallery(); showFeedback('gallery-feedback', 'Eliminata!'); } }
+
+        // EVENTI
         document.getElementById('banner-file').addEventListener('change', () => previewFile('banner-file', 'banner-preview'));
         document.getElementById('gallery-image-file').addEventListener('change', () => previewFile('gallery-image-file', 'preview-main'));
         document.getElementById('gallery-rendering-file').addEventListener('change', () => previewFile('gallery-rendering-file', 'preview-rendering'));
-
-        // TESTI
         ['home','about'].forEach(s => {
             document.getElementById(s+'-form').addEventListener('submit', e => {
                 e.preventDefault();
@@ -374,7 +396,6 @@
                 if (s==='home') homeText = val; else aboutText = val;
                 localStorage.setItem(s+'Text', val);
                 document.getElementById(s+'-text').textContent = val;
-                showFeedback(s+'-feedback', 'Aggiornato!');
             });
         });
 
@@ -383,7 +404,7 @@
         renderAll();
         loadFromGitHub();
 
-        // Esponi funzioni globali
+        // ESPOSIZIONE FUNZIONI
         window.toggleAdmin = toggleAdmin;
         window.logout = logout;
         window.forceSyncFromGitHub = forceSyncFromGitHub;
@@ -392,6 +413,7 @@
         window.deleteArtwork = deleteArtwork;
         window.pushToGitHub = pushToGitHub;
         window.exportData = exportData;
+        window.importFromJson = importFromJson;
     </script>
 </body>
 </html>
