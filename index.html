@@ -106,7 +106,7 @@
                     <input type="text" id="gallery-desc" placeholder="Descrizione" required>
                     <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
                     <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
-                    <input type="file" id="gallery-image-file" accept="image/*" required>
+                    <input type="file" id="gallery-image-file" accept="image/*">
                     <img id="preview-main" class="preview-img" alt="Anteprima">
                     <input type="file" id="gallery-rendering-file" accept="image/*">
                     <img id="preview-rendering" class="preview-img" alt="Anteprima rendering">
@@ -259,15 +259,29 @@
             const dimensions = document.getElementById('gallery-dimensions').value.trim();
             const price = parseInt(document.getElementById('gallery-price').value);
             const imageFile = document.getElementById('gallery-image-file').files[0];
-            if (!imageFile) return showFeedback('gallery-feedback', 'Immagine obbligatoria!', false);
+            const renderFile = document.getElementById('gallery-rendering-file').files[0];
 
-            const imageFilename = Date.now() + '.webp';
-            compressToWebP(imageFile, imgDataUrl => {
-                localStorage.setItem('pendingImage_' + imageFilename, imgDataUrl.split(',')[1]);
-                const data = { title, desc, dimensions, price, image: 'Opere/' + imageFilename };
+            const data = { title, desc, dimensions, price };
 
-                if (document.getElementById('gallery-rendering-file').files[0]) {
-                    const renderFile = document.getElementById('gallery-rendering-file').files[0];
+            if (editingId) {
+                const art = artworks.find(x => x.id === editingId);
+                data.image = art.image;
+                data.rendering = art.rendering || undefined;
+            }
+
+            if (imageFile) {
+                const imageFilename = Date.now() + '.webp';
+                compressToWebP(imageFile, imgDataUrl => {
+                    localStorage.setItem('pendingImage_' + imageFilename, imgDataUrl.split(',')[1]);
+                    data.image = 'Opere/' + imageFilename;
+                    processRendering();
+                });
+            } else {
+                processRendering();
+            }
+
+            function processRendering() {
+                if (renderFile) {
                     const renderFilename = Date.now() + '_render.webp';
                     compressToWebP(renderFile, rendDataUrl => {
                         localStorage.setItem('pendingImage_' + renderFilename, rendDataUrl.split(',')[1]);
@@ -277,7 +291,7 @@
                 } else {
                     saveArtwork(data);
                 }
-            });
+            }
 
             function saveArtwork(data) {
                 if (editingId) {
@@ -294,6 +308,25 @@
                 document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
             }
         });
+
+        // START EDIT
+        function startEdit(id) {
+            const art = artworks.find(x => x.id === id);
+            editingId = id;
+            document.getElementById('gallery-title').value = art.title;
+            document.getElementById('gallery-desc').value = art.desc;
+            document.getElementById('gallery-dimensions').value = art.dimensions;
+            document.getElementById('gallery-price').value = art.price;
+            document.getElementById('preview-main').src = art.image;
+            document.getElementById('preview-main').style.display = 'block';
+            if (art.rendering) {
+                document.getElementById('preview-rendering').src = art.rendering;
+                document.getElementById('preview-rendering').style.display = 'block';
+            }
+            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+            document.getElementById('cancel-edit').style.display = 'inline-block';
+            document.getElementById('gallery-image-file').removeAttribute('required');
+        }
 
         // PUSH
         async function pushToGitHub() {
@@ -413,19 +446,7 @@
         function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
         function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
         function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto con GitHub?")) { localStorage.clear(); location.reload(); } }
-        function startEdit(id) {
-            const art = artworks.find(x => x.id === id);
-            editingId = id;
-            document.getElementById('gallery-title').value = art.title;
-            document.getElementById('gallery-desc').value = art.desc;
-            document.getElementById('gallery-dimensions').value = art.dimensions;
-            document.getElementById('gallery-price').value = art.price;
-            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
-            if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
-            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
-            document.getElementById('cancel-edit').style.display = 'inline-block';
-        }
-        function cancelEdit() { editingId = null; document.getElementById('gallery-form').reset(); document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none'); document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera'; document.getElementById('cancel-edit').style.display = 'none'; }
+        function cancelEdit() { editingId = null; document.getElementById('gallery-form').reset(); document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none'); document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera'; document.getElementById('cancel-edit').style.display = 'none'; document.getElementById('gallery-image-file').setAttribute('required', ''); }
         function deleteArtwork(id) { if (confirm('Eliminare?')) { artworks = artworks.filter(a => a.id !== id); localStorage.setItem('artworks', JSON.stringify(artworks)); renderGallery(); showFeedback('gallery-feedback', 'Eliminata!'); } }
 
         // EVENTI
