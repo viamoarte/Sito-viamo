@@ -144,7 +144,6 @@
     <script>
         const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
         const GITHUB_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/data.json';
-        const GITHUB_IMG_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/Opere';
         let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.jpg';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
@@ -295,12 +294,11 @@
             }
         });
 
-        // PUSH TO GITHUB: dati + immagini
+        // PUSH TO GITHUB
         async function pushToGitHub() {
             const token = prompt("GitHub Personal Access Token (repo scope)");
             if (!token) return;
 
-            // 1. Prepara data.json
             const data = { artworks, homeText, aboutText, bannerData };
             const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
             let sha = await fetch(GITHUB_API).then(r => r.json()).then(r => r.sha).catch(() => null);
@@ -311,7 +309,6 @@
                 body: JSON.stringify({ message: 'Update data.json', content, sha })
             });
 
-            // 2. Push immagini pending
             const pendingKeys = Object.keys(localStorage).filter(k => k.startsWith('pendingImage_') || k === 'pendingBannerFile');
             for (const key of pendingKeys) {
                 const filename = key === 'pendingBannerFile' 
@@ -330,20 +327,32 @@
                 if (key === 'pendingBannerFile') localStorage.removeItem('pendingBannerName');
             }
 
-            showFeedback('github-feedback', 'SYNC COMPLETO: dati + immagini!', true);
+            showFeedback('github-feedback', 'SYNC COMPLETO!', true);
             setTimeout(() => location.reload(), 1500);
+        }
+
+        // ESPORTA JSON - ORA INCLUDE TUTTO
+        function exportData() {
+            localStorage.setItem('artworks', JSON.stringify(artworks));
+            localStorage.setItem('homeText', homeText);
+            localStorage.setItem('aboutText', aboutText);
+            localStorage.setItem('bannerData', bannerData);
+
+            const data = { artworks, homeText, aboutText, bannerData };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showFeedback('github-feedback', `Esportato! (${artworks.length} opere)`, true);
         }
 
         function showFeedback(id, msg, ok = true) {
             const el = document.getElementById(id);
             el.innerHTML = `<div class="feedback ${ok?'success':'error'}">${msg}</div>`;
             setTimeout(() => el.innerHTML = '', 7000);
-        }
-
-        function exportData() {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([JSON.stringify({artworks,homeText,aboutText,bannerData},null,2)], {type:'application/json'}));
-            a.download = 'data.json'; a.click();
         }
 
         function importFromJson() {
