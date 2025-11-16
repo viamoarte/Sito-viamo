@@ -234,7 +234,11 @@
                 reader.readAsDataURL(file);
             }
         }
-        // CONTATTO - INVIO EMAIL
+// CONFIG EMAILJS
+        const SERVICE_ID = 'service_rdfzdc8';
+        const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';     // A te
+        const TEMPLATE_AUTOREPLY = 'template_07bn298';    // Risposta automatica
+// CONTATTO - INVIO EMAIL
 document.getElementById('contact-form').addEventListener('submit', function(e) {
     e.preventDefault();
     const name = this.user_name.value.trim();
@@ -505,4 +509,5 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
 
