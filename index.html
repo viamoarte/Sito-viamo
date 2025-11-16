@@ -238,9 +238,10 @@
         const SERVICE_ID = 'service_rdfzdc8';
         const TEMPLATE_TO_ADMIN = 'template_pxpn0pv';     // A te
         const TEMPLATE_AUTOREPLY = 'template_07bn298';    // Risposta automatica
-// CONTATTO - INVIO EMAIL
+// CONTATTO - INVIO EMAIL (FUNZIONANTE)
 document.getElementById('contact-form').addEventListener('submit', function(e) {
     e.preventDefault();
+    
     const name = this.user_name.value.trim();
     const email = this.user_email.value.trim();
     const message = this.message.value.trim();
@@ -252,14 +253,17 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
 
     showFeedback('form-feedback', 'Invio in corso...', true);
 
-    emailjs.send('default_service', 'template_default', {
+    emailjs.send('service_rdfzdc8', 'template_pxpn0pv', {
         from_name: name,
         from_email: email,
         message: message
-    }).then(() => {
+    })
+    .then(() => {
         showFeedback('form-feedback', 'Messaggio inviato con successo!', true);
         this.reset();
-    }).catch(() => {
+    })
+    .catch((error) => {
+        console.error('Errore EmailJS:', error);
         showFeedback('form-feedback', 'Errore invio. Riprova.', false);
     });
 });
@@ -509,5 +513,6 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
 
 
