@@ -23,7 +23,7 @@
         .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
         .artwork a:hover,.artwork button:hover{background:#34495e;}
         form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
-        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1.em;}
+        input,textarea{margin:10px 0;padding:12px;border:1px solid #ccc;border-radius:5px;font-size:1em;}
         input[type=file]{margin:10px 0;padding:8px;}
         button{background:#2c3e50;color:#fff;border:none;padding:12px;border-radius:5px;cursor:pointer;font-size:1em;}
         button:hover{background:#34495e;}
@@ -38,6 +38,7 @@
         .github-sync span{color:green;font-weight:bold;}
         .warning{color:#d35400;font-weight:bold;}
         .import-section{background:#e8f5e9;padding:15px;border-radius:8px;margin-top:20px;}
+        .placeholder{background:#eee;color:#999;font-style:italic;text-align:center;padding:20px;border-radius:5px;}
         @media (max-width:600px){nav a{display:block;margin:10px 0;}.gallery{grid-template-columns:1fr;}}
     </style>
 </head>
@@ -158,8 +159,8 @@
 
         function loadData() {
             artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
-            homeText = localStorage.getItem('homeText') || "ViAmo, alias Vincenza Amodio, è un'artista che trasforma emozioni in opere d'arte.";
-            aboutText = localStorage.getItem('aboutText') || "Vincenza Amodio, nota come ViAmo, è un'artista italiana che fonde street art e pop culture.";
+            homeText = localStorage.getItem('homeText') || "ViAmo trasforma emozioni in arte.";
+            aboutText = localStorage.getItem('aboutText') || "Vincenza Amodio, in arte ViAmo.";
             bannerData = localStorage.getItem('bannerData') || 'Opere/banner.webp';
         }
 
@@ -196,7 +197,8 @@
             const c = document.getElementById('gallery-container');
             c.innerHTML = artworks.map(a => `
                 <div class="artwork">
-                    <img src="${a.image}?t=${Date.now()}" alt="${a.title}" loading="lazy">
+                    <img src="${a.image}?t=${Date.now()}" alt="${a.title}" loading="lazy"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPkltbWFnaW5lIG1hbmNhbnRlPC90ZXh0Pjwvc3ZnPg=='; this.title='Immagine non trovata su GitHub';">
                     <h3>${a.title}</h3>
                     <p>Dimensioni: ${a.dimensions}</p>
                     <p>Prezzo: €${a.price}</p>
@@ -207,7 +209,6 @@
             `).join('');
         }
 
-        // NUOVA FUNZIONE: CONVERTE E SALVA IN WebP
         function compressToWebP(file, cb) {
             const img = new Image();
             img.onload = () => {
@@ -217,14 +218,14 @@
                 canvas.width = img.width > max ? max : img.width;
                 canvas.height = img.height * (canvas.width / img.width);
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                cb(canvas.toDataURL('image/webp', 0.8)); // SEMPRE WebP
+                cb(canvas.toDataURL('image/webp', 0.8));
             };
             img.src = URL.createObjectURL(file);
         }
 
         function previewFile(inputId, previewId) {
             const file = document.getElementById(inputId).files[0];
-            if (file && file.size < 8*1024*1024) {
+            if (file) {
                 const reader = new FileReader();
                 reader.onload = e => {
                     document.getElementById(previewId).src = e.target.result;
@@ -234,7 +235,7 @@
             }
         }
 
-        // BANNER: SEMPRE WebP
+        // BANNER
         document.getElementById('banner-form').addEventListener('submit', e => {
             e.preventDefault();
             const file = document.getElementById('banner-file').files[0];
@@ -250,7 +251,7 @@
             });
         });
 
-        // OPERE: SEMPRE WebP
+        // OPERE
         document.getElementById('gallery-form').addEventListener('submit', e => {
             e.preventDefault();
             const title = document.getElementById('gallery-title').value.trim();
@@ -294,12 +295,12 @@
             }
         });
 
-        // PUSH SU GITHUB CON WebP
+        // PUSH
         async function pushToGitHub() {
             const token = prompt("GitHub PAT (repo: read+write)");
             if (!token) return showFeedback('github-feedback', 'PAT richiesto!', false);
 
-            showFeedback('github-feedback', 'Caricamento in corso...', true);
+            showFeedback('github-feedback', 'Caricamento...', true);
 
             try {
                 const data = { artworks, homeText, aboutText, bannerData };
@@ -324,7 +325,7 @@
                         headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: `Upload ${filename}`, content: base64 })
                     });
-                    local80Storage.removeItem(key);
+                    localStorage.removeItem(key);
                     if (key === 'pendingBannerFile') localStorage.removeItem('pendingBannerName');
                     uploaded++;
                 }
