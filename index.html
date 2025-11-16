@@ -56,7 +56,7 @@
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
-    
+   
     <section id="contact">
         <h2>Contattami</h2>
         <form id="contact-form">
@@ -67,7 +67,6 @@
             <div id="form-feedback"></div>
         </form>
     </section>
-
     <section id="admin">
         <h2>Area Amministratore</h2>
         <div id="login-section">
@@ -80,7 +79,7 @@
         <div id="admin-panel" style="display:none;">
             <button onclick="logout()">Esci</button>
             <button onclick="forceSyncFromGitHub()" style="background:#9b59b6;margin-left:10px;">Forza Sync GitHub</button>
-            
+           
             <div class="admin-section">
                 <h3>Modifica Banner</h3>
                 <form id="banner-form">
@@ -90,7 +89,6 @@
                     <div id="banner-feedback"></div>
                 </form>
             </div>
-
             <div class="admin-section">
                 <h3>Testo Home</h3>
                 <form id="home-form"><textarea id="new-home-text" rows="4" required></textarea><button type="submit">Aggiorna</button></form>
@@ -99,7 +97,6 @@
                 <h3>Testo Chi è ViAmo</h3>
                 <form id="about-form"><textarea id="new-about-text" rows="4" required></textarea><button type="submit">Aggiorna</button></form>
             </div>
-
             <div class="admin-section">
                 <h3>Aggiungi/Modifica Opera</h3>
                 <p class="warning">Max 8MB</p>
@@ -117,7 +114,6 @@
                     <div id="gallery-feedback"></div>
                 </form>
             </div>
-
             <div class="admin-section">
                 <h3>GitHub Sync</h3>
                 <p class="github-sync">Dati da GitHub: <span id="github-status">In attesa...</span></p>
@@ -125,16 +121,13 @@
                 <button onclick="pushToGitHub()" style="background:#6f42c1;margin-left:10px;">PUSH SU GITHUB</button>
                 <div id="github-feedback"></div>
             </div>
-
-            <!-- NUOVA SEZIONE: CARICA data.json -->
             <div class="import-section">
                 <h3>Ripristina da Backup (data.json)</h3>
                 <p>Carica un file <code>data.json</code> per ripristinare opere, testi e banner</p>
                 <input type="file" id="import-json-file" accept=".json,application/json">
-                <button onclick="importFromJson()" style="background:#e67e22;margin-top:10px;">IMPORTA E RIPRISTINA TUTTO</button>
+                <button onclick="importFromJson()" style="background:#e67e22;margin-top:10px;">IMPORTA E RIPRISTINA</button>
                 <div id="import-feedback"></div>
             </div>
-
             <div class="password-change">
                 <h3>Cambia Password</h3>
                 <form id="password-form">
@@ -147,17 +140,16 @@
             </div>
         </div>
     </section>
-
     <footer>© 2025 ViAmo Art. Tutti i diritti riservati.</footer>
-
     <script>
         const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
         const GITHUB_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/data.json';
+        const GITHUB_IMG_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/Opere';
         let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.jpg';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
 
-        // PASSWORD DEFAULT: #Viamo2025
+        // PASSWORD DEFAULT
         (async () => {
             const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('#Viamo2025'));
             const defaultHash = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -182,15 +174,15 @@
                     homeText = data.homeText || homeText;
                     aboutText = data.aboutText || aboutText;
                     bannerData = data.bannerData || bannerData;
-                    ['artworks','homeText','aboutText','bannerData'].forEach(k => 
+                    ['artworks','homeText','aboutText','bannerData'].forEach(k =>
                         localStorage.setItem(k, k==='artworks' ? JSON.stringify(artworks) : (k==='homeText'?homeText:(k==='aboutText'?aboutText:bannerData)))
                     );
                 }
-                document.getElementById('github-status').textContent = 'SÌ'; 
+                document.getElementById('github-status').textContent = 'SÌ';
                 document.getElementById('github-status').style.color = 'green';
-            } catch { 
-                document.getElementById('github-status').textContent = 'NO'; 
-                document.getElementById('github-status').style.color = 'red'; 
+            } catch {
+                document.getElementById('github-status').textContent = 'NO';
+                document.getElementById('github-status').style.color = 'red';
             }
         }
 
@@ -243,50 +235,17 @@
             }
         }
 
-        // === IMPORTA data.json ===
-        function importFromJson() {
-            const fileInput = document.getElementById('import-json-file');
-            const file = fileInput.files[0];
-            if (!file) {
-                showFeedback('import-feedback', 'Seleziona un file data.json!', false);
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.artworks || !data.homeText || !data.aboutText || !data.bannerData) {
-                        throw new Error("File non valido");
-                    }
-                    if (confirm("Ripristinare TUTTO dal backup? (opere, testi, banner)")) {
-                        artworks = data.artworks;
-                        homeText = data.homeText;
-                        aboutText = data.aboutText;
-                        bannerData = data.bannerData;
-
-                        localStorage.setItem('artworks', JSON.stringify(artworks));
-                        localStorage.setItem('homeText', homeText);
-                        localStorage.setItem('aboutText', aboutText);
-                        localStorage.setItem('bannerData', bannerData);
-
-                        showFeedback('import-feedback', 'Backup ripristinato! Ricaricamento...', true);
-                        setTimeout(() => location.reload(), 1500);
-                    }
-                } catch (err) {
-                    showFeedback('import-feedback', 'File data.json non valido!', false);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // BANNER
+        // BANNER: salva come file separato
         document.getElementById('banner-form').addEventListener('submit', e => {
             e.preventDefault();
             const file = document.getElementById('banner-file').files[0];
             if (!file) return showFeedback('banner-feedback', 'Seleziona file!', false);
             compressImage(file, dataUrl => {
-                localStorage.setItem('pendingBanner', dataUrl.split(',')[1]);
-                localStorage.setItem('bannerData', 'Opere/banner.jpg');
+                const filename = 'banner.webp';
+                localStorage.setItem('pendingBannerFile', dataUrl.split(',')[1]);
+                localStorage.setItem('pendingBannerName', filename);
+                bannerData = 'Opere/' + filename;
+                localStorage.setItem('bannerData', bannerData);
                 document.getElementById('banner').src = dataUrl;
                 showFeedback('banner-feedback', 'Banner pronto! Fai PUSH SU GITHUB', true);
             });
@@ -302,17 +261,25 @@
             const imageFile = document.getElementById('gallery-image-file').files[0];
             if (!imageFile) return showFeedback('gallery-feedback', 'Immagine obbligatoria!', false);
 
-            compressImage(imageFile, img => {
-                const data = { title, desc, dimensions, price, image: img };
+            const imageFilename = Date.now() + '.webp';
+            compressImage(imageFile, imgDataUrl => {
+                localStorage.setItem('pendingImage_' + imageFilename, imgDataUrl.split(',')[1]);
+                const data = { title, desc, dimensions, price, image: 'Opere/' + imageFilename };
+
                 if (document.getElementById('gallery-rendering-file').files[0]) {
-                    compressImage(document.getElementById('gallery-rendering-file').files[0], rend => {
-                        data.rendering = rend;
-                        save(data);
+                    const renderFile = document.getElementById('gallery-rendering-file').files[0];
+                    const renderFilename = Date.now() + '_render.webp';
+                    compressImage(renderFile, rendDataUrl => {
+                        localStorage.setItem('pendingImage_' + renderFilename, rendDataUrl.split(',')[1]);
+                        data.rendering = 'Opere/' + renderFilename;
+                        saveArtwork(data);
                     });
-                } else save(data);
+                } else {
+                    saveArtwork(data);
+                }
             });
 
-            function save(data) {
+            function saveArtwork(data) {
                 if (editingId) {
                     const i = artworks.findIndex(x => x.id === editingId);
                     artworks[i] = { id: editingId, ...data };
@@ -322,13 +289,91 @@
                 }
                 localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
-                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Fai PUSH');
+                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Fai PUSH', true);
                 e.target.reset();
                 document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
             }
         });
 
-        // LOGIN, PUSH, ecc. (tutto funzionante come prima)
+        // PUSH TO GITHUB: dati + immagini
+        async function pushToGitHub() {
+            const token = prompt("GitHub Personal Access Token (repo scope)");
+            if (!token) return;
+
+            // 1. Prepara data.json
+            const data = { artworks, homeText, aboutText, bannerData };
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+            let sha = await fetch(GITHUB_API).then(r => r.json()).then(r => r.sha).catch(() => null);
+
+            await fetch(GITHUB_API, {
+                method: 'PUT',
+                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Update data.json', content, sha })
+            });
+
+            // 2. Push immagini pending
+            const pendingKeys = Object.keys(localStorage).filter(k => k.startsWith('pendingImage_') || k === 'pendingBannerFile');
+            for (const key of pendingKeys) {
+                const filename = key === 'pendingBannerFile' 
+                    ? localStorage.getItem('pendingBannerName') 
+                    : key.replace('pendingImage_', '');
+                const base64 = localStorage.getItem(key);
+                const apiUrl = `https://api.github.com/repos/viamoarte/Sito-viamo/contents/Opere/${filename}`;
+
+                await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Add ${filename}`, content: base64 })
+                });
+
+                localStorage.removeItem(key);
+                if (key === 'pendingBannerFile') localStorage.removeItem('pendingBannerName');
+            }
+
+            showFeedback('github-feedback', 'SYNC COMPLETO: dati + immagini!', true);
+            setTimeout(() => location.reload(), 1500);
+        }
+
+        function showFeedback(id, msg, ok = true) {
+            const el = document.getElementById(id);
+            el.innerHTML = `<div class="feedback ${ok?'success':'error'}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 7000);
+        }
+
+        function exportData() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify({artworks,homeText,aboutText,bannerData},null,2)], {type:'application/json'}));
+            a.download = 'data.json'; a.click();
+        }
+
+        function importFromJson() {
+            const fileInput = document.getElementById('import-json-file');
+            const file = fileInput.files[0];
+            if (!file) return showFeedback('import-feedback', 'Seleziona un file!', false);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (confirm("Ripristinare TUTTO?")) {
+                        artworks = data.artworks || [];
+                        homeText = data.homeText || homeText;
+                        aboutText = data.aboutText || aboutText;
+                        bannerData = data.bannerData || bannerData;
+                        localStorage.setItem('artworks', JSON.stringify(artworks));
+                        localStorage.setItem('homeText', homeText);
+                        localStorage.setItem('aboutText', aboutText);
+                        localStorage.setItem('bannerData', bannerData);
+                        showFeedback('import-feedback', 'Ripristinato! Ricaricamento...', true);
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                } catch {
+                    showFeedback('import-feedback', 'File non valido!', false);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // LOGIN
         document.getElementById('login-form').addEventListener('submit', async e => {
             e.preventDefault();
             const input = document.getElementById('admin-password').value;
@@ -346,42 +391,22 @@
             }
         });
 
-        async function pushToGitHub() {
-            const token = prompt("GitHub Personal Access Token (repo scope)");
-            if (!token) return;
-            const data = { artworks, homeText, aboutText, bannerData };
-            if (localStorage.getItem('pendingBanner')) data.pendingBanner = localStorage.getItem('pendingBanner');
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-            const sha = await fetch(GITHUB_API).then(r => r.json()).then(r => r.sha).catch(() => null);
-            fetch(GITHUB_API, {
-                method: 'PUT',
-                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'Update da admin', content, sha })
-            }).then(r => r.json()).then(res => {
-                if (res.content) {
-                    showFeedback('github-feedback', 'SYNC COMPLETATO!');
-                    localStorage.removeItem('pendingBanner');
-                } else showFeedback('github-feedback', 'Errore push', false);
-            });
-        }
-
-        function showFeedback(id, msg, ok = true) {
-            const el = document.getElementById(id);
-            el.innerHTML = `<div class="feedback ${ok?'success':'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 7000);
-        }
-
-        function exportData() {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([JSON.stringify({artworks,homeText,aboutText,bannerData},null,2)], {type:'application/json'}));
-            a.download = 'data.json'; a.click();
-        }
-
         // FUNZIONI GLOBALI
         function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
         function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
         function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto?")) { localStorage.clear(); location.reload(); } }
-        function startEdit(id) { /* codice completo come sopra */ const art = artworks.find(x => x.id === id); editingId = id; document.getElementById('gallery-title').value = art.title; document.getElementById('gallery-desc').value = art.desc; document.getElementById('gallery-dimensions').value = art.dimensions; document.getElementById('gallery-price').value = art.price; document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block'; if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; } document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche'; document.getElementById('cancel-edit').style.display = 'inline-block'; }
+        function startEdit(id) {
+            const art = artworks.find(x => x.id === id);
+            editingId = id;
+            document.getElementById('gallery-title').value = art.title;
+            document.getElementById('gallery-desc').value = art.desc;
+            document.getElementById('gallery-dimensions').value = art.dimensions;
+            document.getElementById('gallery-price').value = art.price;
+            document.getElementById('preview-main').src = art.image; document.getElementById('preview-main').style.display = 'block';
+            if (art.rendering) { document.getElementById('preview-rendering').src = art.rendering; document.getElementById('preview-rendering').style.display = 'block'; }
+            document.getElementById('gallery-submit-btn').textContent = 'Salva Modifiche';
+            document.getElementById('cancel-edit').style.display = 'inline-block';
+        }
         function cancelEdit() { editingId = null; document.getElementById('gallery-form').reset(); document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none'); document.getElementById('gallery-submit-btn').textContent = 'Aggiungi Opera'; document.getElementById('cancel-edit').style.display = 'none'; }
         function deleteArtwork(id) { if (confirm('Eliminare?')) { artworks = artworks.filter(a => a.id !== id); localStorage.setItem('artworks', JSON.stringify(artworks)); renderGallery(); showFeedback('gallery-feedback', 'Eliminata!'); } }
 
@@ -404,7 +429,7 @@
         renderAll();
         loadFromGitHub();
 
-        // ESPOSIZIONE FUNZIONI
+        // ESPOSIZIONE
         window.toggleAdmin = toggleAdmin;
         window.logout = logout;
         window.forceSyncFromGitHub = forceSyncFromGitHub;
