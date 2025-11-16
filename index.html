@@ -43,7 +43,7 @@
 </head>
 <body>
     <header>
-        <img id="banner" src="Opere/banner.jpg" alt="Banner ViAmo" loading="lazy">
+        <img id="banner" src="Opere/banner.webp" alt="Banner ViAmo" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
     <nav>
@@ -144,7 +144,7 @@
     <script>
         const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/viamoarte/Sito-viamo/main/data.json';
         const GITHUB_API = 'https://api.github.com/repos/viamoarte/Sito-viamo/contents/data.json';
-        let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.jpg';
+        let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.webp';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
 
@@ -160,7 +160,7 @@
             artworks = JSON.parse(localStorage.getItem('artworks') || '[]');
             homeText = localStorage.getItem('homeText') || "ViAmo, alias Vincenza Amodio, è un'artista che trasforma emozioni in opere d'arte.";
             aboutText = localStorage.getItem('aboutText') || "Vincenza Amodio, nota come ViAmo, è un'artista italiana che fonde street art e pop culture.";
-            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.jpg';
+            bannerData = localStorage.getItem('bannerData') || 'Opere/banner.webp';
         }
 
         async function loadFromGitHub() {
@@ -196,7 +196,7 @@
             const c = document.getElementById('gallery-container');
             c.innerHTML = artworks.map(a => `
                 <div class="artwork">
-                    <img src="${a.image}" alt="${a.title}" loading="lazy">
+                    <img src="${a.image}?t=${Date.now()}" alt="${a.title}" loading="lazy">
                     <h3>${a.title}</h3>
                     <p>Dimensioni: ${a.dimensions}</p>
                     <p>Prezzo: €${a.price}</p>
@@ -234,7 +234,7 @@
             }
         }
 
-        // BANNER: salva come file separato
+        // BANNER
         document.getElementById('banner-form').addEventListener('submit', e => {
             e.preventDefault();
             const file = document.getElementById('banner-file').files[0];
@@ -246,11 +246,11 @@
                 bannerData = 'Opere/' + filename;
                 localStorage.setItem('bannerData', bannerData);
                 document.getElementById('banner').src = dataUrl;
-                showFeedback('banner-feedback', 'Banner pronto! Fai PUSH SU GITHUB', true);
+                showFeedback('banner-feedback', 'Banner pronto! Usa PUSH SU GITHUB', true);
             });
         });
 
-        // GALLERY FORM
+        // GALLERY
         document.getElementById('gallery-form').addEventListener('submit', e => {
             e.preventDefault();
             const title = document.getElementById('gallery-title').value.trim();
@@ -288,50 +288,69 @@
                 }
                 localStorage.setItem('artworks', JSON.stringify(artworks));
                 renderGallery();
-                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Fai PUSH', true);
+                showFeedback('gallery-feedback', editingId ? 'Modificata!' : 'Aggiunta! Usa PUSH', true);
                 e.target.reset();
                 document.querySelectorAll('.preview-img').forEach(img => img.style.display = 'none');
             }
         });
 
-        // PUSH TO GITHUB
+        // PUSH TO GITHUB CON FEEDBACK
         async function pushToGitHub() {
-            const token = prompt("GitHub Personal Access Token (repo scope)");
-            if (!token) return;
+            const token = prompt("GitHub PAT (repo: read+write)");
+            if (!token) return showFeedback('github-feedback', 'PAT richiesto!', false);
 
-            const data = { artworks, homeText, aboutText, bannerData };
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-            let sha = await fetch(GITHUB_API).then(r => r.json()).then(r => r.sha).catch(() => null);
+            showFeedback('github-feedback', 'Caricamento in corso...', true);
 
-            await fetch(GITHUB_API, {
-                method: 'PUT',
-                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'Update data.json', content, sha })
-            });
+            try {
+                const data = { artworks, homeText, aboutText, bannerData };
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+                const shaRes = await fetch(GITHUB_API);
+                const shaData = await shaRes.json();
+                const sha = shaData.sha;
 
-            const pendingKeys = Object.keys(localStorage).filter(k => k.startsWith('pendingImage_') || k === 'pendingBannerFile');
-            for (const key of pendingKeys) {
-                const filename = key === 'pendingBannerFile' 
-                    ? localStorage.getItem('pendingBannerName') 
-                    : key.replace('pendingImage_', '');
-                const base64 = localStorage.getItem(key);
-                const apiUrl = `https://api.github.com/repos/viamoarte/Sito-viamo/contents/Opere/${filename}`;
-
-                await fetch(apiUrl, {
+                await fetch(GITHUB_API, {
                     method: 'PUT',
                     headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: `Add ${filename}`, content: base64 })
+                    body: JSON.stringify({ message: 'Update data.json', content, sha })
                 });
 
-                localStorage.removeItem(key);
-                if (key === 'pendingBannerFile') localStorage.removeItem('pendingBannerName');
-            }
+                const pending = Object.keys(localStorage).filter(k => k.startsWith('pendingImage_') || k === 'pendingBannerFile');
+                let uploaded = 0;
 
-            showFeedback('github-feedback', 'SYNC COMPLETO!', true);
-            setTimeout(() => location.reload(), 1500);
+                for (const key of pending) {
+                    const filename = key === 'pendingBannerFile' 
+                        ? localStorage.getItem('pendingBannerName') 
+                        : key.replace('pendingImage_', '');
+                    const base64 = localStorage.getItem(key);
+                    const apiUrl = `https://api.github.com/repos/viamoarte/Sito-viamo/contents/Opere/${filename}`;
+
+                    const res = await fetch(apiUrl, {
+                        method: 'PUT',
+                        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: `Upload ${filename}`, content: base64 })
+                    });
+
+                    if (res.ok) {
+                        localStorage.removeItem(key);
+                        if (key === 'pendingBannerFile') localStorage.removeItem('pendingBannerName');
+                        uploaded++;
+                    }
+                }
+
+                showFeedback('github-feedback', 
+                    `SYNC COMPLETO!<br>${uploaded} immagini caricate<br>
+                     <a href="https://github.com/viamoarte/Sito-viamo/tree/main/Opere" target="_blank" style="color:#007bff;">
+                     Vedi su GitHub
+                     </a>`, 
+                    true);
+
+                setTimeout(() => location.reload(), 2000);
+            } catch (err) {
+                showFeedback('github-feedback', 'Errore: PAT non valido o rete', false);
+            }
         }
 
-        // ESPORTA JSON - ORA INCLUDE TUTTO
+        // ESPORTA JSON
         function exportData() {
             localStorage.setItem('artworks', JSON.stringify(artworks));
             localStorage.setItem('homeText', homeText);
@@ -346,13 +365,13 @@
             a.download = 'data.json';
             a.click();
             URL.revokeObjectURL(url);
-            showFeedback('github-feedback', `Esportato! (${artworks.length} opere)`, true);
+            showFeedback('github-feedback', `Esportato! (${artworks.length} opere)<br><strong>Usa PUSH per sincronizzare</strong>`, true);
         }
 
         function showFeedback(id, msg, ok = true) {
             const el = document.getElementById(id);
             el.innerHTML = `<div class="feedback ${ok?'success':'error'}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 7000);
+            setTimeout(() => el.innerHTML = '', 10000);
         }
 
         function importFromJson() {
@@ -403,7 +422,7 @@
         // FUNZIONI GLOBALI
         function toggleAdmin() { document.getElementById('admin').style.display = document.getElementById('admin').style.display === 'block' ? 'none' : 'block'; }
         function logout() { loggedIn = false; editingId = null; document.getElementById('login-section').style.display = 'block'; document.getElementById('admin-panel').style.display = 'none'; renderGallery(); }
-        function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto?")) { localStorage.clear(); location.reload(); } }
+        function forceSyncFromGitHub() { if(confirm("Sovrascrivere tutto con GitHub?")) { localStorage.clear(); location.reload(); } }
         function startEdit(id) {
             const art = artworks.find(x => x.id === id);
             editingId = id;
