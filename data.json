@@ -69,6 +69,15 @@
       "dimensions": "100x150",
       "price": 650,
       "image": "Opere/1763296722171.webp"
+    },
+    {
+      "id": 1763920725524,
+      "title": "Il Selfie del Mito",
+      "desc": "Quest’opera propone una rilettura ironica e contemporanea della scultura classica. La figura ispirata a un dio antico, avvolta in un drappo fucsia, impugna uno smartphone dorato come per scattarsi un selfie e indossa uno smartwatch, trasformandosi in un’icona dell’era digitale.    Ai suoi piedi compare un personaggio dei cartoon, stupito e quasi adorante, che crea un contrasto divertente tra arte tradizionale e cultura pop. L’opera invita a riflettere sul culto dell’immagine, sull’ego sociale e su come i miti vengano reinterpretati e consumati nella società contemporanea. La composizione è realizzata su una tela di lino di canapa del 1900, dipinta con colori acrilici, creando un interessante dialogo tra supporto storico e linguaggio pittorico moderno.",
+      "dimensions": "100x200",
+      "price": 2000,
+      "image": "Opere/1763920725090.webp",
+      "rendering": "Opere/1763920725452_render.webp"
     }
   ],
   "homeText": "Benvenuti nel mondo di ViAmo.....\n\nViAmo, alias Vincenza Amodio, è un’artista che trasforma le emozioni in colori, la strada in tela e la cultura pop in poesia visiva.\nQui trovi le sue opere più recenti: dipinti vibranti, street art audace e dettagli che raccontano storie. Ogni pezzo è unico, pensato per chi ama l’arte che parla, colpisce e resta.\nEsplora la galleria, scopri i rendering in alta definizione, contattami direttamente.\nL’arte non aspetta. Entra.",
