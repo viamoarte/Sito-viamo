@@ -59,7 +59,6 @@
         <img id="artwork-image" alt="" loading="lazy">
         <p id="artwork-desc"></p>
         <p id="artwork-dimensions"></p>
-        <p id="artwork-price"></p>
 
         <button id="rendering-btn" style="display:none;">Visualizza in un ambiente</button>
 
@@ -104,7 +103,6 @@
             $('artwork-image').alt = `Opera "${artwork.title}"`;
             $('artwork-desc').textContent = artwork.desc;
             $('artwork-dimensions').textContent = `Dimensioni: ${artwork.dimensions}`;
-            $('artwork-price').textContent = `Prezzo: €${artwork.price}`;
             $('error-message').style.display = 'none';
 
             // Precompila messaggio
@@ -178,3 +176,4 @@
     </script>
 </body>
 </html>
+
