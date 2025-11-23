@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://viamoarte.github.io/Sito-viamo/sitemap.xml
