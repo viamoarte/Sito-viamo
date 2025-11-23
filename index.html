@@ -105,7 +105,6 @@
                     <input type="text" id="gallery-title" placeholder="Titolo" required>
                     <input type="text" id="gallery-desc" placeholder="Descrizione" required>
                     <input type="text" id="gallery-dimensions" placeholder="Dimensioni" required>
-                    <input type="number" id="gallery-price" placeholder="Prezzo (€)" min="1" required>
                     <input type="file" id="gallery-image-file" accept="image/*">
                     <img id="preview-main" class="preview-img" alt="Anteprima">
                     <input type="file" id="gallery-rendering-file" accept="image/*">
@@ -204,7 +203,6 @@ window.addEventListener('load', () => {
                          onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM5OTkiPkltbWFnaW5lIG1hbmNhbnRlPC90ZXh0Pjwvc3ZnPg=='; this.title='Immagine non trovata su GitHub';">
                     <h3>${a.title}</h3>
                     <p>Dimensioni: ${a.dimensions}</p>
-                    <p>Prezzo: €${a.price}</p>
                     <a href="artwork.html?id=${a.id}">Dettagli</a>
                     ${loggedIn ? `<button onclick="startEdit(${a.id})">Modifica</button>
                                  <button onclick="deleteArtwork(${a.id})" style="background:#e74c3c;">Elimina</button>` : ''}
@@ -295,7 +293,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
             const imageFile = document.getElementById('gallery-image-file').files[0];
             const renderFile = document.getElementById('gallery-rendering-file').files[0];
 
-            const data = { title, desc, dimensions, price };
+            const data = { title, desc, dimensions };
 
             if (editingId) {
                 const art = artworks.find(x => x.id === editingId);
@@ -350,7 +348,6 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
             document.getElementById('gallery-title').value = art.title;
             document.getElementById('gallery-desc').value = art.desc;
             document.getElementById('gallery-dimensions').value = art.dimensions;
-            document.getElementById('gallery-price').value = art.price;
             document.getElementById('preview-main').src = art.image;
             document.getElementById('preview-main').style.display = 'block';
             if (art.rendering) {
@@ -515,6 +512,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
 
 
 
