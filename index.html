@@ -148,7 +148,10 @@
         let artworks = [], homeText = '', aboutText = '', bannerData = 'Opere/banner.webp';
         let adminPasswordHash = '';
         let loggedIn = false, editingId = null;
-
+// PULIZIA AUTOMATICA ALL'APERTURA
+window.addEventListener('load', () => {
+    localStorage.clear(); // Forza sempre dati freschi da GitHub
+});
         // PASSWORD DEFAULT
         (async () => {
             const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('#Viamo2025'));
@@ -513,6 +516,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
 
 
 
