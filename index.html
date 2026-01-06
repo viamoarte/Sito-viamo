@@ -509,9 +509,13 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
         });
 
         // INIT
-        loadData();
-        renderAll();
-        loadFromGitHub();
+        async function init() {
+    await loadFromGitHub();     // aspetta che finisca il fetch da GitHub
+    loadData();                 // ora legge i dati aggiornati
+    renderAll();                // e solo adesso disegna
+}
+
+init();   // avvia tutto
 
         // ESPOSIZIONE
         window.toggleAdmin = toggleAdmin;
@@ -526,6 +530,7 @@ document.getElementById('contact-form').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
 
 
 
