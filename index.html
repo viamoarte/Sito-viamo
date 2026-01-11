@@ -34,51 +34,58 @@
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    padding: 10px 10px 30px;
-    /* Togli questi due o mettili molto alti se vuoi limitare */
-    /* max-height: 70vh; */
-    /* overflow-y: auto; */
+    gap: 20px 24px;           /* orizzontale più largo, verticale più stretto */
+    padding: 10px;
+    align-content: start;     /* non allunga inutilmente le righe */
 }
 
 .artwork {
+    display: flex;
+    flex-direction: column;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    padding: 0;               /* tolto padding interno */
+    margin: 0;
+}
+
+.artwork img {
+    width: 100%;
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+    background: #f9f9f9;
+    display: block;
+}
+
+.artwork .content {           /* ← nuovo contenitore per testo + bottone */
+    padding: 10px 12px 12px;
     display: flex;
     flex-direction: column;
-    text-align: center;
-    padding: 12px 10px 14px;           /* ← padding ridotto */
-    max-height: 85vh;
-    box-sizing: border-box;
+    gap: 4px;                 /* spazio minimo tra elementi */
+    flex-grow: 1;
+    justify-content: flex-start;
 }
 
 .artwork h3 {
-    margin: 8px 0 4px 0;               /* ← spazi molto ridotti */
+    margin: 0;
     font-size: 1.1em;
-    line-height: 1.2;
 }
 
 .artwork p {
-    margin: 0 0 6px 0;                 /* ← quasi zero spazio sotto "Dimensioni" */
+    margin: 0;
     font-size: 0.9em;
     color: #555;
 }
 
 .artwork a,
 .artwork button {
-    display: inline-block;
-    margin: 4px 6px 0;                 /* ← margini minimi */
-    padding: 6px 12px;                 /* pulsanti più compatti */
-    background: #2c3e50;
-    color: #fff;
-    text-decoration: none;
-    border: none;
-    border-radius: 5px;
+    margin-top: 6px;          /* solo un piccolo spazio sopra il bottone */
+    padding: 6px 12px;
     font-size: 0.85em;
-    cursor: pointer;
+    align-self: center;       /* centra il bottone */
 }
 
 /* Mobile - tutto a colonna singola */
@@ -597,6 +604,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
