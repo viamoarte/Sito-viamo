@@ -32,91 +32,35 @@
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
 .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, max-content));  /* 180px = larghezza minima accettabile */
-    /* oppure più morbido: */
-    /* grid-template-columns: repeat(auto-fit, minmax(220px, fit-content(380px))); */
-    
-    gap: 28px 20px;                  /* verticale più generoso, orizzontale più stretto */
-    padding: 10px 15px;
-    justify-content: center;         /* centra il gruppo se non riempie tutta la riga */
+    column-count: 4;                    /* 4 colonne su desktop – cambia a piacere */
+    column-gap: 24px;                   /* spazio orizzontale tra colonne */
+    padding: 0px;
 }
 
 .gallery .artwork {
-    width: fit-content;              /* ← chiave: la card si restringe/espande con l'immagine */
-    max-width: 420px;                /* limite massimo per evitare card enormi */
-    margin: 0 auto;                  /* centra la card nella sua "cella" */
-    break-inside: avoid;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-}
-
-.gallery .artwork img {
-    width: 100%;
-    height: auto;
+    break-inside: avoid;                /* importantissimo! impedisce che una card sia spezzata tra colonne */
+    margin-bottom: 24px;                /* spazio verticale tra card */
     display: block;
-    object-fit: contain;
-    background: #f9f9fa;
-}
-
-/* Per immagini molto strette (verticali alte) */
-.gallery .artwork img[style*="aspect-ratio"], 
-.gallery .artwork img {
-    max-width: 100%;
-    min-width: 180px;                /* evita card minuscole */
-}
-
-.artwork {
-    display: flex;
-    flex-direction: column;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #e0e0e0;
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    padding: 0;               /* tolto padding interno */
-    margin: 0;
 }
 
-.artwork img {
-    width: 100%;
-    height: auto;
-    max-height: 60vh;
-    object-fit: contain;
-    background: #f9f9f9;
-    display: block;
+/* Responsive */
+@media (max-width: 900px) {
+    .gallery {
+        column-count: 2;
+    }
 }
 
-.artwork .content {           /* ← nuovo contenitore per testo + bottone */
-    padding: 10px 12px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;                 /* spazio minimo tra elementi */
-    flex-grow: 1;
-    justify-content: flex-start;
+@media (max-width: 600px) {
+    .gallery {
+        column-count: 1;
+    }
 }
 
-.artwork h3 {
-    margin: 0;
-    font-size: 1.1em;
-}
-
-.artwork p {
-    margin: 0;
-    font-size: 0.9em;
-    color: #555;
-}
-
-.artwork a,
-.artwork button {
-    margin-top: 6px;          /* solo un piccolo spazio sopra il bottone */
-    padding: 6px 12px;
-    font-size: 0.85em;
-    align-self: center;       /* centra il bottone */
-}
 
 /* Mobile - tutto a colonna singola */
 @media (max-width: 600px) {
@@ -634,6 +578,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
