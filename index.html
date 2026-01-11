@@ -169,25 +169,7 @@ body {
   gtag('config', 'G-BLDKGBVBF7');
 </script>
 </head>
-<!-- Widget Google Translate nascosto -->
-<div id="google_translate_element" style="display: none;"></div>
-
-<script type="text/javascript">
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'it',              // lingua originale
-        includedLanguages: 'it,en',      // solo italiano + inglese
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: false
-        multilanguagePage: false
-    }, 'google_translate_element');
-}
-</script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <span class="notranslate">ViAmo - Vincenza Amodio</span>
+<span class="notranslate">ViAmo - Vincenza Amodio</span>
 <script>
 document.querySelectorAll('.lang-link').forEach(link => {
     link.addEventListener('click', function(e) {
@@ -214,19 +196,11 @@ document.querySelectorAll('.lang-link').forEach(link => {
 
     <div class="nav-right">
         <a href="#" onclick="toggleAdmin()">Area Riservata</a>
-
-        <!-- Selettore lingue con sole bandierine -->
-        <div class="lang-switcher">
-            <a href="#googtrans/it/it" class="lang-link" data-lang="it" title="Italiano">
-                <img src="Opere/it.png" alt="Italiano" width="20" height="15">
-            </a>
-            <a href="#googtrans/it/en" class="lang-link" data-lang="en" title="English">
-                <img src="Opere/gb.png" alt="English" width="20" height="15">
-            </a>
-        </div>
+        
+        <!-- Widget Google Translate visibile (menu a tendina semplice) -->
+        <div id="google_translate_element"></div>
     </div>
 </nav>
-        
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
@@ -710,8 +684,21 @@ init();   // avvia tutto
         });
     });
 </script>
+<!-- Script Google Translate -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'it',
+    includedLanguages: 'it,en',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
+
 
 
 
