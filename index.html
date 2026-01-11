@@ -42,11 +42,13 @@
   color: #2c3e50 !important;
   font-family: Arial, sans-serif !important;
 }
-.goog-te-banner-frame.skiptranslate {
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget-icon,
+.goog-te-combo {
   display: none !important;
 }
 body {
-  top: 0 !important;  /* evita lo spazio in alto che a volte crea */
+  top: 0 !important; /* elimina lo spazio bianco in alto creato dal banner nascosto */
 }
 .gallery {
     column-count: 4;                    /* 4 colonne su desktop – cambia a piacere */
@@ -177,6 +179,7 @@ function googleTranslateElementInit() {
         includedLanguages: 'it,en',      // solo italiano + inglese
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
+        multilanguagePage: false
     }, 'google_translate_element');
 }
 </script>
@@ -686,6 +689,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
