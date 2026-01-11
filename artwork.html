@@ -179,11 +179,7 @@
         console.warn('Errore ignorato: recipient empty (probabile falso positivo autoreply)');
         showFeedback('form-feedback', 'Messaggio inviato con successo!', true);
         this.reset();
-    } else {
-        console.error('Errore reale:', error);
-        showFeedback('form-feedback', 'Errore invio. Riprova.', false);
-    }
-});
+    } 
             .finally(() => {
                 btn.disabled = false;
                 btn.textContent = 'Invia Messaggio';
@@ -192,6 +188,7 @@
     </script>
 </body>
 </html>
+
 
 
 
