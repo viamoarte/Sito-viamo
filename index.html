@@ -31,6 +31,22 @@
         nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
+        #google_translate_element {
+  font-size: 0.9em;
+}
+.goog-te-gadget {
+  color: transparent !important;
+}
+.goog-te-gadget span {
+  color: #2c3e50 !important;
+  font-family: Arial, sans-serif !important;
+}
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0 !important;  /* evita lo spazio in alto che a volte crea */
+}
 .gallery {
     column-count: 4;                    /* 4 colonne su desktop – cambia a piacere */
     column-gap: 12px;                   /* spazio orizzontale tra colonne */
@@ -108,7 +124,6 @@
     }
 }
 
-
 /* Mobile - tutto a colonna singola */
 @media (max-width: 600px) {
     .gallery {
@@ -151,35 +166,63 @@
   gtag('config', 'G-BLDKGBVBF7');
 </script>
 </head>
-<!-- Google Translate Widget -->
-<div id="google_translate_element" style="position: fixed; top: 10px; right: 10px; z-index: 1000;"></div>
+<!-- Widget Google Translate nascosto -->
+<div id="google_translate_element" style="display: none;"></div>
 
 <script type="text/javascript">
 function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'it',                    // lingua originale del sito
-    includedLanguages: 'en,it',            // solo inglese + italiano (riduce il menu)
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay: false                     // non tradurre automaticamente
-  }, 'google_translate_element');
+    new google.translate.TranslateElement({
+        pageLanguage: 'it',              // lingua originale
+        includedLanguages: 'it,en',      // solo italiano + inglese
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+    }, 'google_translate_element');
 }
 </script>
 
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <span class="notranslate">ViAmo - Vincenza Amodio</span>
-<!-- o su interi blocchi -->
+<script>
+document.querySelectorAll('.lang-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const lang = this.getAttribute('data-lang');
+        const hash = lang === 'it' ? '#googtrans/it/it' : '#googtrans/it/en';
+        window.location.hash = hash;
+        window.location.reload();  // necessario per applicare la traduzione
+    });
+});
+</script>
     <body>
     <header>
         <img id="banner" src="Opere/banner.webp" alt="Banner ViAmo" loading="lazy">
         <h1>ViAmo - Vincenza Amodio</h1>
     </header>
-    <nav>
+<nav>
+    <div class="nav-left">
         <a href="#home">Home</a>
         <a href="#gallery">Galleria</a>
         <a href="#about">Chi Sono</a>
         <a href="#contact">Contatti</a>
+    </div>
+
+    <div class="nav-right">
         <a href="#" onclick="toggleAdmin()">Area Riservata</a>
-    </nav>
+
+        <!-- Selettore lingue con sole bandierine -->
+        <div class="lang-switcher">
+            <a href="#googtrans/it/it" class="lang-link" data-lang="it" title="Italiano">
+                <img src="images/flags/it.png" alt="Italiano" width="20" height="15">
+            </a>
+            <a href="#googtrans/it/en" class="lang-link" data-lang="en" title="English">
+                <img src="images/flags/gb.png" alt="English" width="20" height="15">
+            </a>
+        </div>
+    </div>
+</nav>
+        
     <section id="home"><h2>Home</h2><p id="home-text">Caricamento...</p></section>
     <section id="gallery"><h2>Galleria Opere</h2><div class="gallery" id="gallery-container"></div></section>
     <section id="about"><h2>Chi è ViAmo</h2><p id="about-text">Caricamento...</p></section>
@@ -642,6 +685,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
