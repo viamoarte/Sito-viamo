@@ -687,8 +687,32 @@ init();   // avvia tutto
         window.exportData = exportData;
         window.importFromJson = importFromJson;
     </script>
+    <script>
+    // Funzione per cambiare lingua
+    function changeLanguage(lang) {
+        // Cancella cookie googtrans precedente (importante!)
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + document.domain + ";";
+
+        // Imposta nuovo cookie (usa il formato /it/en)
+        const cookieValue = lang === 'it' ? '/it/it' : '/it/en';
+        document.cookie = "googtrans=" + cookieValue + "; path=/; domain=" + document.domain + ";";
+
+        // Ricarica la pagina per applicare
+        window.location.reload();
+    }
+
+    // Collega i click alle bandiere
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const lang = this.getAttribute('data-lang');
+            changeLanguage(lang);
+        });
+    });
+</script>
 </body>
 </html>
+
 
 
 
