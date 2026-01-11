@@ -32,33 +32,41 @@
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
 .gallery {
-    column-count: 4;                    /* 3 colonne su desktop – cambia a piacere */
-    column-gap: 24px;                   /* spazio orizzontale tra colonne */
-    padding: 0px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, max-content));  /* 180px = larghezza minima accettabile */
+    /* oppure più morbido: */
+    /* grid-template-columns: repeat(auto-fit, minmax(220px, fit-content(380px))); */
+    
+    gap: 28px 20px;                  /* verticale più generoso, orizzontale più stretto */
+    padding: 10px 15px;
+    justify-content: center;         /* centra il gruppo se non riempie tutta la riga */
 }
 
 .gallery .artwork {
-    break-inside: avoid;                /* importantissimo! impedisce che una card sia spezzata tra colonne */
-    margin-bottom: 24px;                /* spazio verticale tra card */
-    display: block;
+    width: fit-content;              /* ← chiave: la card si restringe/espande con l'immagine */
+    max-width: 420px;                /* limite massimo per evitare card enormi */
+    margin: 0 auto;                  /* centra la card nella sua "cella" */
+    break-inside: avoid;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #e0e0e0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-    .gallery {
-        column-count: 2;
-    }
+.gallery .artwork img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    background: #f9f9fa;
 }
 
-@media (max-width: 600px) {
-    .gallery {
-        column-count: 1;
-    }
+/* Per immagini molto strette (verticali alte) */
+.gallery .artwork img[style*="aspect-ratio"], 
+.gallery .artwork img {
+    max-width: 100%;
+    min-width: 180px;                /* evita card minuscole */
 }
 
 .artwork {
@@ -626,6 +634,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
