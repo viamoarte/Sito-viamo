@@ -32,11 +32,33 @@
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
 .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px 24px;           /* orizzontale più largo, verticale più stretto */
+    column-count: 3;                    /* 3 colonne su desktop – cambia a piacere */
+    column-gap: 24px;                   /* spazio orizzontale tra colonne */
     padding: 10px;
-    align-content: start;     /* non allunga inutilmente le righe */
+}
+
+.gallery .artwork {
+    break-inside: avoid;                /* importantissimo! impedisce che una card sia spezzata tra colonne */
+    margin-bottom: 24px;                /* spazio verticale tra card */
+    display: block;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .gallery {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery {
+        column-count: 1;
+    }
 }
 
 .artwork {
@@ -604,6 +626,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
