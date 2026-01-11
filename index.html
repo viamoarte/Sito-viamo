@@ -31,9 +31,57 @@
         nav a{color:#fff;margin:0 15px;text-decoration:none;font-size:1.1em;}
         nav a:hover{text-decoration:underline;}
         section{padding:25px;margin:20px;background:#fff;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,.1);}
-        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-height:70vh;overflow-y:auto;padding:10px;}
-        .artwork{border:1px solid #ddd;padding:15px;text-align:center;background:#fff;border-radius:8px;}
-        .artwork img{width:100%;height:200px;object-fit:cover;border-radius:5px;}      
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 10px 10px 30px;
+    /* Togli questi due o mettili molto alti se vuoi limitare */
+    /* max-height: 70vh; */
+    /* overflow-y: auto; */
+}
+
+.artwork {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    /* max-height utile per evitare opere enormi in verticale */
+    max-height: 85vh;
+}
+
+.artwork img {
+    width: 100%;
+    height: auto;                    /* ← permette alle proporzioni reali di vincere */
+    max-height: 65vh;                /* ← limite massimo per immagini molto alte */
+    object-fit: contain;             /* importante: NON taglia, mostra tutta l'opera */
+    background: #f8f9fa;             /* sfondo leggero se l'immagine non riempie */
+    display: block;
+    margin: 0 auto;                  /* centra orizzontalmente se < 100% */
+}
+
+/* Opzionale: se vuoi che le immagini molto larghe non diventino minuscole */
+.artwork img {
+    max-width: 100%;
+    max-height: 65vh;
+    width: auto;                     /* ← permette alle orizzontali di mantenere proporzioni */
+    height: auto;
+}
+
+/* Mobile - tutto a colonna singola */
+@media (max-width: 600px) {
+    .gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .artwork img {
+        max-height: 55vh;            /* un po' più piccolo su mobile */
+    }
+}
         .artwork a,.artwork button{display:inline-block;margin:8px 4px 0;padding:8px 14px;background:#2c3e50;color:#fff;text-decoration:none;border:none;border-radius:5px;font-size:.9em;cursor:pointer;}
         .artwork a:hover,.artwork button:hover{background:#34495e;}
         form{display:flex;flex-direction:column;max-width:450px;margin:0 auto;}
@@ -539,6 +587,7 @@ init();   // avvia tutto
     </script>
 </body>
 </html>
+
 
 
 
