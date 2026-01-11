@@ -174,12 +174,9 @@
                 if (artwork) $('message').value = `Richiesta informazioni per l'opera "${artwork.title}"`;
             })
            .catch((error) => {
-    if (error.text?.includes('this recipient is empty')) {
-        // Ignora questo errore noto
-        console.warn('Errore ignorato: recipient empty (probabile falso positivo autoreply)');
-        showFeedback('form-feedback', 'Messaggio inviato con successo!', true);
-        this.reset();
-    } 
+                console.error('EmailJS Error:', error);
+                showFeedback('Errore: ' + (error.text || 'Controlla console'), false);
+            })
             .finally(() => {
                 btn.disabled = false;
                 btn.textContent = 'Invia Messaggio';
@@ -188,6 +185,7 @@
     </script>
 </body>
 </html>
+
 
 
 
